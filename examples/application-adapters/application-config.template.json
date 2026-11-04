@@ -1,0 +1,44 @@
+[
+  {
+    "tenant": "demo-a",
+    "credentials": {
+      "owner": "REPLACE_WITH_OWNER_TEST_BEARER_CREDENTIAL",
+      "peer": "REPLACE_WITH_PEER_TEST_BEARER_CREDENTIAL"
+    },
+    "plan": {
+      "version": "http-object-access/v2",
+      "id": "owned-api",
+      "title": "Cross-user private object access",
+      "origin": "https://api.example.invalid",
+      "approved_addresses": ["192.0.2.10"],
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {"account": "owner", "path": "/me", "equals": {"/data/username": "owner-user"}},
+        {"account": "peer", "path": "/me", "equals": {"/data/username": "peer-user"}}
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/objects/owner-test-object",
+          "equals": {"/id": "owner-test-object", "/owner": "owner-user"},
+          "sha256": {"/private_value": "REPLACE_WITH_SHA256_OF_OWNER_SEEDED_PROOF"}
+        },
+        {
+          "account": "peer",
+          "path": "/objects/peer-test-object",
+          "equals": {"/id": "peer-test-object", "/owner": "peer-user"},
+          "sha256": {"/private_value": "REPLACE_WITH_SHA256_OF_PEER_SEEDED_PROOF"}
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/objects/owner-test-object",
+        "equals": {"/id": "owner-test-object", "/owner": "owner-user"},
+        "sha256": {"/private_value": "REPLACE_WITH_SHA256_OF_OWNER_SEEDED_PROOF"}
+      },
+      "expected_access": "deny",
+      "denial_statuses": [401, 403, 404]
+    }
+  }
+]

@@ -1,0 +1,19 @@
+{
+  "executor": "curl-http/v1",
+  "application_profile": "http-object-access/v2",
+  "application_campaign_job": "tsunami-application-znls5",
+  "images": {
+    "tsunami:dev": "sha256:044ea1afd5c24d472b1b0cc5b8af0cef66e897cae9f3fe39944319ff7bbc2153",
+    "tsunami-tools:dev": "sha256:4b6c10c4d8b7e42e0e13d98252a9995a72f153d36bfe8884c6724394c26e8752"
+  },
+  "tools_base": "debian:trixie-slim@sha256:f6b08b09a05725f9431502d3b5714f5c4576e82c1a84fa1debe0c24a7e0c3ec4",
+  "script_sha256": "7ef72580a71631eeabe750d42b33fd705a342129809466c1f324ffeaa7b76bbe",
+  "external_model_calls": 0,
+  "toolkit_scripts_executed": 0,
+  "synthetic_data_only": true,
+  "limitations": [
+    "Native cancellation tests use a real curl process, bridge, broker and held target. They are not a Kubernetes active-request Stop latency measurement.",
+    "Kubernetes runs qualify the supported read adapter and selected network/runtime paths, not arbitrary hostile shell execution.",
+    "Review purpose is automated_lab_test; no human approval or customer impact rating."
+  ]
+}

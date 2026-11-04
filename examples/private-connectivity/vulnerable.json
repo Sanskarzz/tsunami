@@ -1,0 +1,81 @@
+{
+  "id": "6ceff5d3c6517b45689c58824e7a248d",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only / private connector",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "object-ownership/v1",
+  "created_at": "2026-11-01T18:17:03.483417273Z",
+  "deadline": "2026-11-01T18:18:33.483417273Z",
+  "finished_at": "2026-11-01T18:17:04.224851758Z",
+  "deletion_requested_at": "2026-11-01T18:17:04.572917431Z",
+  "request_count": 3,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "ec703787085ca9ca9aafe228c31a87bb",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T18:17:04.193554259Z",
+      "finished_at": "2026-11-01T18:17:04.193555917Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "9fdfe1e17be80dbaa198d3bbb5fa2407",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T18:17:04.195301714Z",
+      "finished_at": "2026-11-01T18:17:04.202899598Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    },
+    {
+      "id": "85caae7c854e8c0cfc6957e4c969e5ff",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-bob",
+      "account": "bob",
+      "started_at": "2026-11-01T18:17:04.205132844Z",
+      "finished_at": "2026-11-01T18:17:04.210918768Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"content\":\"synthetic private invoice for bob\",\"id\":\"doc-bob\",\"owner\":\"bob\"}\n"
+    },
+    {
+      "id": "d6e86737165b5eb6b19ed731a08dfbd3",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-alice",
+      "account": "bob",
+      "started_at": "2026-11-01T18:17:04.213431307Z",
+      "finished_at": "2026-11-01T18:17:04.221339285Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T18:17:03.483417273Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T18:17:04.224851758Z",
+      "kind": "validated",
+      "detail": "confirmed"
+    }
+  ],
+  "result": {
+    "verdict": "confirmed",
+    "title": "Broken Object Level Authorization (synthetic invoice API)",
+    "reason": "Bob received Alice's known private fixture document. Both legitimate ownership baselines succeeded.",
+    "evidence_ids": [
+      "9fdfe1e17be80dbaa198d3bbb5fa2407",
+      "85caae7c854e8c0cfc6957e4c969e5ff",
+      "d6e86737165b5eb6b19ed731a08dfbd3"
+    ]
+  }
+}

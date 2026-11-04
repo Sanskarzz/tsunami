@@ -1,0 +1,33 @@
+{
+  "checked_at": "2026-11-03T06:22:10.178767822Z",
+  "artifact_directory": "/tmp/application-campaign/campaign-3942938299",
+  "mode": "scripted Mecatl / configured owned application / no external model",
+  "checks": [
+    {
+      "application": "vampi-fixed",
+      "engagement_id": "1e5ff86582872e3ae3750ecda0342dd7",
+      "run_id": "9f60d3680fe41355867c13ba5df609d3",
+      "expected": "no_issue_observed",
+      "actual": "no_issue_observed",
+      "target_requests": 7,
+      "candidates": 0,
+      "reviewed_findings": 0
+    },
+    {
+      "application": "vampi-vulnerable",
+      "engagement_id": "ea6dae4ee09d1970a6318b6d65c01fc7",
+      "run_id": "1726420bb4ff25755fbd2ff75c4487a3",
+      "expected": "confirmed",
+      "actual": "confirmed",
+      "target_requests": 7,
+      "candidates": 1,
+      "reviewed_findings": 1
+    }
+  ],
+  "limitations": [
+    "Known accounts, object inventory and access rule; not blind discovery or customer readiness.",
+    "Setup creates synthetic data outside the agent. The agent receives only read capabilities.",
+    "Any review performed here is explicitly automated_lab_test, not human signoff.",
+    "No private application connector, shell/scanners, real customer data or scale qualification."
+  ]
+}

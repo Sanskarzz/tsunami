@@ -1,0 +1,7 @@
+PASS vulnerable    verdict=confirmed          requests=3 scope_denials=1 stop_drain_ms=0
+PASS fixed         verdict=no_issue_observed  requests=3 scope_denials=1 stop_drain_ms=0
+PASS inconclusive  verdict=inconclusive       requests=3 scope_denials=1 stop_drain_ms=0
+PASS redirect      verdict=inconclusive       requests=1 scope_denials=2 stop_drain_ms=0
+PASS stop          verdict=stopped            requests=1 scope_denials=1 stop_drain_ms=40
+PASS tripwire: zero requests; lab target observed request cancellation
+Completed 5 scenario checks; reports in /tmp/tsunami-artifacts

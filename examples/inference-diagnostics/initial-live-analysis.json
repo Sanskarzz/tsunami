@@ -1,0 +1,54 @@
+{
+  "generated_at": "2026-11-02T10:29:17.926230474Z",
+  "source_label": "initial-live",
+  "items": [
+    {
+      "run_id": "b15a52619886e7320315e0a97307e4cc",
+      "assessment": "opaque-ownership/v1",
+      "fixture_variant": "fixed",
+      "stored_state": "completed",
+      "stored_verdict": "no_issue_observed",
+      "expected": "no_issue_observed",
+      "match": true,
+      "outcome_category": "expected_access_observed"
+    },
+    {
+      "run_id": "5ca552664af580905145b34690158a01",
+      "assessment": "opaque-ownership/v1",
+      "fixture_variant": "vulnerable",
+      "stored_state": "completed",
+      "stored_verdict": "inconclusive",
+      "expected": "confirmed",
+      "match": false,
+      "outcome_category": "incomplete_assessment"
+    },
+    {
+      "run_id": "99578d514a68b8382549aa97576d93e9",
+      "assessment": "shared-access/v1",
+      "fixture_variant": "fixed",
+      "stored_state": "completed",
+      "stored_verdict": "no_issue_observed",
+      "expected": "no_issue_observed",
+      "match": true,
+      "outcome_category": "expected_access_observed"
+    },
+    {
+      "run_id": "a7119b84077f081ef1af8ac82369ccca",
+      "assessment": "shared-access/v1",
+      "fixture_variant": "vulnerable",
+      "stored_state": "completed",
+      "stored_verdict": "no_issue_observed",
+      "expected": "no_issue_observed",
+      "match": true,
+      "outcome_category": "expected_access_observed"
+    }
+  ],
+  "matched": 3,
+  "missed_vulnerable": 1,
+  "operational_failures": 0,
+  "assessment_misses": 1,
+  "incomplete_assessments": 1,
+  "stopped_runs": 0,
+  "source_records_changed": false,
+  "historical_causes_inferred": false
+}

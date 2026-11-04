@@ -1,0 +1,16 @@
+{
+  "id": "anonymous-access/v1",
+  "title": "Unauthenticated access to a known private object",
+  "purpose": "Check whether the private object is readable with no Authorization header. Anonymous is an explicit broker capability.",
+  "risk": "read-only synthetic fixture",
+  "review": "initial engineering procedure; security-engineer review pending",
+  "method": "GET",
+  "max_requests": 6,
+  "baselines": [
+    {"account":"alice","path":"/api/reviewed/objects/r-7f3c9a","object":{"id":"r-7f3c9a","owner":"alice","content":"synthetic private ledger A"}},
+    {"account":"bob","path":"/api/reviewed/objects/r-b82d16","object":{"id":"r-b82d16","owner":"bob","content":"synthetic private ledger B"}}
+  ],
+  "probe": {"account":"anonymous","path":"/api/reviewed/objects/r-7f3c9a","object":{"id":"r-7f3c9a","owner":"alice","content":"synthetic private ledger A"}},
+  "expected_access": "deny",
+  "remediation": "Require authentication and object authorization before returning private data."
+}

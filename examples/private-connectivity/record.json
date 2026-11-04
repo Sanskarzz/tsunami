@@ -1,0 +1,73 @@
+{
+  "recorded_on": "2026-11-01",
+  "context": "kind-tsunami-lab",
+  "source_job": "tsunami-private-verify-n882m",
+  "evaluation_image_id": "sha256:d7cc9d71a46b9095b2e7c047762c0e476d6ce2ff432f35c16215a5b2f4298f69",
+  "worker_runtime_class": "gvisor",
+  "backend": "Mecatl scripted adapter; no model calls",
+  "private_namespaces": [
+    "tsunami-customer-a",
+    "tsunami-customer-b"
+  ],
+  "checks": [
+    {
+      "run_id": "6ceff5d3c6517b45689c58824e7a248d",
+      "scenario": "vulnerable",
+      "state": "completed",
+      "verdict": "confirmed",
+      "request_count": 3,
+      "captures": 4,
+      "connectivity": "private"
+    },
+    {
+      "run_id": "55eb384fe63f4dafb4dea97c208a3059",
+      "scenario": "fixed",
+      "state": "completed",
+      "verdict": "no_issue_observed",
+      "request_count": 3,
+      "captures": 4,
+      "connectivity": "private"
+    },
+    {
+      "run_id": "d12b1f8192fda8631cc844977d653d6a",
+      "scenario": "redirect",
+      "state": "completed",
+      "verdict": "inconclusive",
+      "request_count": 1,
+      "captures": 3,
+      "connectivity": "private"
+    },
+    {
+      "run_id": "6714050a5d177b81d0d3a1b47a98ee91",
+      "scenario": "stop",
+      "state": "stopped",
+      "verdict": null,
+      "request_count": 1,
+      "captures": 2,
+      "connectivity": "private"
+    },
+    {
+      "run_id": "e5f274e512b83af022028598ad3e5578",
+      "scenario": "inconclusive",
+      "state": "completed",
+      "verdict": "inconclusive",
+      "request_count": 3,
+      "captures": 4,
+      "connectivity": "private"
+    }
+  ],
+  "private_stop_broker_drain_ms": 29,
+  "target_observed_cancellation": true,
+  "connector_outage_no_target_traffic": true,
+  "tenant_b_private_run_creation_denied": true,
+  "native_tests": [
+    "signature and tenant/audience/target rejection",
+    "replay rejected after restart",
+    "active response body expired without control-plane callback",
+    "cutoff cancels target and survives restart",
+    "run/tenant/global stop",
+    "connector outage no fallback",
+    "redirect denied"
+  ],
+  "scope_note": "Kubernetes workflow/outage/network probes; native expiry/cutoff/replay tests. Not cross-node partition or production containment qualification."
+}

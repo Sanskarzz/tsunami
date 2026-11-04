@@ -1,0 +1,3 @@
+Private synthetic lab configured with mTLS. CA key and emergency TLS key stay local. Signing keys, replay state, and cutoff are preserved. No model calls made.
+Image: "tsunami-vampi:f16052d" with ID "sha256:8ffa773d316c0e2095e428118c856662815a4aae1e497d1385d20d7d3eb3213a" found to be already present on all nodes.
+Owned VAmPI lab seeded; two application plans mounted only in the control plane. No model calls or assessment probes made.

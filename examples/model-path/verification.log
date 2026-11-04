@@ -1,0 +1,4 @@
+EVAL_CREATED run=d67518489f7872737ff36cabcd27ddf8 scenario=vulnerable
+EVAL run=d67518489f7872737ff36cabcd27ddf8 vulnerable expected=confirmed          actual=confirmed          match=true mode=Responses wire fixture / no live model
+EVAL_CREATED run=dc5e86090dbbb046b246d20b99f15f64 scenario=fixed
+EVAL run=dc5e86090dbbb046b246d20b99f15f64 fixed      expected=no_issue_observed  actual=no_issue_observed  match=true mode=Responses wire fixture / no live model

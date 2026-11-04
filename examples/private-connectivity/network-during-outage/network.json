@@ -1,0 +1,41 @@
+{
+  "checked_at": "2026-11-01T18:17:40.660384+00:00",
+  "context": "kind-tsunami-lab",
+  "destinations": {
+    "tripwire-service": "http://10.97.251.36:8080",
+    "tripwire-pod": "http://10.245.0.9:8080",
+    "api-service": "https://10.97.0.1:443",
+    "node-api": "https://172.18.0.3:6443",
+    "dns-tcp": "http://10.97.0.10:53",
+    "model-service": "http://10.97.192.132:8080",
+    "private-a-web": "http://10.97.214.163:8080",
+    "private-a-tripwire": "http://10.97.49.196:8080",
+    "private-a-connector": "http://10.97.32.33:8080",
+    "private-b-web": "http://10.97.28.85:8080"
+  },
+  "udp_dns": "10.97.0.10:53",
+  "openrouter_ipv4": null,
+  "checks": [
+    {
+      "role": "positive-before",
+      "job": "tsunami-network-positive-before-vzzn2",
+      "runtime_class": "",
+      "image_id": "sha256:d7cc9d71a46b9095b2e7c047762c0e476d6ce2ff432f35c16215a5b2f4298f69",
+      "passed": true
+    },
+    {
+      "role": "runner",
+      "job": "tsunami-network-runner-ghfbj",
+      "runtime_class": "gvisor",
+      "image_id": "sha256:d7cc9d71a46b9095b2e7c047762c0e476d6ce2ff432f35c16215a5b2f4298f69",
+      "passed": false
+    },
+    {
+      "role": "positive-after",
+      "job": "tsunami-network-positive-after-mkp2c",
+      "runtime_class": "",
+      "image_id": "sha256:d7cc9d71a46b9095b2e7c047762c0e476d6ce2ff432f35c16215a5b2f4298f69",
+      "passed": true
+    }
+  ]
+}

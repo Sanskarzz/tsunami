@@ -1,0 +1,10 @@
+test_collector_does_not_forward_operator_header_on_redirect (test_toolkit.ToolkitDataBoundaries.test_collector_does_not_forward_operator_header_on_redirect) ... ok
+test_duplicate_members_and_remote_schema_refs_are_rejected (test_toolkit.ToolkitDataBoundaries.test_duplicate_members_and_remote_schema_refs_are_rejected) ... ok
+test_file_and_directory_aliases_are_rejected (test_toolkit.ToolkitDataBoundaries.test_file_and_directory_aliases_are_rejected) ... ok
+test_inventory_never_executes_scripts_or_copies_their_contents (test_toolkit.ToolkitDataBoundaries.test_inventory_never_executes_scripts_or_copies_their_contents) ... ok
+test_leaf_inventory_does_not_count_parent_categories (test_toolkit.ToolkitDataBoundaries.test_leaf_inventory_does_not_count_parent_categories) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 1.009s
+
+OK

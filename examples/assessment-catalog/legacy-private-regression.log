@@ -1,0 +1,18 @@
+CONTEXT=kind-tsunami-lab python3 scripts/verify-private.py
+VERIFY_CREATED run=bab920cdcd1136f3f5607cf81d7dba84 scenario=vulnerable connectivity=private
+PASS vulnerable    verdict=confirmed          requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=1b9c1d71d5bb80c29d02e67d3410d667 scenario=fixed connectivity=private
+PASS fixed         verdict=no_issue_observed  requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=79cad175ca84498abd3df390b0366952 scenario=inconclusive connectivity=private
+PASS inconclusive  verdict=inconclusive       requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=6c0ce9b3f6dd7b77852e6a7060c3bf2b scenario=redirect connectivity=private
+PASS redirect      verdict=inconclusive       requests=1 scope_denials=2 stop_drain_ms=0
+VERIFY_CREATED run=ac00172f99d9ad0cf4baa2e20a594889 scenario=stop connectivity=private
+PASS stop          verdict=stopped            requests=1 scope_denials=1 stop_drain_ms=28
+PASS tripwire: zero requests; lab target observed request cancellation
+Completed 5 scenario checks; reports in /tmp/tsunami-artifacts
+
+Collected 5 synthetic run reports into artifacts/private/tsunami-private-verify-pg66t (no credentials exported)
+PASS tenant B cannot create a run using tenant A's private route
+PASS connector outage: no target traffic and no direct fallback
+PASS private verification; evidence in artifacts/private/tsunami-private-verify-pg66t. No model calls made.

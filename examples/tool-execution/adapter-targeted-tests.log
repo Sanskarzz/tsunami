@@ -1,0 +1,27 @@
+=== RUN   TestBrokerStopCancelsTargetBehindCurlAndFencesLaterCalls
+--- PASS: TestBrokerStopCancelsTargetBehindCurlAndFencesLaterCalls (0.03s)
+=== RUN   TestCurlAdapterDoesNotWeakenBrokerTLSOrRedirectPolicy
+=== RUN   TestCurlAdapterDoesNotWeakenBrokerTLSOrRedirectPolicy/untrusted_tls
+2026/11/03 23:46:04 http: TLS handshake error from 127.0.0.1:50616: remote error: tls: bad certificate
+=== RUN   TestCurlAdapterDoesNotWeakenBrokerTLSOrRedirectPolicy/redirect
+--- PASS: TestCurlAdapterDoesNotWeakenBrokerTLSOrRedirectPolicy (0.05s)
+    --- PASS: TestCurlAdapterDoesNotWeakenBrokerTLSOrRedirectPolicy/untrusted_tls (0.03s)
+    --- PASS: TestCurlAdapterDoesNotWeakenBrokerTLSOrRedirectPolicy/redirect (0.01s)
+=== RUN   TestCurlIntentIsDataAndEnvironmentIsNotInherited
+--- PASS: TestCurlIntentIsDataAndEnvironmentIsNotInherited (0.01s)
+=== RUN   TestBridgeRejectsOtherCapabilitiesAndBoundsInvocations
+--- PASS: TestBridgeRejectsOtherCapabilitiesAndBoundsInvocations (0.10s)
+=== RUN   TestCurlCancellationClosesBridgeRequestAndDoesNotRetry
+--- PASS: TestCurlCancellationClosesBridgeRequestAndDoesNotRetry (0.01s)
+=== RUN   TestCommandLimitsOutputAndKillsOrdinaryDescendants
+=== RUN   TestCommandLimitsOutputAndKillsOrdinaryDescendants/output
+=== RUN   TestCommandLimitsOutputAndKillsOrdinaryDescendants/timeout
+=== RUN   TestCommandLimitsOutputAndKillsOrdinaryDescendants/inherited-pipe
+--- PASS: TestCommandLimitsOutputAndKillsOrdinaryDescendants (1.12s)
+    --- PASS: TestCommandLimitsOutputAndKillsOrdinaryDescendants/output (0.01s)
+    --- PASS: TestCommandLimitsOutputAndKillsOrdinaryDescendants/timeout (0.10s)
+    --- PASS: TestCommandLimitsOutputAndKillsOrdinaryDescendants/inherited-pipe (1.00s)
+=== RUN   TestChangedAdapterRefused
+--- PASS: TestChangedAdapterRefused (0.00s)
+PASS
+ok  	github.com/Sanskarzz/tsunami/internal/toolrunner	1.323s

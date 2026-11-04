@@ -1,0 +1,123 @@
+{
+  "id": "5281dc7f709dd81836073b8aced75629",
+  "tenant": "demo-a",
+  "scenario": "fixed",
+  "state": "completed",
+  "target": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "missing-object/v1",
+  "assessment": {
+    "id": "missing-object/v1",
+    "title": "Missing-object negative control",
+    "purpose": "A nonexistent object's rejection cannot establish whether access to a real private object is protected.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/objects/r-missing-99e"
+    },
+    "expected_access": "unknown",
+    "remediation": "Use a known existing private object and approved second account before making an authorization conclusion."
+  },
+  "assessment_digest": "7677e75cb7264c9c51f4d51483b729d1e04a5af30a8c1725477160950cfc09c6",
+  "created_at": "2026-11-02T07:39:48.903852109Z",
+  "deadline": "2026-11-02T07:41:18.903852109Z",
+  "finished_at": "2026-11-02T07:39:49.852782178Z",
+  "deletion_requested_at": "2026-11-02T07:39:49.952664109Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "6a039b43d80506dd9824428f2e2cb3c0",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:49.744799051Z",
+      "finished_at": "2026-11-02T07:39:49.744801266Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "297d1989b3d1c9876bf7c04235c973fd",
+      "url": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:49.748589683Z",
+      "finished_at": "2026-11-02T07:39:49.762102919Z",
+      "status": 200,
+      "peer": "10.97.50.17:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    },
+    {
+      "id": "16effd2b3a986655f01d1838989d6be7",
+      "url": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:49.767599214Z",
+      "finished_at": "2026-11-02T07:39:49.780373749Z",
+      "status": 200,
+      "peer": "10.97.50.17:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "445cca3e6de294a94a2b77a5b1aa1163",
+      "url": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-missing-99e",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:49.785548243Z",
+      "finished_at": "2026-11-02T07:39:49.84880227Z",
+      "status": 404,
+      "peer": "10.97.50.17:8080",
+      "body": "{\"error\":\"not found\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:39:48.903852109Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:39:49.852782178Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Missing-object negative control",
+    "reason": "The probe uses an object with no confirmed existence. Its rejection cannot prove ownership enforcement.",
+    "evidence_ids": [
+      "297d1989b3d1c9876bf7c04235c973fd",
+      "16effd2b3a986655f01d1838989d6be7",
+      "445cca3e6de294a94a2b77a5b1aa1163"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "unknown"
+    }
+  }
+}

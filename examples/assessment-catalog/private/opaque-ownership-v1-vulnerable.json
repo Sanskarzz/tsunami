@@ -1,0 +1,128 @@
+{
+  "id": "e8b6a96a7763833d3d2eee22005228b9",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "opaque-ownership/v1",
+  "assessment": {
+    "id": "opaque-ownership/v1",
+    "title": "Cross-user access to an opaque object ID",
+    "purpose": "Check a real object belonging to another account; IDs are not predictable counters.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/objects/r-7f3c9a",
+      "object": {
+        "id": "r-7f3c9a",
+        "owner": "alice",
+        "content": "synthetic private ledger A"
+      }
+    },
+    "expected_access": "deny",
+    "remediation": "Check object ownership against the authenticated account on every object read. Opaque IDs alone do not authorize access."
+  },
+  "assessment_digest": "414b6dd1126f39b8a01d8d52f82ac7f31d8d33d57847150be36a9f13ec6764d5",
+  "created_at": "2026-11-02T07:39:49.859554694Z",
+  "deadline": "2026-11-02T07:41:19.859554694Z",
+  "finished_at": "2026-11-02T07:39:50.877073668Z",
+  "deletion_requested_at": "2026-11-02T07:39:50.984146742Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "e3423095bff56323978528b2ca167f36",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:50.76330787Z",
+      "finished_at": "2026-11-02T07:39:50.763310098Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "ea004e016b849882148149002783782b",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:50.766373556Z",
+      "finished_at": "2026-11-02T07:39:50.777371576Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    },
+    {
+      "id": "4983a6bf482e65d51936a5305940cdf6",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:50.781220852Z",
+      "finished_at": "2026-11-02T07:39:50.794978069Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "06a2945b60935aa6c3e1ca5f21a06e16",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:50.799553911Z",
+      "finished_at": "2026-11-02T07:39:50.869750047Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:39:49.859554694Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:39:50.877073668Z",
+      "kind": "validated",
+      "detail": "confirmed"
+    }
+  ],
+  "result": {
+    "verdict": "confirmed",
+    "title": "Cross-user access to an opaque object ID",
+    "reason": "The probe returned the exact protected fixture object despite the reviewed deny rule; legitimate baselines also succeeded.",
+    "evidence_ids": [
+      "ea004e016b849882148149002783782b",
+      "4983a6bf482e65d51936a5305940cdf6",
+      "06a2945b60935aa6c3e1ca5f21a06e16"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}

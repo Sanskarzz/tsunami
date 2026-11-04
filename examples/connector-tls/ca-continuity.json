@@ -1,0 +1,13 @@
+{
+  "checks": [
+    {
+      "case": "missing-ca",
+      "setup_refused": true
+    },
+    {
+      "case": "mismatched-ca",
+      "setup_refused": true
+    }
+  ],
+  "installed_broker_tls_secret_unchanged": true
+}

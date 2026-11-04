@@ -1,0 +1,139 @@
+{
+  "id": "99314885623bb13a52fbb10df73df307",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "OpenRouter free model / synthetic lab only",
+  "execution": "live",
+  "workflow": "shared-access/v1",
+  "assessment": {
+    "id": "shared-access/v1",
+    "title": "Approved shared-object access",
+    "purpose": "Avoid calling every cross-owner HTTP 200 a vulnerability. This object is explicitly shared with Bob.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-shared-40a",
+        "object": {
+          "id": "r-shared-40a",
+          "owner": "alice",
+          "content": "synthetic team handover"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/objects/r-shared-40a",
+      "object": {
+        "id": "r-shared-40a",
+        "owner": "alice",
+        "content": "synthetic team handover"
+      }
+    },
+    "expected_access": "allow",
+    "remediation": "Preserve the explicit sharing rule. A successful approved share is not a security finding."
+  },
+  "assessment_digest": "df94143d286bea5ab5b89870b351aa929f0310652970d8d83d5403057544420f",
+  "completion_feedback_count": 1,
+  "model": {
+    "price_policy": "openrouter-free/v1",
+    "provider": "openrouter-free",
+    "name": "nvidia/nemotron-3.5-lightning:free",
+    "config_id": "2b56c61688a20cccaa0b022ea82deaeb1036707d13d7b15f0d7795a00ff3da0a",
+    "max_calls": 8,
+    "max_output_tokens": 1024,
+    "calls_reserved": 5,
+    "wire_attempts": 5,
+    "streams_opened": 5,
+    "completed_calls": 5,
+    "reported_input_tokens": 6661,
+    "reported_output_tokens": 212,
+    "usage_uncertain": false
+  },
+  "created_at": "2026-11-02T07:40:33.942878636Z",
+  "deadline": "2026-11-02T07:42:03.942878636Z",
+  "finished_at": "2026-11-02T07:40:46.262898989Z",
+  "deletion_requested_at": "2026-11-02T07:40:46.446412178Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "b67d7aa7a9e1e3e2a879c0f72b5b8ba3",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-shared-40a",
+      "account": "bob",
+      "started_at": "2026-11-02T07:40:38.625482026Z",
+      "finished_at": "2026-11-02T07:40:38.62855976Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-shared-40a\",\"owner\":\"alice\",\"content\":\"synthetic team handover\"}\n"
+    },
+    {
+      "id": "a278eee58f1bc0f1d99e50220b0aba0c",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-shared-40a",
+      "account": "alice",
+      "started_at": "2026-11-02T07:40:41.542567282Z",
+      "finished_at": "2026-11-02T07:40:41.546455891Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-shared-40a\",\"owner\":\"alice\",\"content\":\"synthetic team handover\"}\n"
+    },
+    {
+      "id": "ac4618bc6ccc49273d68fb1b84e4442e",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:40:44.715361075Z",
+      "finished_at": "2026-11-02T07:40:44.718647434Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:40:33.942878636Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:40:39.900706976Z",
+      "kind": "assessment_incomplete",
+      "detail": "trusted missing-evidence feedback; permission scope unchanged"
+    },
+    {
+      "at": "2026-11-02T07:40:46.262898989Z",
+      "kind": "validated",
+      "detail": "no_issue_observed"
+    }
+  ],
+  "result": {
+    "verdict": "no_issue_observed",
+    "title": "Approved shared-object access",
+    "reason": "The captured shared-object response matches the explicitly approved access rule. This is a positive control, not a finding.",
+    "evidence_ids": [
+      "a278eee58f1bc0f1d99e50220b0aba0c",
+      "ac4618bc6ccc49273d68fb1b84e4442e",
+      "b67d7aa7a9e1e3e2a879c0f72b5b8ba3"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "allow"
+    }
+  }
+}

@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-11-02T10:29:18.059114699Z",
+  "source_label": "feedback-live",
+  "items": [
+    {
+      "run_id": "6af09111809f8870870b1be1ef599640",
+      "assessment": "opaque-ownership/v1",
+      "fixture_variant": "fixed",
+      "stored_state": "failed",
+      "stored_verdict": "inconclusive",
+      "expected": "no_issue_observed",
+      "match": false,
+      "outcome_category": "model_failure_unclassified",
+      "failure_code": "model_error"
+    },
+    {
+      "run_id": "f70a97c15ddd8565bdc0e8a0d229ca90",
+      "assessment": "opaque-ownership/v1",
+      "fixture_variant": "vulnerable",
+      "stored_state": "failed",
+      "stored_verdict": "inconclusive",
+      "expected": "confirmed",
+      "match": false,
+      "outcome_category": "model_failure_unclassified",
+      "failure_code": "model_error"
+    },
+    {
+      "run_id": "852646b48a615e74b835e73247618b51",
+      "assessment": "shared-access/v1",
+      "fixture_variant": "fixed",
+      "stored_state": "completed",
+      "stored_verdict": "no_issue_observed",
+      "expected": "no_issue_observed",
+      "match": true,
+      "outcome_category": "expected_access_observed"
+    },
+    {
+      "run_id": "99314885623bb13a52fbb10df73df307",
+      "assessment": "shared-access/v1",
+      "fixture_variant": "vulnerable",
+      "stored_state": "completed",
+      "stored_verdict": "no_issue_observed",
+      "expected": "no_issue_observed",
+      "match": true,
+      "outcome_category": "expected_access_observed"
+    }
+  ],
+  "matched": 2,
+  "missed_vulnerable": 1,
+  "operational_failures": 2,
+  "assessment_misses": 0,
+  "incomplete_assessments": 0,
+  "stopped_runs": 0,
+  "source_records_changed": false,
+  "historical_causes_inferred": false
+}

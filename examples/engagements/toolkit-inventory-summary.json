@@ -1,0 +1,28 @@
+{
+  "version": "tsunami.toolkit-inventory/v1",
+  "checked_at": "2026-11-02T11:00:07.749217+00:00",
+  "counts": {
+    "scripts": 44,
+    "checklists": 26,
+    "schemas": 3,
+    "prompt_files": 4,
+    "documented_roles": 8,
+    "scripts_by_domain": {
+      "cloud": 2,
+      "crypto": 2,
+      "mobile": 19,
+      "network": 4,
+      "reporting": 3,
+      "web": 14
+    }
+  },
+  "scripts_executed": false,
+  "contents_vendored": false,
+  "vm_mcp_integration_implemented": false,
+  "license_files": [],
+  "limitations": [
+    "File hashes and checklist IDs are inventory, not approval to execute a tool.",
+    "All script adapters remain disabled until reviewed and integrated with their enforcement profile.",
+    "Inventory does not verify the toolkit's standards claims, completeness, licensing terms, or script safety."
+  ]
+}

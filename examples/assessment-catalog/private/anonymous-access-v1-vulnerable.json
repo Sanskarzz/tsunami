@@ -1,0 +1,128 @@
+{
+  "id": "b66d015bf192b3b40831ed88f1f67a08",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "anonymous-access/v1",
+  "assessment": {
+    "id": "anonymous-access/v1",
+    "title": "Unauthenticated access to a known private object",
+    "purpose": "Check whether the private object is readable with no Authorization header. Anonymous is an explicit broker capability.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "anonymous",
+      "path": "/api/reviewed/objects/r-7f3c9a",
+      "object": {
+        "id": "r-7f3c9a",
+        "owner": "alice",
+        "content": "synthetic private ledger A"
+      }
+    },
+    "expected_access": "deny",
+    "remediation": "Require authentication and object authorization before returning private data."
+  },
+  "assessment_digest": "a268470c93713fd723efb6c8721d9e1c240d3f2e4beeaec1c6501897d57d08aa",
+  "created_at": "2026-11-02T07:39:45.458272275Z",
+  "deadline": "2026-11-02T07:41:15.458272275Z",
+  "finished_at": "2026-11-02T07:39:46.677794652Z",
+  "deletion_requested_at": "2026-11-02T07:39:47.022229359Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "66b414c671f2c8e4d3d0183f4d9e270f",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:46.635234006Z",
+      "finished_at": "2026-11-02T07:39:46.635236469Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "7ea56020532c785da7d505e026b19f18",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:46.637496344Z",
+      "finished_at": "2026-11-02T07:39:46.64676484Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    },
+    {
+      "id": "15819bc7253024fdfb70696660ce0e13",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:46.653036692Z",
+      "finished_at": "2026-11-02T07:39:46.659833389Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "009610529d5e98aacc3fc95d4f88eb22",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "anonymous",
+      "started_at": "2026-11-02T07:39:46.662271311Z",
+      "finished_at": "2026-11-02T07:39:46.67341481Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:39:45.458272275Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:39:46.677794652Z",
+      "kind": "validated",
+      "detail": "confirmed"
+    }
+  ],
+  "result": {
+    "verdict": "confirmed",
+    "title": "Unauthenticated access to a known private object",
+    "reason": "The probe returned the exact protected fixture object despite the reviewed deny rule; legitimate baselines also succeeded.",
+    "evidence_ids": [
+      "7ea56020532c785da7d505e026b19f18",
+      "15819bc7253024fdfb70696660ce0e13",
+      "009610529d5e98aacc3fc95d4f88eb22"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}

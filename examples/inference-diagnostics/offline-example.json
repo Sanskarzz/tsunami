@@ -1,0 +1,242 @@
+{
+  "id": "1d807b27f438b50326ae0e263b3fddca",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://127.0.0.1:43139",
+  "mode": "Responses wire fixture / no live model",
+  "execution": "live",
+  "workflow": "opaque-ownership/v1",
+  "assessment": {
+    "id": "opaque-ownership/v1",
+    "title": "Cross-user access to an opaque object ID",
+    "purpose": "Check a real object belonging to another account; IDs are not predictable counters.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/objects/r-7f3c9a",
+      "object": {
+        "id": "r-7f3c9a",
+        "owner": "alice",
+        "content": "synthetic private ledger A"
+      }
+    },
+    "expected_access": "deny",
+    "remediation": "Check object ownership against the authenticated account on every object read. Opaque IDs alone do not authorize access."
+  },
+  "assessment_digest": "414b6dd1126f39b8a01d8d52f82ac7f31d8d33d57847150be36a9f13ec6764d5",
+  "model": {
+    "provider": "fixture",
+    "name": "tsunami-wire-fixture",
+    "config_id": "d2eb136ab41dda7251376c250d19c9c62f5d627a53759d31a160b32b3b6edc13",
+    "max_calls": 8,
+    "max_output_tokens": 1024,
+    "calls_reserved": 5,
+    "wire_attempts": 5,
+    "streams_opened": 5,
+    "completed_calls": 5,
+    "reported_input_tokens": 200,
+    "reported_output_tokens": 100,
+    "usage_uncertain": false,
+    "calls": [
+      {
+        "sequence": 1,
+        "started_at": "2026-11-02T10:31:38.248143068Z",
+        "deadline": "2026-11-02T10:31:58.247922603Z",
+        "deadline_source": "call",
+        "finished_at": "2026-11-02T10:31:38.250433544Z",
+        "elapsed_ms": 2,
+        "upstream_http_status": 200,
+        "headers_ms": 1,
+        "first_chunk_ms": 2,
+        "chunks": 3,
+        "buffered_tool_calls": 1,
+        "released_tool_calls": 1,
+        "wire_attempts": 1,
+        "usage_chunk_observed": true,
+        "usage_accepted": true,
+        "outcome": "succeeded",
+        "code": "ok",
+        "phase": "complete"
+      },
+      {
+        "sequence": 2,
+        "started_at": "2026-11-02T10:31:38.251824344Z",
+        "deadline": "2026-11-02T10:31:58.251738172Z",
+        "deadline_source": "call",
+        "finished_at": "2026-11-02T10:31:38.252756394Z",
+        "elapsed_ms": 0,
+        "upstream_http_status": 200,
+        "headers_ms": 0,
+        "first_chunk_ms": 0,
+        "chunks": 3,
+        "buffered_tool_calls": 1,
+        "released_tool_calls": 1,
+        "wire_attempts": 1,
+        "usage_chunk_observed": true,
+        "usage_accepted": true,
+        "outcome": "succeeded",
+        "code": "ok",
+        "phase": "complete"
+      },
+      {
+        "sequence": 3,
+        "started_at": "2026-11-02T10:31:38.255387895Z",
+        "deadline": "2026-11-02T10:31:58.255151393Z",
+        "deadline_source": "call",
+        "finished_at": "2026-11-02T10:31:38.259405018Z",
+        "elapsed_ms": 4,
+        "upstream_http_status": 200,
+        "headers_ms": 3,
+        "first_chunk_ms": 3,
+        "chunks": 3,
+        "buffered_tool_calls": 1,
+        "released_tool_calls": 1,
+        "wire_attempts": 1,
+        "usage_chunk_observed": true,
+        "usage_accepted": true,
+        "outcome": "succeeded",
+        "code": "ok",
+        "phase": "complete"
+      },
+      {
+        "sequence": 4,
+        "started_at": "2026-11-02T10:31:38.262574925Z",
+        "deadline": "2026-11-02T10:31:58.262421194Z",
+        "deadline_source": "call",
+        "finished_at": "2026-11-02T10:31:38.265742936Z",
+        "elapsed_ms": 3,
+        "upstream_http_status": 200,
+        "headers_ms": 2,
+        "first_chunk_ms": 2,
+        "chunks": 3,
+        "buffered_tool_calls": 1,
+        "released_tool_calls": 1,
+        "wire_attempts": 1,
+        "usage_chunk_observed": true,
+        "usage_accepted": true,
+        "outcome": "succeeded",
+        "code": "ok",
+        "phase": "complete"
+      },
+      {
+        "sequence": 5,
+        "started_at": "2026-11-02T10:31:38.270268483Z",
+        "deadline": "2026-11-02T10:31:58.270101682Z",
+        "deadline_source": "call",
+        "finished_at": "2026-11-02T10:31:38.271998264Z",
+        "elapsed_ms": 1,
+        "upstream_http_status": 200,
+        "headers_ms": 1,
+        "first_chunk_ms": 1,
+        "chunks": 3,
+        "buffered_tool_calls": 1,
+        "released_tool_calls": 1,
+        "wire_attempts": 1,
+        "usage_chunk_observed": true,
+        "usage_accepted": true,
+        "outcome": "succeeded",
+        "code": "ok",
+        "phase": "complete"
+      }
+    ]
+  },
+  "created_at": "2026-11-02T10:31:37.780702263Z",
+  "deadline": "2026-11-02T10:33:07.780702263Z",
+  "finished_at": "2026-11-02T10:31:38.273503558Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "26abd707714be58d580f83e95f0bb428",
+      "url": "http://not-approved.invalid/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T10:31:38.251300071Z",
+      "finished_at": "2026-11-02T10:31:38.251302538Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "138217b3aa0e2713678327bec00cf32f",
+      "url": "http://127.0.0.1:43139/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T10:31:38.253180657Z",
+      "finished_at": "2026-11-02T10:31:38.253897411Z",
+      "status": 200,
+      "peer": "127.0.0.1:43139",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    },
+    {
+      "id": "a008c15c241ed26fc8051c8c8e1222a4",
+      "url": "http://127.0.0.1:43139/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T10:31:38.260530445Z",
+      "finished_at": "2026-11-02T10:31:38.261446073Z",
+      "status": 200,
+      "peer": "127.0.0.1:43139",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "202315b43508f762fc9158b383a46290",
+      "url": "http://127.0.0.1:43139/api/reviewed/objects/r-7f3c9a",
+      "account": "bob",
+      "started_at": "2026-11-02T10:31:38.267808179Z",
+      "finished_at": "2026-11-02T10:31:38.269035049Z",
+      "status": 200,
+      "peer": "127.0.0.1:43139",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T10:31:37.780702263Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T10:31:38.273503558Z",
+      "kind": "validated",
+      "detail": "confirmed"
+    }
+  ],
+  "result": {
+    "verdict": "confirmed",
+    "title": "Cross-user access to an opaque object ID",
+    "reason": "The probe returned the exact protected fixture object despite the reviewed deny rule; legitimate baselines also succeeded.",
+    "evidence_ids": [
+      "138217b3aa0e2713678327bec00cf32f",
+      "a008c15c241ed26fc8051c8c8e1222a4",
+      "202315b43508f762fc9158b383a46290"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}

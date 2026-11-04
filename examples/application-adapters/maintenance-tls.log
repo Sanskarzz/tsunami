@@ -1,0 +1,4 @@
+CGO_ENABLED=0 go build -trimpath -o bin/tsunami ./cmd/tsunami
+cp /etc/ssl/certs/ca-certificates.crt bin/ca-certificates.crt
+CONTEXT=kind-tsunami-lab python3 scripts/verify-connector-tls.py
+PASS connector mTLS, role separation, identity/CA/version rejection, and plaintext refusal; no target requests or model calls.

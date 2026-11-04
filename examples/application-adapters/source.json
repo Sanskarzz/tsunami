@@ -1,0 +1,9 @@
+{
+  "source": "https://github.com/erev0s/VAmPI.git",
+  "commit": "f16052dce83f05847133ec98f01c5193a41de7d8",
+  "license": "MIT (upstream source retained locally, not vendored)",
+  "image": "sha256:8ffa773d316c0e2095e428118c856662815a4aae1e497d1385d20d7d3eb3213a",
+  "synthetic_data_only": true,
+  "account_token_lifetime_seconds": 3600,
+  "debugger_enabled": false
+}

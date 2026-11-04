@@ -1,0 +1,14 @@
+CONTEXT=kind-tsunami-lab sh scripts/verify-k8s.sh
+VERIFY_CREATED run=a7bccc1601971affca187ef499d1ae15 scenario=vulnerable connectivity=
+PASS vulnerable    verdict=confirmed          requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=72579eabe9544a5a4316b03db02a97b5 scenario=fixed connectivity=
+PASS fixed         verdict=no_issue_observed  requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=81a728bac9e185d825fbfbf0916d3620 scenario=inconclusive connectivity=
+PASS inconclusive  verdict=inconclusive       requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=3ab62d090d842392ca4350308a897aa7 scenario=redirect connectivity=
+PASS redirect      verdict=inconclusive       requests=1 scope_denials=2 stop_drain_ms=0
+VERIFY_CREATED run=c915b196e92bf7d526e9f9e87db2a56c scenario=stop connectivity=
+PASS stop          verdict=stopped            requests=1 scope_denials=1 stop_drain_ms=28
+PASS tripwire: zero requests; lab target observed request cancellation
+Completed 5 scenario checks; reports in /tmp/tsunami-artifacts
+Verification job retained for inspection: job.batch/tsunami-verify-ph6w4

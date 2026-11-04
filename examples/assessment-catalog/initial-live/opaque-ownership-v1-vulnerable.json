@@ -1,0 +1,111 @@
+{
+  "id": "5ca552664af580905145b34690158a01",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "OpenRouter free model / synthetic lab only",
+  "execution": "live",
+  "workflow": "opaque-ownership/v1",
+  "assessment": {
+    "id": "opaque-ownership/v1",
+    "title": "Cross-user access to an opaque object ID",
+    "purpose": "Check a real object belonging to another account; IDs are not predictable counters.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/objects/r-7f3c9a",
+      "object": {
+        "id": "r-7f3c9a",
+        "owner": "alice",
+        "content": "synthetic private ledger A"
+      }
+    },
+    "expected_access": "deny",
+    "remediation": "Check object ownership against the authenticated account on every object read. Opaque IDs alone do not authorize access."
+  },
+  "assessment_digest": "414b6dd1126f39b8a01d8d52f82ac7f31d8d33d57847150be36a9f13ec6764d5",
+  "model": {
+    "price_policy": "openrouter-free/v1",
+    "provider": "openrouter-free",
+    "name": "nvidia/nemotron-3.5-lightning:free",
+    "config_id": "c95e7d72c5bb23f446cc6817e0397560428cf5bb471dc31520e7aa634431860e",
+    "max_calls": 8,
+    "max_output_tokens": 1024,
+    "calls_reserved": 2,
+    "wire_attempts": 2,
+    "streams_opened": 2,
+    "completed_calls": 2,
+    "reported_input_tokens": 1999,
+    "reported_output_tokens": 77,
+    "usage_uncertain": false
+  },
+  "created_at": "2026-11-02T07:26:24.866778938Z",
+  "deadline": "2026-11-02T07:27:54.866778938Z",
+  "finished_at": "2026-11-02T07:26:30.708495907Z",
+  "deletion_requested_at": "2026-11-02T07:26:31.367050391Z",
+  "request_count": 1,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "ec52fe8f26613b468f9e31602d3a7c02",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "bob",
+      "started_at": "2026-11-02T07:26:28.643032936Z",
+      "finished_at": "2026-11-02T07:26:28.645061761Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:26:24.866778938Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:26:30.708495907Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Cross-user access to an opaque object ID",
+    "reason": "One or more known-owner or legitimate-role baselines failed; no authorization conclusion.",
+    "evidence_ids": [
+      "ec52fe8f26613b468f9e31602d3a7c02"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 0,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}

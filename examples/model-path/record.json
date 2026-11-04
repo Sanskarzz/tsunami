@@ -1,0 +1,43 @@
+{
+  "source_job": "tsunami-model-eval-z28rk",
+  "evaluation_image_id": "sha256:d89bb10862b8481c33d250be11441e806b45e7f518003106b6f6efa820989025",
+  "backend": "offline Responses fixture; not an LLM",
+  "checks": [
+    {
+      "run_id": "dc5e86090dbbb046b246d20b99f15f64",
+      "scenario": "fixed",
+      "verdict": "no_issue_observed",
+      "model": {
+        "provider": "fixture",
+        "name": "tsunami-wire-fixture",
+        "config_id": "b4685aa11afc1a4c2d5e346f828b247a6bea1b35738ac10473ac35ea6d94a4ee",
+        "max_calls": 8,
+        "max_output_tokens": 1024,
+        "calls_reserved": 5,
+        "wire_attempts": 5,
+        "completed_calls": 5,
+        "reported_input_tokens": 200,
+        "reported_output_tokens": 100,
+        "usage_uncertain": false
+      }
+    },
+    {
+      "run_id": "d67518489f7872737ff36cabcd27ddf8",
+      "scenario": "vulnerable",
+      "verdict": "confirmed",
+      "model": {
+        "provider": "fixture",
+        "name": "tsunami-wire-fixture",
+        "config_id": "b4685aa11afc1a4c2d5e346f828b247a6bea1b35738ac10473ac35ea6d94a4ee",
+        "max_calls": 8,
+        "max_output_tokens": 1024,
+        "calls_reserved": 5,
+        "wire_attempts": 5,
+        "completed_calls": 5,
+        "reported_input_tokens": 200,
+        "reported_output_tokens": 100,
+        "usage_uncertain": false
+      }
+    }
+  ]
+}

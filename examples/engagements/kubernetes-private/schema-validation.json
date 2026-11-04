@@ -1,0 +1,11 @@
+{
+  "engagement_schema_valid": true,
+  "artifact_hashes_valid": true,
+  "artifacts": 20,
+  "finding_candidates": 3,
+  "final_finding_schema_export": "pending_human_triage_and_adapter",
+  "schema_sha256": "47c4143fae299724fefbbf40e84d799323cb7d0ade9e7b749370384f2adb2d47",
+  "jsonschema_version": "4.19.2",
+  "scripts_executed": false,
+  "remote_refs_allowed": false
+}

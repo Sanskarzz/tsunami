@@ -1,0 +1,16 @@
+{
+  "id": "role-boundary/v1",
+  "title": "Member access to an administrator summary",
+  "purpose": "Alice is an administrator and Bob is a member. Only the administrator may read this summary.",
+  "risk": "read-only synthetic fixture",
+  "review": "initial engineering procedure; security-engineer review pending",
+  "method": "GET",
+  "max_requests": 6,
+  "baselines": [
+    {"account":"alice","path":"/api/reviewed/admin/summary","object":{"id":"admin-summary","owner":"administrators","content":"synthetic administrator audit summary"}},
+    {"account":"bob","path":"/api/reviewed/objects/r-b82d16","object":{"id":"r-b82d16","owner":"bob","content":"synthetic private ledger B"}}
+  ],
+  "probe": {"account":"bob","path":"/api/reviewed/admin/summary","object":{"id":"admin-summary","owner":"administrators","content":"synthetic administrator audit summary"}},
+  "expected_access": "deny",
+  "remediation": "Enforce the administrator role on the server before returning the summary. A valid member session is insufficient."
+}

@@ -1,0 +1,91 @@
+{
+  "version": "tsunami.checklist-coverage/v1",
+  "engagement": {
+    "authorization_note": "owned-lab/application-verifier",
+    "authorized": false,
+    "checklist_progress": {
+      "tsunami_authorization_v1": {
+        "completed": 1,
+        "not_applicable": 0,
+        "skipped": 0,
+        "total": 1
+      },
+      "owasp_api_top10": {
+        "total": 10,
+        "completed": 0,
+        "skipped": 0,
+        "not_applicable": 0
+      }
+    },
+    "findings": [
+      {
+        "cvss_score": 6.5,
+        "id": "F-8f9c4d794bb1a5fd573c41a62a048781",
+        "severity": "Medium",
+        "status": "Confirmed",
+        "title": "Cross-user book secret access"
+      }
+    ],
+    "id": "0e729e9376c480369ebe22505083388f",
+    "metadata": {
+      "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+      "finding_candidates": 1,
+      "scope_digest": "c717ecfe574f0cc4e25f72678d6b5fce2409151d1633f2a796c8e4e1619ac081",
+      "tsunami_checklist_samples": [
+        {
+          "path": "checklists/owasp_api_top10.json",
+          "sha256": "b42a0c3b48118c22364e9553a4effe12d62894a89e6387e57f1158db47130cd1",
+          "total_imported_items": 10,
+          "fully_completed": 0,
+          "unmapped_items": 9,
+          "samples": [
+            {
+              "item_id": "API1:2023",
+              "procedure": "vampi-vulnerable/object-access/v2",
+              "coverage": "partial",
+              "sample_state": "sampled",
+              "verdict": "confirmed",
+              "run_id": "6be923366136c9afdeac856c3f0537bc"
+            }
+          ]
+        }
+      ]
+    },
+    "name": "Owned application access-control test",
+    "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+    "scope_in": [
+      "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000"
+    ],
+    "start_date": "2026-11-02",
+    "status": "On-Hold",
+    "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "target_type": "api"
+  },
+  "mapping_sha256": "9ccb74f171bd5f68a8dd422efd5ae16453f376f4fd45d399bc271ab28c598e1c",
+  "sources": [
+    {
+      "path": "checklists/owasp_api_top10.json",
+      "sha256": "b42a0c3b48118c22364e9553a4effe12d62894a89e6387e57f1158db47130cd1",
+      "total_imported_items": 10,
+      "fully_completed": 0,
+      "unmapped_items": 9,
+      "samples": [
+        {
+          "item_id": "API1:2023",
+          "procedure": "vampi-vulnerable/object-access/v2",
+          "coverage": "partial",
+          "sample_state": "sampled",
+          "verdict": "confirmed",
+          "run_id": "6be923366136c9afdeac856c3f0537bc"
+        }
+      ]
+    }
+  ],
+  "runtime_permissions_changed": false,
+  "scripts_executed": false,
+  "limitations": [
+    "Imported IDs are reference data, never executable instructions.",
+    "All mappings are partial samples; fully completed standard items remain zero.",
+    "Normative checklist completeness and procedure mappings still need security review."
+  ]
+}

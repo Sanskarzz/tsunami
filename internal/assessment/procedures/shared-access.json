@@ -1,0 +1,16 @@
+{
+  "id": "shared-access/v1",
+  "title": "Approved shared-object access",
+  "purpose": "Avoid calling every cross-owner HTTP 200 a vulnerability. This object is explicitly shared with Bob.",
+  "risk": "read-only synthetic fixture",
+  "review": "initial engineering procedure; security-engineer review pending",
+  "method": "GET",
+  "max_requests": 6,
+  "baselines": [
+    {"account":"alice","path":"/api/reviewed/objects/r-shared-40a","object":{"id":"r-shared-40a","owner":"alice","content":"synthetic team handover"}},
+    {"account":"bob","path":"/api/reviewed/objects/r-b82d16","object":{"id":"r-b82d16","owner":"bob","content":"synthetic private ledger B"}}
+  ],
+  "probe": {"account":"bob","path":"/api/reviewed/objects/r-shared-40a","object":{"id":"r-shared-40a","owner":"alice","content":"synthetic team handover"}},
+  "expected_access": "allow",
+  "remediation": "Preserve the explicit sharing rule. A successful approved share is not a security finding."
+}

@@ -1,0 +1,78 @@
+{
+  "id": "32a8be0a3e71e871d1de1874ede25fcf",
+  "tenant": "demo-a",
+  "scenario": "fixed",
+  "state": "completed",
+  "target": "http://tsunami-fixed:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "created_at": "2026-11-01T10:15:33.877045236Z",
+  "deadline": "2026-11-01T10:17:03.877045236Z",
+  "finished_at": "2026-11-01T10:15:34.636928352Z",
+  "deletion_requested_at": "2026-11-01T10:15:34.963303696Z",
+  "request_count": 3,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "4d09033481a25568be1be35b059b707b",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:15:34.619069036Z",
+      "finished_at": "2026-11-01T10:15:34.619072801Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "52629968144ac77a8f5f09870dcd1766",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:15:34.621534132Z",
+      "finished_at": "2026-11-01T10:15:34.625591388Z",
+      "status": 200,
+      "peer": "10.96.13.26:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    },
+    {
+      "id": "69d89a0a0dbf1004444f769a3a74c456",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-bob",
+      "account": "bob",
+      "started_at": "2026-11-01T10:15:34.627777554Z",
+      "finished_at": "2026-11-01T10:15:34.630205392Z",
+      "status": 200,
+      "peer": "10.96.13.26:8080",
+      "body": "{\"content\":\"synthetic private invoice for bob\",\"id\":\"doc-bob\",\"owner\":\"bob\"}\n"
+    },
+    {
+      "id": "461a3e246dfdd60f05f2c22184ce2164",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-alice",
+      "account": "bob",
+      "started_at": "2026-11-01T10:15:34.631946369Z",
+      "finished_at": "2026-11-01T10:15:34.634668513Z",
+      "status": 403,
+      "peer": "10.96.13.26:8080",
+      "body": "{\"error\":\"forbidden\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T10:15:33.877045236Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T10:15:34.636928352Z",
+      "kind": "validated",
+      "detail": "no_issue_observed"
+    }
+  ],
+  "result": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user document access",
+    "reason": "The two known-owner baselines succeeded; the cross-user read was forbidden. This is not proof of application-wide security.",
+    "evidence_ids": [
+      "52629968144ac77a8f5f09870dcd1766",
+      "69d89a0a0dbf1004444f769a3a74c456",
+      "461a3e246dfdd60f05f2c22184ce2164"
+    ]
+  }
+}

@@ -1,0 +1,14 @@
+?   	github.com/Sanskarzz/tsunami/cmd/tsunami	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/application	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/assessment	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/connector	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/demo	26.793s
+ok  	github.com/Sanskarzz/tsunami/internal/inference	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/isolation	1.009s
+ok  	github.com/Sanskarzz/tsunami/internal/kube	1.019s
+?   	github.com/Sanskarzz/tsunami/internal/lab	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/platform	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/scoring	(cached)
+?   	github.com/Sanskarzz/tsunami/internal/toolcontract	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/toolrunner	(cached)
+?   	github.com/Sanskarzz/tsunami/internal/worker	[no test files]

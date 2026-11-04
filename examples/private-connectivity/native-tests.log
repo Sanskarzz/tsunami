@@ -1,0 +1,38 @@
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/tenant
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/audience
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/target
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/account
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/expired
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/too-long
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/future
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/signature
+--- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime (0.02s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/tenant (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/audience (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/target (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/account (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/expired (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/too-long (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/future (0.00s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/signature (0.00s)
+=== RUN   TestReplayRejectedAcrossConnectorRestart
+--- PASS: TestReplayRejectedAcrossConnectorRestart (0.01s)
+=== RUN   TestLeaseExpiryCancelsTargetWithoutControlPlane
+--- PASS: TestLeaseExpiryCancelsTargetWithoutControlPlane (0.26s)
+=== RUN   TestEmergencyCutoffCancelsActiveWorkAndSurvivesRestart
+--- PASS: TestEmergencyCutoffCancelsActiveWorkAndSurvivesRestart (0.01s)
+=== RUN   TestBrokerStopCancelsPrivateRequest
+=== RUN   TestBrokerStopCancelsPrivateRequest/run
+=== RUN   TestBrokerStopCancelsPrivateRequest/tenant
+=== RUN   TestBrokerStopCancelsPrivateRequest/global
+--- PASS: TestBrokerStopCancelsPrivateRequest (0.02s)
+    --- PASS: TestBrokerStopCancelsPrivateRequest/run (0.01s)
+    --- PASS: TestBrokerStopCancelsPrivateRequest/tenant (0.01s)
+    --- PASS: TestBrokerStopCancelsPrivateRequest/global (0.01s)
+=== RUN   TestPrivateConnectorOutageHasNoDirectFallback
+--- PASS: TestPrivateConnectorOutageHasNoDirectFallback (0.00s)
+=== RUN   TestPrivateRedirectCannotRelayToAnotherOrigin
+--- PASS: TestPrivateRedirectCannotRelayToAnotherOrigin (0.01s)
+PASS
+ok  	github.com/Sanskarzz/tsunami/internal/connector	1.347s

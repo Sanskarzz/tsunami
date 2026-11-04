@@ -1,0 +1,2 @@
+EVAL_CREATED run=ac9ebb732b9cde60ee594f8722fe99eb scenario=model-stop
+PASS live inference stop run=ac9ebb732b9cde60ee594f8722fe99eb broker_drain_ms=29; vendor billing/compute cancellation is unverified

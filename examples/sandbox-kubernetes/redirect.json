@@ -1,0 +1,62 @@
+{
+  "id": "4e167faa2c6a7a9e831b999d6e23dcc7",
+  "tenant": "demo-a",
+  "scenario": "redirect",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "created_at": "2026-11-01T10:45:23.846645474Z",
+  "deadline": "2026-11-01T10:46:53.846645474Z",
+  "finished_at": "2026-11-01T10:45:25.181936719Z",
+  "deletion_requested_at": "2026-11-01T10:45:25.291667513Z",
+  "request_count": 1,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "88fd2214e60bc4186e1801dbb1511742",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:45:25.150208107Z",
+      "finished_at": "2026-11-01T10:45:25.150210468Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "b15e5ccd1cf1f8f490c31664d0d82d87",
+      "url": "http://tsunami-vulnerable:8080/api/redirect",
+      "account": "alice",
+      "started_at": "2026-11-01T10:45:25.155357891Z",
+      "finished_at": "2026-11-01T10:45:25.168387504Z",
+      "status": 302,
+      "peer": "10.97.190.42:8080"
+    },
+    {
+      "id": "2b8e8dcf920b7a6e76313b298a5d4546",
+      "url": "http://tsunami-tripwire:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:45:25.178865187Z",
+      "finished_at": "2026-11-01T10:45:25.178868172Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T10:45:23.846645474Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T10:45:25.181936719Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Cross-user document access",
+    "reason": "Both known-owner baselines and a conclusive cross-user response are required.",
+    "evidence_ids": []
+  }
+}

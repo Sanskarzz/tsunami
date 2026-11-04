@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-11-02T07:42:33.969204+00:00",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "pricing": {
+    "prompt": "0",
+    "completion": "0"
+  },
+  "tools_advertised": true,
+  "is_free_tier": true,
+  "usage": 0,
+  "usage_daily": 0,
+  "free_model_daily_requests": {
+    "used": 28,
+    "limit": 50,
+    "remaining": 22
+  }
+}

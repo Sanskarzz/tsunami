@@ -1,0 +1,9 @@
+{
+  "id": "E-95fb6e3752c5b563c994d918604e020448df74ef1018640ba6f69b7895eb57f8",
+  "type": "request_response",
+  "path": "evidence/95fb6e3752c5b563c994d918604e020448df74ef1018640ba6f69b7895eb57f8.json",
+  "description": "Broker-captured GET using account alias peer",
+  "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+  "captured_at": "2026-11-03T16:13:30.444421133Z",
+  "tool": "tsunami-http-broker"
+}

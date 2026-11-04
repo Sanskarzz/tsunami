@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsunami-model-fixture
+spec:
+  selector: {tsunami-component: model-fixture}
+  ports: [{name: http, port: 8080, targetPort: 8080}]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tsunami-model-fixture
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {tsunami-component: model-fixture}
+  template:
+    metadata:
+      labels:
+        tsunami-role: verifier
+        tsunami-component: model-fixture
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: model-fixture
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [model-fixture]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            httpGet: {path: /healthz, port: 8080}
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 200m, memory: 64Mi}

@@ -1,0 +1,65 @@
+{
+  "id": "c5b4824298cb6d5552b0295ca53641c7",
+  "tenant": "demo-a",
+  "scenario": "redirect",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only / private connector",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "object-ownership/v1",
+  "created_at": "2026-11-01T21:09:03.970945286Z",
+  "deadline": "2026-11-01T21:10:33.970945286Z",
+  "finished_at": "2026-11-01T21:09:04.828254825Z",
+  "deletion_requested_at": "2026-11-01T21:09:05.073080701Z",
+  "request_count": 1,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "ef6c8687246dd9c76726d62bf5fe9afc",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:04.780930647Z",
+      "finished_at": "2026-11-01T21:09:04.780932589Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "e3b766285bb9e4b460c9fef6c072af1c",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/redirect",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:04.814024795Z",
+      "finished_at": "2026-11-01T21:09:04.823414328Z",
+      "status": 302,
+      "peer": "10.97.214.163:8080"
+    },
+    {
+      "id": "53dcf2bf95fd983b673c1ea89fc53921",
+      "url": "http://tsunami-tripwire:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:04.825263053Z",
+      "finished_at": "2026-11-01T21:09:04.825264605Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T21:09:03.970945286Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T21:09:04.828254825Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Cross-user document access",
+    "reason": "Both known-owner baselines and a conclusive cross-user response are required.",
+    "evidence_ids": []
+  }
+}

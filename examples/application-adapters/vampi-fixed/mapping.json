@@ -1,0 +1,18 @@
+{
+  "version": "tsunami.checklist-map/v1",
+  "engagement_id": "ebcb60e81503bf904d198241fa61ba70",
+  "scope_digest": "095bbdeb0a92c093fb20e9ec50e97b0840635c1502500ddf1712ca249f96c81d",
+  "sources": [
+    {
+      "path": "checklists/owasp_api_top10.json",
+      "sha256": "b42a0c3b48118c22364e9553a4effe12d62894a89e6387e57f1158db47130cd1",
+      "mappings": [
+        {
+          "item_id": "API1:2023",
+          "procedure": "vampi-fixed/object-access/v2",
+          "coverage": "partial"
+        }
+      ]
+    }
+  ]
+}

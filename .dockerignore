@@ -1,0 +1,8 @@
+*
+!bin/
+!bin/tsunami
+!bin/ca-certificates.crt
+
+!internal/
+!internal/toolrunner/
+!internal/toolrunner/http-read.sh

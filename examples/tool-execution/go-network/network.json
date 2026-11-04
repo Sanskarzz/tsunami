@@ -1,0 +1,44 @@
+{
+  "checked_at": "2026-11-03T16:16:04.133847+00:00",
+  "context": "kind-tsunami-lab",
+  "destinations": {
+    "tripwire-service": "http://10.97.251.36:8080",
+    "tripwire-pod": "http://10.245.0.115:8080",
+    "api-service": "https://10.97.0.1:443",
+    "node-api": "https://172.18.0.3:6443",
+    "dns-tcp": "http://10.97.0.10:53",
+    "model-service": "http://10.97.192.132:8080",
+    "private-a-web": "http://10.97.214.163:8080",
+    "private-a-tripwire": "http://10.97.49.196:8080",
+    "private-a-connector": "http://10.97.32.33:8080",
+    "private-b-web": "http://10.97.28.85:8080",
+    "vampi-vulnerable": "http://10.97.122.76:5000",
+    "vampi-fixed": "http://10.97.254.51:5000",
+    "application-tripwire": "http://10.97.220.208:5000"
+  },
+  "udp_dns": "10.97.0.10:53",
+  "openrouter_ipv4": null,
+  "checks": [
+    {
+      "role": "positive-before",
+      "job": "tsunami-network-positive-before-qc564",
+      "runtime_class": "",
+      "image_id": "sha256:044ea1afd5c24d472b1b0cc5b8af0cef66e897cae9f3fe39944319ff7bbc2153",
+      "passed": true
+    },
+    {
+      "role": "runner",
+      "job": "tsunami-network-runner-zqgv2",
+      "runtime_class": "gvisor",
+      "image_id": "sha256:044ea1afd5c24d472b1b0cc5b8af0cef66e897cae9f3fe39944319ff7bbc2153",
+      "passed": true
+    },
+    {
+      "role": "positive-after",
+      "job": "tsunami-network-positive-after-5cwdl",
+      "runtime_class": "",
+      "image_id": "sha256:044ea1afd5c24d472b1b0cc5b8af0cef66e897cae9f3fe39944319ff7bbc2153",
+      "passed": true
+    }
+  ]
+}

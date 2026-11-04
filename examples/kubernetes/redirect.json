@@ -1,0 +1,62 @@
+{
+  "id": "0cf2e09c99314e5ccb1f98bde1a3446e",
+  "tenant": "demo-a",
+  "scenario": "redirect",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "created_at": "2026-11-01T10:15:35.566654378Z",
+  "deadline": "2026-11-01T10:17:05.566654378Z",
+  "finished_at": "2026-11-01T10:15:36.590529285Z",
+  "deletion_requested_at": "2026-11-01T10:15:36.9619101Z",
+  "request_count": 1,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "d893d2723ef18cf53502f5a1e9c1b698",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:15:36.580805285Z",
+      "finished_at": "2026-11-01T10:15:36.580809353Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "b3540b4e58258487411acd36ce947e25",
+      "url": "http://tsunami-vulnerable:8080/api/redirect",
+      "account": "alice",
+      "started_at": "2026-11-01T10:15:36.582968372Z",
+      "finished_at": "2026-11-01T10:15:36.586387064Z",
+      "status": 302,
+      "peer": "10.96.118.32:8080"
+    },
+    {
+      "id": "e6a93bf939802ff5e29a9907aeb67ff4",
+      "url": "http://tsunami-tripwire:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:15:36.588321544Z",
+      "finished_at": "2026-11-01T10:15:36.588323876Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T10:15:35.566654378Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T10:15:36.590529285Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Cross-user document access",
+    "reason": "Both known-owner baselines and a conclusive cross-user response are required.",
+    "evidence_ids": []
+  }
+}

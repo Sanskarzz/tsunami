@@ -1,0 +1,71 @@
+{
+  "audience": "customer-a",
+  "checked_at": "2026-11-01T21:09:30.964754075Z",
+  "checks": [
+    {
+      "name": "broker-health",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "name": "operator-status",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "name": "broker-cannot-use-emergency-role",
+      "passed": true,
+      "http_status": 403
+    },
+    {
+      "name": "operator-cannot-execute-grants",
+      "passed": true,
+      "http_status": 403
+    },
+    {
+      "name": "missing-client-certificate",
+      "passed": true,
+      "tls_rejected": true
+    },
+    {
+      "name": "untrusted-server-ca",
+      "passed": true,
+      "tls_rejected": true
+    },
+    {
+      "name": "incorrect-server-name",
+      "passed": true,
+      "tls_rejected": true
+    },
+    {
+      "name": "incorrect-server-audience",
+      "passed": true,
+      "tls_rejected": true
+    },
+    {
+      "name": "obsolete-tls-version",
+      "passed": true,
+      "tls_rejected": true
+    },
+    {
+      "name": "plaintext-refused",
+      "passed": true,
+      "http_status": 400
+    },
+    {
+      "name": "broker-health-after",
+      "passed": true,
+      "http_status": 200
+    },
+    {
+      "name": "operator-status-after",
+      "passed": true,
+      "http_status": 200
+    }
+  ],
+  "cutoff_changed": false,
+  "server_name": "tsunami-connector.tsunami-customer-a.svc.cluster.local",
+  "target_requests_sent": false,
+  "tenant": "demo-a",
+  "transport": "TLS 1.3 with verified client and server URI identities"
+}

@@ -1,0 +1,81 @@
+{
+  "id": "553e5195e3879d82541d7ac0429a66fd",
+  "tenant": "demo-a",
+  "scenario": "fixed",
+  "state": "completed",
+  "target": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only / private connector",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "object-ownership/v1",
+  "created_at": "2026-11-01T21:09:01.913714785Z",
+  "deadline": "2026-11-01T21:10:31.913714785Z",
+  "finished_at": "2026-11-01T21:09:02.942455861Z",
+  "deletion_requested_at": "2026-11-01T21:09:03.083096097Z",
+  "request_count": 3,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "4779cdfbfea3186e2761814cd721e778",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:02.890328823Z",
+      "finished_at": "2026-11-01T21:09:02.890332566Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "c0b59a8aba666874b341ea6776268390",
+      "url": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:02.893467732Z",
+      "finished_at": "2026-11-01T21:09:02.90578076Z",
+      "status": 200,
+      "peer": "10.97.50.17:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    },
+    {
+      "id": "6743c99a133712e14a98a5e79308845a",
+      "url": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-bob",
+      "account": "bob",
+      "started_at": "2026-11-01T21:09:02.909286392Z",
+      "finished_at": "2026-11-01T21:09:02.921393475Z",
+      "status": 200,
+      "peer": "10.97.50.17:8080",
+      "body": "{\"content\":\"synthetic private invoice for bob\",\"id\":\"doc-bob\",\"owner\":\"bob\"}\n"
+    },
+    {
+      "id": "f769bd87073003c60edd355394614b81",
+      "url": "http://tsunami-fixed.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-alice",
+      "account": "bob",
+      "started_at": "2026-11-01T21:09:02.92546951Z",
+      "finished_at": "2026-11-01T21:09:02.938810379Z",
+      "status": 403,
+      "peer": "10.97.50.17:8080",
+      "body": "{\"error\":\"forbidden\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T21:09:01.913714785Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T21:09:02.942455861Z",
+      "kind": "validated",
+      "detail": "no_issue_observed"
+    }
+  ],
+  "result": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user document access",
+    "reason": "The two known-owner baselines succeeded; the cross-user read was forbidden. This is not proof of application-wide security.",
+    "evidence_ids": [
+      "c0b59a8aba666874b341ea6776268390",
+      "6743c99a133712e14a98a5e79308845a",
+      "f769bd87073003c60edd355394614b81"
+    ]
+  }
+}

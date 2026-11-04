@@ -1,0 +1,31 @@
+{
+  "audience": "customer-a",
+  "ca_not_after": "2026-12-01T21:04:04Z",
+  "ca_sha256": "7b4ec2b5f23f4b9504d7afddd77a55ff74b6459f569f3a38dc9df51a079c5057",
+  "certificates": [
+    {
+      "identity": "spiffe://tsunami.lab/tenants/demo-a/connectors/customer-a",
+      "not_after": "2026-11-02T21:10:22Z",
+      "role": "connector",
+      "sha256": "fdf0c5fda944ebd200e16740a4e0736f159bc474b0633b3a6ac9cd68194d4355"
+    },
+    {
+      "identity": "spiffe://tsunami.lab/tenants/demo-a/broker",
+      "not_after": "2026-11-02T21:10:22Z",
+      "role": "broker",
+      "sha256": "fa75f186562af79ad46212dbe270b875f0d43e94cd9eb1394ade99bf613fc6ed"
+    },
+    {
+      "identity": "spiffe://tsunami.lab/tenants/demo-a/emergency-operator",
+      "not_after": "2026-11-02T21:10:22Z",
+      "role": "emergency-operator",
+      "sha256": "5d93ff1126f37a3cbf17ffee7003624c6ae2a90608e52d927a6fca19ccf68cca"
+    }
+  ],
+  "checked_at": "2026-11-01T21:10:22.556839267Z",
+  "leaf_lifetime_hours": 24,
+  "renewal_requested": true,
+  "server_name": "tsunami-connector.tsunami-customer-a.svc.cluster.local",
+  "tenant": "demo-a",
+  "tls_minimum": "1.3"
+}

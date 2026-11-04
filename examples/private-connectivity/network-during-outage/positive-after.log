@@ -1,0 +1,36 @@
+Kernel: Linux version 6.17.0-41-generic (buildd@lcy02-amd64-047) (x86_64-linux-gnu-gcc (Ubuntu 15.2.0-4ubuntu4) 15.2.0, GNU ld (GNU Binutils for Ubuntu) 2.45) #41-Ubuntu SMP PREEMPT_DYNAMIC Sat Jun 20 18:01:40 UTC 2026
+{"phase":"startup","destination":"model-service","address":"10.97.192.132:8080","outcome":"reachable"}
+{"phase":"startup","destination":"dns-udp","address":"10.97.0.10:53","outcome":"reachable"}
+{"phase":"startup","destination":"dns-tcp","address":"10.97.0.10:53","outcome":"reachable"}
+{"phase":"startup","destination":"tripwire-service","address":"10.97.251.36:8080","outcome":"reachable"}
+{"phase":"startup","destination":"node-api","address":"172.18.0.3:6443","outcome":"reachable"}
+{"phase":"startup","destination":"private-a-tripwire","address":"10.97.49.196:8080","outcome":"reachable"}
+{"phase":"startup","destination":"private-b-web","address":"10.97.28.85:8080","outcome":"reachable"}
+{"phase":"startup","destination":"private-a-web","address":"10.97.214.163:8080","outcome":"reachable"}
+{"phase":"startup","destination":"private-a-connector","address":"10.97.32.33:8080","outcome":"reachable"}
+{"phase":"startup","destination":"tripwire-pod","address":"10.245.0.9:8080","outcome":"reachable"}
+{"phase":"startup","destination":"api-service","address":"10.97.0.1:443","outcome":"reachable"}
+{"phase":"settled","destination":"dns-tcp","address":"10.97.0.10:53","outcome":"reachable"}
+{"phase":"settled","destination":"tripwire-service","address":"10.97.251.36:8080","outcome":"reachable"}
+{"phase":"settled","destination":"api-service","address":"10.97.0.1:443","outcome":"reachable"}
+{"phase":"settled","destination":"dns-udp","address":"10.97.0.10:53","outcome":"reachable"}
+{"phase":"settled","destination":"model-service","address":"10.97.192.132:8080","outcome":"reachable"}
+{"phase":"settled","destination":"node-api","address":"172.18.0.3:6443","outcome":"reachable"}
+{"phase":"settled","destination":"private-a-connector","address":"10.97.32.33:8080","outcome":"reachable"}
+{"phase":"settled","destination":"tripwire-pod","address":"10.245.0.9:8080","outcome":"reachable"}
+{"phase":"settled","destination":"private-a-web","address":"10.97.214.163:8080","outcome":"reachable"}
+{"phase":"settled","destination":"private-b-web","address":"10.97.28.85:8080","outcome":"reachable"}
+{"phase":"settled","destination":"private-a-tripwire","address":"10.97.49.196:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"api-service","address":"10.97.0.1:443","outcome":"reachable"}
+{"phase":"repeat","destination":"node-api","address":"172.18.0.3:6443","outcome":"reachable"}
+{"phase":"repeat","destination":"tripwire-pod","address":"10.245.0.9:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"dns-tcp","address":"10.97.0.10:53","outcome":"reachable"}
+{"phase":"repeat","destination":"private-b-web","address":"10.97.28.85:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"private-a-web","address":"10.97.214.163:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"private-a-tripwire","address":"10.97.49.196:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"model-service","address":"10.97.192.132:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"private-a-connector","address":"10.97.32.33:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"tripwire-service","address":"10.97.251.36:8080","outcome":"reachable"}
+{"phase":"repeat","destination":"dns-udp","address":"10.97.0.10:53","outcome":"reachable"}
+PASS broker HTTP reachable
+PASS positive control: all direct lab paths reachable

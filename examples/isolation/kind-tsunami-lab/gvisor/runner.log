@@ -1,0 +1,21 @@
+Kernel: Linux version 4.19.0-gvisor #1 SMP Sun Jan 10 15:06:54 PST 2016
+{"phase":"startup","destination":"tripwire-service","address":"10.97.251.36:8080","outcome":"timeout"}
+{"phase":"startup","destination":"api-service","address":"10.97.0.1:443","outcome":"timeout"}
+{"phase":"startup","destination":"node-api","address":"172.18.0.3:6443","outcome":"timeout"}
+{"phase":"startup","destination":"dns-udp","address":"10.97.0.10:53","outcome":"timeout"}
+{"phase":"startup","destination":"tripwire-pod","address":"10.245.0.40:8080","outcome":"timeout"}
+{"phase":"startup","destination":"dns-tcp","address":"10.97.0.10:53","outcome":"timeout"}
+{"phase":"settled","destination":"node-api","address":"172.18.0.3:6443","outcome":"timeout"}
+{"phase":"settled","destination":"dns-tcp","address":"10.97.0.10:53","outcome":"timeout"}
+{"phase":"settled","destination":"tripwire-pod","address":"10.245.0.40:8080","outcome":"timeout"}
+{"phase":"settled","destination":"api-service","address":"10.97.0.1:443","outcome":"timeout"}
+{"phase":"settled","destination":"dns-udp","address":"10.97.0.10:53","outcome":"timeout"}
+{"phase":"settled","destination":"tripwire-service","address":"10.97.251.36:8080","outcome":"timeout"}
+{"phase":"repeat","destination":"dns-udp","address":"10.97.0.10:53","outcome":"timeout"}
+{"phase":"repeat","destination":"tripwire-pod","address":"10.245.0.40:8080","outcome":"timeout"}
+{"phase":"repeat","destination":"dns-tcp","address":"10.97.0.10:53","outcome":"timeout"}
+{"phase":"repeat","destination":"api-service","address":"10.97.0.1:443","outcome":"timeout"}
+{"phase":"repeat","destination":"tripwire-service","address":"10.97.251.36:8080","outcome":"timeout"}
+{"phase":"repeat","destination":"node-api","address":"172.18.0.3:6443","outcome":"timeout"}
+PASS broker HTTP reachable
+PASS tested paths denied at startup and after settling; this is not full sandbox qualification

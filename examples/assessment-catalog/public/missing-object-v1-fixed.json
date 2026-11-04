@@ -1,0 +1,122 @@
+{
+  "id": "18a0fbf5406acdd5515f48605ba6ad77",
+  "tenant": "demo-a",
+  "scenario": "fixed",
+  "state": "completed",
+  "target": "http://tsunami-fixed:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "execution": "scripted",
+  "workflow": "missing-object/v1",
+  "assessment": {
+    "id": "missing-object/v1",
+    "title": "Missing-object negative control",
+    "purpose": "A nonexistent object's rejection cannot establish whether access to a real private object is protected.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/objects/r-missing-99e"
+    },
+    "expected_access": "unknown",
+    "remediation": "Use a known existing private object and approved second account before making an authorization conclusion."
+  },
+  "assessment_digest": "7677e75cb7264c9c51f4d51483b729d1e04a5af30a8c1725477160950cfc09c6",
+  "created_at": "2026-11-02T07:39:48.884079403Z",
+  "deadline": "2026-11-02T07:41:18.884079403Z",
+  "finished_at": "2026-11-02T07:39:49.802225638Z",
+  "deletion_requested_at": "2026-11-02T07:39:49.939960969Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "9f0088fae80e70b92557b5326caa227d",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:49.770571431Z",
+      "finished_at": "2026-11-02T07:39:49.770576496Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "c2c04dfb52121b5eb4d3ca2ba5f01327",
+      "url": "http://tsunami-fixed:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:49.775191903Z",
+      "finished_at": "2026-11-02T07:39:49.778215261Z",
+      "status": 200,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    },
+    {
+      "id": "10239e0ed802f61bc3e0f626a466bc30",
+      "url": "http://tsunami-fixed:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:49.781542366Z",
+      "finished_at": "2026-11-02T07:39:49.785105393Z",
+      "status": 200,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "7bf55240d588f8e9c88a1ca90a8a2b7f",
+      "url": "http://tsunami-fixed:8080/api/reviewed/objects/r-missing-99e",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:49.791168889Z",
+      "finished_at": "2026-11-02T07:39:49.795132426Z",
+      "status": 404,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"error\":\"not found\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:39:48.884079403Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:39:49.802225638Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Missing-object negative control",
+    "reason": "The probe uses an object with no confirmed existence. Its rejection cannot prove ownership enforcement.",
+    "evidence_ids": [
+      "c2c04dfb52121b5eb4d3ca2ba5f01327",
+      "10239e0ed802f61bc3e0f626a466bc30",
+      "7bf55240d588f8e9c88a1ca90a8a2b7f"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "unknown"
+    }
+  }
+}

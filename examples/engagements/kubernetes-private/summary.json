@@ -1,0 +1,30 @@
+{
+  "checked_at": "2026-11-02T11:09:28.425655203Z",
+  "mode": "scripted",
+  "connectivity": "private",
+  "artifact_directory": "/tmp/engagements/campaign-4286050917",
+  "checks": [
+    {
+      "engagement_id": "8496b6ec8702439e111eb101f150542c",
+      "scenario": "vulnerable",
+      "procedures_completed": 5,
+      "finding_candidates": 3,
+      "evidence_artifacts": 20
+    },
+    {
+      "engagement_id": "3afd2d4a11bf3c76403283b208fcf20e",
+      "scenario": "fixed",
+      "procedures_completed": 5,
+      "finding_candidates": 0,
+      "evidence_artifacts": 20
+    }
+  ],
+  "draft_dispatch_denied": true,
+  "stopped_dispatch_denied": true,
+  "limitations": [
+    "Synthetic lab targets and initial procedures only, not customer readiness or broad toolkit execution.",
+    "Candidates are unrated pending human impact review; findings-schema export is not implemented.",
+    "Stop here checks dispatch revocation; active-request cancellation is tested separately.",
+    "No general multi-agent role scheduler, VM/device executor, or scale qualification is demonstrated."
+  ]
+}

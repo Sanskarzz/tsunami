@@ -1,0 +1,35 @@
+{
+  "checked_at": "2026-11-01T10:45:54.186403+00:00",
+  "context": "kind-kind",
+  "destinations": {
+    "tripwire-service": "http://10.96.20.178:8080",
+    "tripwire-pod": "http://10.244.0.61:8080",
+    "api-service": "https://10.96.0.1:443",
+    "node-api": "https://172.18.0.2:6443",
+    "dns-tcp": "http://10.96.0.10:53"
+  },
+  "udp_dns": "10.96.0.10:53",
+  "checks": [
+    {
+      "role": "positive-before",
+      "job": "tsunami-network-positive-before-9blbp",
+      "runtime_class": "",
+      "image_id": "sha256:4532e04a89397e0822336f9f6f1ca7f6409b7d7a41cfc5b0a494fd5b3096d46e",
+      "passed": true
+    },
+    {
+      "role": "runner",
+      "job": "tsunami-network-runner-tcwt9",
+      "runtime_class": "",
+      "image_id": "sha256:4532e04a89397e0822336f9f6f1ca7f6409b7d7a41cfc5b0a494fd5b3096d46e",
+      "passed": false
+    },
+    {
+      "role": "positive-after",
+      "job": "tsunami-network-positive-after-z5gdj",
+      "runtime_class": "",
+      "image_id": "sha256:4532e04a89397e0822336f9f6f1ca7f6409b7d7a41cfc5b0a494fd5b3096d46e",
+      "passed": true
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "id": "missing-object/v1",
+  "title": "Missing-object negative control",
+  "purpose": "A nonexistent object's rejection cannot establish whether access to a real private object is protected.",
+  "risk": "read-only synthetic fixture",
+  "review": "initial engineering procedure; security-engineer review pending",
+  "method": "GET",
+  "max_requests": 6,
+  "baselines": [
+    {"account":"alice","path":"/api/reviewed/objects/r-7f3c9a","object":{"id":"r-7f3c9a","owner":"alice","content":"synthetic private ledger A"}},
+    {"account":"bob","path":"/api/reviewed/objects/r-b82d16","object":{"id":"r-b82d16","owner":"bob","content":"synthetic private ledger B"}}
+  ],
+  "probe": {"account":"bob","path":"/api/reviewed/objects/r-missing-99e"},
+  "expected_access": "unknown",
+  "remediation": "Use a known existing private object and approved second account before making an authorization conclusion."
+}

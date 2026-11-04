@@ -1,0 +1,79 @@
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/tenant
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/audience
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/target
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/account
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/expired
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/too-long
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/future
+=== RUN   TestGrantCannotChangeTenantAudienceDestinationOrLifetime/signature
+--- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime (0.09s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/tenant (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/audience (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/target (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/account (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/expired (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/too-long (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/future (0.01s)
+    --- PASS: TestGrantCannotChangeTenantAudienceDestinationOrLifetime/signature (0.01s)
+=== RUN   TestReplayRejectedAcrossConnectorRestart
+--- PASS: TestReplayRejectedAcrossConnectorRestart (0.05s)
+=== RUN   TestLeaseExpiryCancelsTargetWithoutControlPlane
+--- PASS: TestLeaseExpiryCancelsTargetWithoutControlPlane (0.28s)
+=== RUN   TestEmergencyCutoffCancelsActiveWorkAndSurvivesRestart
+--- PASS: TestEmergencyCutoffCancelsActiveWorkAndSurvivesRestart (0.07s)
+=== RUN   TestBrokerStopCancelsPrivateRequest
+=== RUN   TestBrokerStopCancelsPrivateRequest/run
+=== RUN   TestBrokerStopCancelsPrivateRequest/tenant
+=== RUN   TestBrokerStopCancelsPrivateRequest/global
+--- PASS: TestBrokerStopCancelsPrivateRequest (0.07s)
+    --- PASS: TestBrokerStopCancelsPrivateRequest/run (0.02s)
+    --- PASS: TestBrokerStopCancelsPrivateRequest/tenant (0.02s)
+    --- PASS: TestBrokerStopCancelsPrivateRequest/global (0.02s)
+=== RUN   TestPrivateConnectorOutageHasNoDirectFallback
+--- PASS: TestPrivateConnectorOutageHasNoDirectFallback (0.01s)
+=== RUN   TestPrivateRedirectCannotRelayToAnotherOrigin
+--- PASS: TestPrivateRedirectCannotRelayToAnotherOrigin (0.02s)
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/no-client-cert
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57762: tls: client didn't provide a certificate
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/other-ca-client
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57778: tls: failed to verify certificate: x509: certificate signed by unknown authority (possibly because of "x509: Ed25519 verification failure" while trying to verify candidate authority certificate "Tsunami Customer A lab CA")
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/wrong-tenant-client
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57790: unexpected connector client identity
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/expired-client
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57798: tls: failed to verify certificate: x509: certificate has expired or is not yet valid: current time 2026-11-02T02:39:26+05:30 is after 2026-11-01T21:08:26Z
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/wrong-server-name
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57814: remote error: tls: bad certificate
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/untrusted-server-ca
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57818: remote error: tls: bad certificate
+=== RUN   TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/wrong-server-audience
+2026/11/02 02:39:26 http: TLS handshake error from 127.0.0.1:57820: remote error: tls: bad certificate
+--- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer (0.08s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/no-client-cert (0.01s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/other-ca-client (0.02s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/wrong-tenant-client (0.01s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/expired-client (0.01s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/wrong-server-name (0.01s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/untrusted-server-ca (0.01s)
+    --- PASS: TestMTLSRejectsUnknownMissingWrongTenantAndWrongServer/wrong-server-audience (0.01s)
+=== RUN   TestTLSRolesAndPlaintextCannotSubstituteForAuthorization
+--- PASS: TestTLSRolesAndPlaintextCannotSubstituteForAuthorization (0.03s)
+=== RUN   TestCertificateExpiryCancelsAnAlreadyOpenResponse
+=== RUN   TestCertificateExpiryCancelsAnAlreadyOpenResponse/broker
+=== RUN   TestCertificateExpiryCancelsAnAlreadyOpenResponse/connector
+--- PASS: TestCertificateExpiryCancelsAnAlreadyOpenResponse (3.87s)
+    --- PASS: TestCertificateExpiryCancelsAnAlreadyOpenResponse/broker (1.87s)
+    --- PASS: TestCertificateExpiryCancelsAnAlreadyOpenResponse/connector (2.00s)
+=== RUN   TestLeafRenewalPreservesAuthorityAndRequiresExplicitAction
+--- PASS: TestLeafRenewalPreservesAuthorityAndRequiresExplicitAction (0.03s)
+=== RUN   TestCertificateExpiryRecheckedOnAnExistingTLSConnection
+=== RUN   TestCertificateExpiryRecheckedOnAnExistingTLSConnection/broker
+=== RUN   TestCertificateExpiryRecheckedOnAnExistingTLSConnection/connector
+--- PASS: TestCertificateExpiryRecheckedOnAnExistingTLSConnection (3.99s)
+    --- PASS: TestCertificateExpiryRecheckedOnAnExistingTLSConnection/broker (1.99s)
+    --- PASS: TestCertificateExpiryRecheckedOnAnExistingTLSConnection/connector (2.00s)
+=== RUN   TestTLSProbeDoesNotCountDeadEndpointsAsRejection
+--- PASS: TestTLSProbeDoesNotCountDeadEndpointsAsRejection (0.00s)
+PASS
+ok  	github.com/Sanskarzz/tsunami/internal/connector	9.594s

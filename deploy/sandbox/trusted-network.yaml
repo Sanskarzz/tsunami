@@ -1,0 +1,39 @@
+# These allow policies apply only to the dedicated lab cluster with Cilium's
+# global default deny. Trusted diagnostic pods deliberately reach targets
+# directly, so their success supplies a positive control for runner denial.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tsunami-lab-system
+  namespace: kube-system
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: [{}]
+  egress: [{}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tsunami-lab-storage
+  namespace: local-path-storage
+spec:
+  podSelector: {}
+  policyTypes: [Ingress, Egress]
+  ingress: [{}]
+  egress: [{}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tsunami-lab-trusted
+  namespace: tsunami
+spec:
+  podSelector:
+    matchExpressions:
+      - key: tsunami-role
+        operator: In
+        values: [control, lab, tripwire, verifier]
+  policyTypes: [Ingress, Egress]
+  ingress: [{}]
+  egress: [{}]

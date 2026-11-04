@@ -1,0 +1,55 @@
+{
+  "id": "ac9ebb732b9cde60ee594f8722fe99eb",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "stopped",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "OpenRouter free model / synthetic lab only",
+  "execution": "live",
+  "workflow": "object-ownership/v1",
+  "model": {
+    "price_policy": "openrouter-free/v1",
+    "provider": "openrouter-free",
+    "name": "nvidia/nemotron-3.5-lightning:free",
+    "config_id": "c95e7d72c5bb23f446cc6817e0397560428cf5bb471dc31520e7aa634431860e",
+    "max_calls": 8,
+    "max_output_tokens": 1024,
+    "calls_reserved": 1,
+    "wire_attempts": 1,
+    "streams_opened": 1,
+    "completed_calls": 0,
+    "reported_input_tokens": 0,
+    "reported_output_tokens": 0,
+    "usage_uncertain": true
+  },
+  "created_at": "2026-11-01T15:08:53.232083491Z",
+  "deadline": "2026-11-01T15:10:23.232083491Z",
+  "stop_accepted_at": "2026-11-01T15:08:55.412548846Z",
+  "deletion_requested_at": "2026-11-01T15:08:55.664719155Z",
+  "request_count": 0,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [],
+  "events": [
+    {
+      "at": "2026-11-01T15:08:53.232083491Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T15:08:55.412548846Z",
+      "kind": "stopped",
+      "detail": "durable permission revoked before acknowledgement"
+    },
+    {
+      "at": "2026-11-01T15:08:55.414957042Z",
+      "kind": "model_usage_uncertain",
+      "detail": "call reservation retained"
+    },
+    {
+      "at": "2026-11-01T15:08:55.414957901Z",
+      "kind": "model_error",
+      "detail": "model_error"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "examples/assessment-catalog/initial-live/evaluation.json": "ddfe6f52f8f2ca43862c0c3f1a8222ad82e38b3885fe02ab41bb7cc9c876a31a",
+  "examples/assessment-catalog/initial-live/opaque-ownership-v1-fixed.json": "e7c24de41ed0ff8fabc4943924874ce670b3289e233cde1330fff65feae29f84",
+  "examples/assessment-catalog/initial-live/opaque-ownership-v1-fixed.md": "221a8f77d7d18abf60b1ca9cc82c72dae487471d2f2f03fa4255bf684ab3bfc1",
+  "examples/assessment-catalog/initial-live/opaque-ownership-v1-vulnerable.json": "c7ac0912ac639d31b6350630df90281547c9b1147d77fe914e4b8285fde83a07",
+  "examples/assessment-catalog/initial-live/opaque-ownership-v1-vulnerable.md": "2bcea63867997712e8441b79d33ba9a4efc2b91e69646fd2e05f59fb668e5567",
+  "examples/assessment-catalog/initial-live/shared-access-v1-fixed.json": "6967c3b100ba340d98ef5fb20163d969337008c8930172e82ba7f990084b6084",
+  "examples/assessment-catalog/initial-live/shared-access-v1-fixed.md": "69a6eb4fccd3d645ec244d50ff0a1b1328996eccc530cc6177d4cc5340403f55",
+  "examples/assessment-catalog/initial-live/shared-access-v1-vulnerable.json": "1cd133b66e73b2ed82b247c22f2222632704b898df1c5caaec4944d72fd12fe7",
+  "examples/assessment-catalog/initial-live/shared-access-v1-vulnerable.md": "ebfd92ef5d463e9c1c5c5c24a79975e4142a07d70b793f3d6730c0f303cc5609",
+  "examples/assessment-catalog/initial-live/verification.log": "7e2a8f3ae629df0307596f83fa8ef6d3d6d4b0126a17eb190e3831cc3ccad5af",
+  "examples/assessment-catalog/feedback-live/evaluation.json": "03e9612efa0943a726bcf019b355bc01516754f6e7ad3ea4a309674e6b795095",
+  "examples/assessment-catalog/feedback-live/opaque-ownership-v1-fixed.json": "933ff425889428861537501ef6445df5dc4684fdaf0ad99bbef0e7d9da191272",
+  "examples/assessment-catalog/feedback-live/opaque-ownership-v1-fixed.md": "b9e63ccc89489e113b9ce892a60d287b56cb5e9ed926f5fc24e568452fd23cef",
+  "examples/assessment-catalog/feedback-live/opaque-ownership-v1-vulnerable.json": "fccc11792b0a226a18c8f9f13e3fe00937319e928153a13ff66ed77548a194e5",
+  "examples/assessment-catalog/feedback-live/opaque-ownership-v1-vulnerable.md": "46c21310a13ecee52fcda5a4ecd7a4d81b5327c057122c73a359a2586d7ae24f",
+  "examples/assessment-catalog/feedback-live/shared-access-v1-fixed.json": "9bd6feb82cb022a4c771c98e7cdcdefb97714e25f58cb67d0476fafe484ed24f",
+  "examples/assessment-catalog/feedback-live/shared-access-v1-fixed.md": "53e8bf17d638cdc5bcc3ffd34aa25ee8302dbf59a6955a4ff63eb13feb12cdd9",
+  "examples/assessment-catalog/feedback-live/shared-access-v1-vulnerable.json": "10d0b6387ea41a48ce626be78ce7f13a6867a5bfc63ece765aa43db07e0e4e8a",
+  "examples/assessment-catalog/feedback-live/shared-access-v1-vulnerable.md": "1e4f46e33139b52ceeb36442c0dcfbaaf323399dc7aa35653aa1de1b4aabe21c",
+  "examples/assessment-catalog/feedback-live/verification.log": "7a121d5ead040274d9f8857bc891ffb93578c6efb75f763120dca27589363f77"
+}

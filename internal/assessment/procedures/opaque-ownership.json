@@ -1,0 +1,16 @@
+{
+  "id": "opaque-ownership/v1",
+  "title": "Cross-user access to an opaque object ID",
+  "purpose": "Check a real object belonging to another account; IDs are not predictable counters.",
+  "risk": "read-only synthetic fixture",
+  "review": "initial engineering procedure; security-engineer review pending",
+  "method": "GET",
+  "max_requests": 6,
+  "baselines": [
+    {"account":"alice","path":"/api/reviewed/objects/r-7f3c9a","object":{"id":"r-7f3c9a","owner":"alice","content":"synthetic private ledger A"}},
+    {"account":"bob","path":"/api/reviewed/objects/r-b82d16","object":{"id":"r-b82d16","owner":"bob","content":"synthetic private ledger B"}}
+  ],
+  "probe": {"account":"bob","path":"/api/reviewed/objects/r-7f3c9a","object":{"id":"r-7f3c9a","owner":"alice","content":"synthetic private ledger A"}},
+  "expected_access": "deny",
+  "remediation": "Check object ownership against the authenticated account on every object read. Opaque IDs alone do not authorize access."
+}

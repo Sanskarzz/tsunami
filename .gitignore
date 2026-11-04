@@ -1,0 +1,8 @@
+/bin/
+/artifacts/
+/.local/
+*.db
+*.db.lock
+.env
+__pycache__/
+*.py[cod]

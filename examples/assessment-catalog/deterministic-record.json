@@ -1,0 +1,26 @@
+[
+  {
+    "path": "public",
+    "source_job": "tsunami-catalog-6sl52",
+    "image_id": "sha256:b33ed07d43043a9e4f0fb82224df0e6d100b71f92a1c9104bdec70946174a270",
+    "results": 20,
+    "matched": 20,
+    "missed_vulnerable": 0,
+    "false_positives": 0,
+    "inconclusive": 4,
+    "incomplete_evidence": 0,
+    "repeats": 2
+  },
+  {
+    "path": "private",
+    "source_job": "tsunami-catalog-z57l6",
+    "image_id": "sha256:b33ed07d43043a9e4f0fb82224df0e6d100b71f92a1c9104bdec70946174a270",
+    "results": 20,
+    "matched": 20,
+    "missed_vulnerable": 0,
+    "false_positives": 0,
+    "inconclusive": 4,
+    "incomplete_evidence": 0,
+    "repeats": 2
+  }
+]

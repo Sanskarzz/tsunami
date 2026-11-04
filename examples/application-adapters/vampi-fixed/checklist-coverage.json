@@ -1,0 +1,83 @@
+{
+  "version": "tsunami.checklist-coverage/v1",
+  "engagement": {
+    "authorization_note": "owned-lab/application-verifier",
+    "authorized": false,
+    "checklist_progress": {
+      "tsunami_authorization_v1": {
+        "completed": 1,
+        "not_applicable": 0,
+        "skipped": 0,
+        "total": 1
+      },
+      "owasp_api_top10": {
+        "total": 10,
+        "completed": 0,
+        "skipped": 0,
+        "not_applicable": 0
+      }
+    },
+    "findings": [],
+    "id": "ebcb60e81503bf904d198241fa61ba70",
+    "metadata": {
+      "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+      "finding_candidates": 0,
+      "scope_digest": "095bbdeb0a92c093fb20e9ec50e97b0840635c1502500ddf1712ca249f96c81d",
+      "tsunami_checklist_samples": [
+        {
+          "path": "checklists/owasp_api_top10.json",
+          "sha256": "b42a0c3b48118c22364e9553a4effe12d62894a89e6387e57f1158db47130cd1",
+          "total_imported_items": 10,
+          "fully_completed": 0,
+          "unmapped_items": 9,
+          "samples": [
+            {
+              "item_id": "API1:2023",
+              "procedure": "vampi-fixed/object-access/v2",
+              "coverage": "partial",
+              "sample_state": "sampled",
+              "verdict": "no_issue_observed",
+              "run_id": "271c189456b1ed4b3fa06357020b52e5"
+            }
+          ]
+        }
+      ]
+    },
+    "name": "Owned application access-control test",
+    "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+    "scope_in": [
+      "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000"
+    ],
+    "start_date": "2026-11-02",
+    "status": "On-Hold",
+    "target": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+    "target_type": "api"
+  },
+  "mapping_sha256": "861481a60378aa83e86f2c8cabef9027f69a48632eeee85d5cc7fea2f8716af9",
+  "sources": [
+    {
+      "path": "checklists/owasp_api_top10.json",
+      "sha256": "b42a0c3b48118c22364e9553a4effe12d62894a89e6387e57f1158db47130cd1",
+      "total_imported_items": 10,
+      "fully_completed": 0,
+      "unmapped_items": 9,
+      "samples": [
+        {
+          "item_id": "API1:2023",
+          "procedure": "vampi-fixed/object-access/v2",
+          "coverage": "partial",
+          "sample_state": "sampled",
+          "verdict": "no_issue_observed",
+          "run_id": "271c189456b1ed4b3fa06357020b52e5"
+        }
+      ]
+    }
+  ],
+  "runtime_permissions_changed": false,
+  "scripts_executed": false,
+  "limitations": [
+    "Imported IDs are reference data, never executable instructions.",
+    "All mappings are partial samples; fully completed standard items remain zero.",
+    "Normative checklist completeness and procedure mappings still need security review."
+  ]
+}

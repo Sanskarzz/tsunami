@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: tsunami-verify-
+  labels:
+    app.kubernetes.io/part-of: tsunami
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 120
+  template:
+    metadata:
+      labels:
+        tsunami-role: verifier
+    spec:
+      restartPolicy: Never
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: verify
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [verify]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 50m, memory: 32Mi}
+            limits: {cpu: 200m, memory: 128Mi}
+          volumeMounts:
+            - name: operator
+              mountPath: /run/operator
+              readOnly: true
+            - name: scratch
+              mountPath: /tmp
+      volumes:
+        - name: operator
+          secret:
+            secretName: tsunami-operator
+            items:
+              - key: admin-a
+                path: admin-a
+        - name: scratch
+          emptyDir:
+            sizeLimit: 16Mi

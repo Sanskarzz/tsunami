@@ -1,0 +1,19 @@
+{
+  "attempts": 1,
+  "checked_at": "2026-11-01T14:40:47.019523714Z",
+  "completed": true,
+  "duration_ms": 1759,
+  "error_code": "",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "price_policy": "openrouter-free/v1",
+  "tools": [
+    "finish_assessment"
+  ],
+  "usage": {
+    "InputTokens": 614,
+    "OutputTokens": 16,
+    "CacheReadTokens": 0,
+    "CacheWriteTokens": 0,
+    "ReasoningTokens": 0
+  }
+}

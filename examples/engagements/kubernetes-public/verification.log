@@ -1,0 +1,14 @@
+ENGAGEMENT_RUN engagement=7f9682e803fa66ebdd1d41e105c03094 run=93a8cde6d62ff763a98a70f27c8f1cbd procedure=anonymous-access/v1 variant=vulnerable
+ENGAGEMENT_RUN engagement=7f9682e803fa66ebdd1d41e105c03094 run=17eda9695d957f4c1122161c3137d5f0 procedure=missing-object/v1 variant=vulnerable
+ENGAGEMENT_RUN engagement=7f9682e803fa66ebdd1d41e105c03094 run=36be34f6d285e8899fd27476491987bb procedure=opaque-ownership/v1 variant=vulnerable
+ENGAGEMENT_RUN engagement=7f9682e803fa66ebdd1d41e105c03094 run=9c19738f6eb9eb9497d0b7792ec4291b procedure=role-boundary/v1 variant=vulnerable
+ENGAGEMENT_RUN engagement=7f9682e803fa66ebdd1d41e105c03094 run=1a8963118796a4cb417431476ced4dbe procedure=shared-access/v1 variant=vulnerable
+ENGAGEMENT_RESULT id=7f9682e803fa66ebdd1d41e105c03094 variant=vulnerable completed=5 candidates=3 artifacts=20 dispatch_after_stop=denied
+ENGAGEMENT_RUN engagement=2eb53067e6661c1a0e3b275e1bf0f022 run=8740fd944cda24bc4152dd3cc95394a4 procedure=anonymous-access/v1 variant=fixed
+ENGAGEMENT_RUN engagement=2eb53067e6661c1a0e3b275e1bf0f022 run=f28505539dff093940b47be24ff3a96b procedure=missing-object/v1 variant=fixed
+ENGAGEMENT_RUN engagement=2eb53067e6661c1a0e3b275e1bf0f022 run=65ea4b1be50602d536e5970986f69761 procedure=opaque-ownership/v1 variant=fixed
+ENGAGEMENT_RUN engagement=2eb53067e6661c1a0e3b275e1bf0f022 run=3f3079f6316bc586b5cd5a1fefdf9833 procedure=role-boundary/v1 variant=fixed
+ENGAGEMENT_RUN engagement=2eb53067e6661c1a0e3b275e1bf0f022 run=5c0155172500e6aac18438852fcc9bc6 procedure=shared-access/v1 variant=fixed
+ENGAGEMENT_RESULT id=2eb53067e6661c1a0e3b275e1bf0f022 variant=fixed completed=5 candidates=0 artifacts=20 dispatch_after_stop=denied
+ENGAGEMENT_SUMMARY records=/tmp/engagements/campaign-753608938 no_external_model_calls=true
+ENGAGEMENT_REPORT {"checked_at":"2026-11-02T11:09:28.509612269Z","mode":"scripted","artifact_directory":"/tmp/engagements/campaign-753608938","checks":[{"engagement_id":"7f9682e803fa66ebdd1d41e105c03094","scenario":"vulnerable","procedures_completed":5,"finding_candidates":3,"evidence_artifacts":20},{"engagement_id":"2eb53067e6661c1a0e3b275e1bf0f022","scenario":"fixed","procedures_completed":5,"finding_candidates":0,"evidence_artifacts":20}],"draft_dispatch_denied":true,"stopped_dispatch_denied":true,"limitations":["Synthetic lab targets and initial procedures only, not customer readiness or broad toolkit execution.","Candidates are unrated pending human impact review; findings-schema export is not implemented.","Stop here checks dispatch revocation; active-request cancellation is tested separately.","No general multi-agent role scheduler, VM/device executor, or scale qualification is demonstrated."]}

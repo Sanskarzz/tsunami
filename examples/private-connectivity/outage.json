@@ -1,0 +1,69 @@
+{
+  "checked_at": "2026-11-01T18:17:17.078600+00:00",
+  "run": {
+    "id": "6e2444e276cf79580b428b3e6e4c33b4",
+    "tenant": "demo-a",
+    "scenario": "vulnerable",
+    "state": "failed",
+    "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+    "mode": "scripted Mecatl / synthetic lab only / private connector",
+    "execution": "scripted",
+    "connectivity": "private",
+    "workflow": "object-ownership/v1",
+    "created_at": "2026-11-01T18:17:13.513699862Z",
+    "deadline": "2026-11-01T18:18:43.513699862Z",
+    "finished_at": "2026-11-01T18:17:17.055920678Z",
+    "request_count": 2,
+    "max_requests": 12,
+    "active_requests": 0,
+    "captures": [
+      {
+        "id": "f20578b370c14c7ea38b49f177ee6a37",
+        "url": "http://not-approved.invalid/api/documents/doc-alice",
+        "account": "alice",
+        "started_at": "2026-11-01T18:17:14.372367246Z",
+        "finished_at": "2026-11-01T18:17:14.37237136Z",
+        "blocked": true,
+        "error": "destination is outside the approved origin"
+      },
+      {
+        "id": "6e25c028a50de67e923afe8ea301bf63",
+        "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-alice",
+        "account": "alice",
+        "started_at": "2026-11-01T18:17:14.375664923Z",
+        "finished_at": "2026-11-01T18:17:14.379764839Z",
+        "error": "request failed or was cancelled"
+      },
+      {
+        "id": "5f0ac65b4b01a055700fb5d6b6bfe6dc",
+        "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-bob",
+        "account": "bob",
+        "started_at": "2026-11-01T18:17:14.383217557Z",
+        "finished_at": "2026-11-01T18:17:14.387173033Z",
+        "error": "request failed or was cancelled"
+      }
+    ],
+    "events": [
+      {
+        "at": "2026-11-01T18:17:13.513699862Z",
+        "kind": "created",
+        "detail": "server-owned lab policy; no arbitrary target selection"
+      },
+      {
+        "at": "2026-11-01T18:17:17.055920678Z",
+        "kind": "worker_failed",
+        "detail": "no automatic retry of uncertain requests"
+      }
+    ],
+    "result": {
+      "verdict": "inconclusive",
+      "title": "Assessment incomplete",
+      "reason": "Worker ended before trusted validation; no automatic replay.",
+      "evidence_ids": []
+    }
+  },
+  "target_requests_before": 8,
+  "target_requests_after": 8,
+  "no_direct_fallback": true,
+  "cross_tenant_private_creation_denied": true
+}

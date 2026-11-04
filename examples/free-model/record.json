@@ -1,0 +1,94 @@
+{
+  "recorded_on": "2026-11-01",
+  "context": "kind-tsunami-lab",
+  "runtime_class": "gvisor",
+  "provider": "openrouter-free",
+  "model": "nvidia/nemotron-3.5-lightning:free",
+  "workflow": "object-ownership/v1",
+  "guided_synthetic_lab": true,
+  "checks": [
+    {
+      "source_job": "tsunami-model-eval-khk9p",
+      "evaluation_image_id": "sha256:88f13c5619aea7e1913ebe306bdef9846f6d252571998530739a3e777d3be215",
+      "run_id": "17854af34144c1929aa549dba4b96695",
+      "scenario": "fixed",
+      "state": "completed",
+      "verdict": "no_issue_observed",
+      "model": {
+        "price_policy": "openrouter-free/v1",
+        "provider": "openrouter-free",
+        "name": "nvidia/nemotron-3.5-lightning:free",
+        "config_id": "c95e7d72c5bb23f446cc6817e0397560428cf5bb471dc31520e7aa634431860e",
+        "max_calls": 8,
+        "max_output_tokens": 1024,
+        "calls_reserved": 5,
+        "wire_attempts": 5,
+        "streams_opened": 5,
+        "completed_calls": 5,
+        "reported_input_tokens": 5537,
+        "reported_output_tokens": 216,
+        "usage_uncertain": false
+      },
+      "target_request_count": 4,
+      "captures": 4
+    },
+    {
+      "source_job": "tsunami-model-eval-khk9p",
+      "evaluation_image_id": "sha256:88f13c5619aea7e1913ebe306bdef9846f6d252571998530739a3e777d3be215",
+      "run_id": "957e0ff21a276e7dc74bd984617ebfb9",
+      "scenario": "vulnerable",
+      "state": "completed",
+      "verdict": "confirmed",
+      "model": {
+        "price_policy": "openrouter-free/v1",
+        "provider": "openrouter-free",
+        "name": "nvidia/nemotron-3.5-lightning:free",
+        "config_id": "c95e7d72c5bb23f446cc6817e0397560428cf5bb471dc31520e7aa634431860e",
+        "max_calls": 8,
+        "max_output_tokens": 1024,
+        "calls_reserved": 5,
+        "wire_attempts": 5,
+        "streams_opened": 5,
+        "completed_calls": 5,
+        "reported_input_tokens": 5679,
+        "reported_output_tokens": 228,
+        "usage_uncertain": false
+      },
+      "target_request_count": 4,
+      "captures": 4
+    },
+    {
+      "source_job": "tsunami-model-eval-wwlmj",
+      "evaluation_image_id": "sha256:88f13c5619aea7e1913ebe306bdef9846f6d252571998530739a3e777d3be215",
+      "run_id": "ac9ebb732b9cde60ee594f8722fe99eb",
+      "scenario": "stop",
+      "state": "stopped",
+      "verdict": null,
+      "model": {
+        "price_policy": "openrouter-free/v1",
+        "provider": "openrouter-free",
+        "name": "nvidia/nemotron-3.5-lightning:free",
+        "config_id": "c95e7d72c5bb23f446cc6817e0397560428cf5bb471dc31520e7aa634431860e",
+        "max_calls": 8,
+        "max_output_tokens": 1024,
+        "calls_reserved": 1,
+        "wire_attempts": 1,
+        "streams_opened": 1,
+        "completed_calls": 0,
+        "reported_input_tokens": 0,
+        "reported_output_tokens": 0,
+        "usage_uncertain": true
+      },
+      "target_request_count": 0,
+      "captures": 0
+    }
+  ],
+  "stop_check": {
+    "source": "stop-verification.log and StopInference harness",
+    "provider_http_200_stream_headers_observed": true,
+    "broker_stop_drain_ms": 29,
+    "no_counter_growth_for_ms": 1000,
+    "vendor_compute_or_billing_cancellation_verified": false
+  },
+  "account_usage_reported_usd_after": 0
+}

@@ -1,0 +1,95 @@
+{
+  "id": "F-335c0d397cc2410c480a36a69399c44f",
+  "title": "Cross-user book secret access",
+  "severity": "Medium",
+  "cvss_score": 6.5,
+  "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+  "status": "Confirmed",
+  "category": "Broken Object Level Authorization",
+  "cwe_id": 639,
+  "description_flaw": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+  "description_impact": "An authenticated synthetic peer retrieved another synthetic test account's seeded private object proof.",
+  "steps_to_reproduce": [
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/me using account alias owner; inspect captured status and proof fields.",
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/me using account alias peer; inspect captured status and proof fields.",
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/books/v1/tsunami-owner-c2ff1b80b041 using account alias owner; inspect captured status and proof fields.",
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/books/v1/tsunami-peer-fd1908fd2258 using account alias peer; inspect captured status and proof fields.",
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/books/v1/tsunami-owner-c2ff1b80b041 using account alias peer; inspect captured status and proof fields.",
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/books/v1/tsunami-owner-c2ff1b80b041 using account alias owner; inspect captured status and proof fields.",
+    "Read http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000/me using account alias peer; inspect captured status and proof fields."
+  ],
+  "evidence": [
+    {
+      "id": "E-6288d6355b7c2bf46e8ed3fc28797d9f57e489900af78a2faa0ff710320fb618",
+      "type": "request_response",
+      "path": "evidence/6288d6355b7c2bf46e8ed3fc28797d9f57e489900af78a2faa0ff710320fb618.json",
+      "description": "Broker-captured GET using account alias owner",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.132480178Z",
+      "tool": "tsunami-http-broker"
+    },
+    {
+      "id": "E-c5b02f7521b8d6b8a33ba1dc72f62ba7af88b7bf6c3327ec576c8221d9b18bc1",
+      "type": "request_response",
+      "path": "evidence/c5b02f7521b8d6b8a33ba1dc72f62ba7af88b7bf6c3327ec576c8221d9b18bc1.json",
+      "description": "Broker-captured GET using account alias peer",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.23910878Z",
+      "tool": "tsunami-http-broker"
+    },
+    {
+      "id": "E-7cb5b932b4dcc61bbffa8d00fa4924003bfe3cadf716adde300a3ac1721b50d1",
+      "type": "request_response",
+      "path": "evidence/7cb5b932b4dcc61bbffa8d00fa4924003bfe3cadf716adde300a3ac1721b50d1.json",
+      "description": "Broker-captured GET using account alias owner",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.341227555Z",
+      "tool": "tsunami-http-broker"
+    },
+    {
+      "id": "E-95fb6e3752c5b563c994d918604e020448df74ef1018640ba6f69b7895eb57f8",
+      "type": "request_response",
+      "path": "evidence/95fb6e3752c5b563c994d918604e020448df74ef1018640ba6f69b7895eb57f8.json",
+      "description": "Broker-captured GET using account alias peer",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.444421133Z",
+      "tool": "tsunami-http-broker"
+    },
+    {
+      "id": "E-5833187eac3360eed5d9f25066f17506d9e8b15e9702c317b93384124e18e4a0",
+      "type": "request_response",
+      "path": "evidence/5833187eac3360eed5d9f25066f17506d9e8b15e9702c317b93384124e18e4a0.json",
+      "description": "Broker-captured GET using account alias peer",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.634340504Z",
+      "tool": "tsunami-http-broker"
+    },
+    {
+      "id": "E-f9e6a5152683c9759871520e58edff0ff221cd140cc569c04925d62da796e05e",
+      "type": "request_response",
+      "path": "evidence/f9e6a5152683c9759871520e58edff0ff221cd140cc569c04925d62da796e05e.json",
+      "description": "Broker-captured GET using account alias owner",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.733594292Z",
+      "tool": "tsunami-http-broker"
+    },
+    {
+      "id": "E-ce7630a1e37fbacfe0d1cd143171bd60cbeb636a2bd459a3bfb7a779c50b6192",
+      "type": "request_response",
+      "path": "evidence/ce7630a1e37fbacfe0d1cd143171bd60cbeb636a2bd459a3bfb7a779c50b6192.json",
+      "description": "Broker-captured GET using account alias peer",
+      "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "captured_at": "2026-11-03T16:13:30.829709278Z",
+      "tool": "tsunami-http-broker"
+    }
+  ],
+  "remediation": "Authorize every object read against the authenticated principal and intended sharing rules on the server.",
+  "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+  "engagement_id": "88bbc4ec7190f5203c124724c3443514",
+  "found_at": "2026-11-03T16:13:30.834759749Z",
+  "found_by": "trusted_http_validator",
+  "tags": [
+    "owned-lab",
+    "automated_lab_test"
+  ]
+}

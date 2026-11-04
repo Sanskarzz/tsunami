@@ -1,0 +1,77 @@
+{
+  "id": "e5f274e512b83af022028598ad3e5578",
+  "tenant": "demo-a",
+  "scenario": "inconclusive",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only / private connector",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "object-ownership/v1",
+  "created_at": "2026-11-01T18:17:05.467491356Z",
+  "deadline": "2026-11-01T18:18:35.467491356Z",
+  "finished_at": "2026-11-01T18:17:06.441139477Z",
+  "deletion_requested_at": "2026-11-01T18:17:06.573229335Z",
+  "request_count": 3,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "10b3dd7e6022d2096f6ca211eeeedb59",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T18:17:06.394111469Z",
+      "finished_at": "2026-11-01T18:17:06.394115646Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "66f46bdac98cf25a9041fefde03b1968",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T18:17:06.397623023Z",
+      "finished_at": "2026-11-01T18:17:06.410032969Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    },
+    {
+      "id": "24896a61f5142fedff5b55cee80a5cd6",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/doc-bob",
+      "account": "bob",
+      "started_at": "2026-11-01T18:17:06.413918572Z",
+      "finished_at": "2026-11-01T18:17:06.422995789Z",
+      "status": 200,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"content\":\"synthetic private invoice for bob\",\"id\":\"doc-bob\",\"owner\":\"bob\"}\n"
+    },
+    {
+      "id": "e39c75b821f46821e084af9ce09539f4",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/documents/unknown",
+      "account": "bob",
+      "started_at": "2026-11-01T18:17:06.426555689Z",
+      "finished_at": "2026-11-01T18:17:06.436899605Z",
+      "status": 404,
+      "peer": "10.97.214.163:8080",
+      "body": "{\"error\":\"not found\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T18:17:05.467491356Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T18:17:06.441139477Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Cross-user document access",
+    "reason": "Both known-owner baselines and a conclusive cross-user response are required.",
+    "evidence_ids": []
+  }
+}

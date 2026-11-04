@@ -1,0 +1,36 @@
+{
+  "authorization_note": "owned-lab/application-verifier",
+  "authorized": false,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 1,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [
+    {
+      "cvss_score": 6.5,
+      "id": "F-335c0d397cc2410c480a36a69399c44f",
+      "severity": "Medium",
+      "status": "Confirmed",
+      "title": "Cross-user book secret access"
+    }
+  ],
+  "id": "88bbc4ec7190f5203c124724c3443514",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 1,
+    "scope_digest": "c87bde149d0f70f66cf2d1e1adab67be20a62f0047844deab981e6ed0d014879"
+  },
+  "name": "Owned application access-control test",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000"
+  ],
+  "start_date": "2026-11-03",
+  "status": "On-Hold",
+  "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+  "target_type": "api"
+}

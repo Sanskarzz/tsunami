@@ -1,0 +1,96 @@
+{
+  "id": "17854af34144c1929aa549dba4b96695",
+  "tenant": "demo-a",
+  "scenario": "fixed",
+  "state": "completed",
+  "target": "http://tsunami-fixed:8080",
+  "mode": "OpenRouter free model / synthetic lab only",
+  "execution": "live",
+  "workflow": "object-ownership/v1",
+  "model": {
+    "price_policy": "openrouter-free/v1",
+    "provider": "openrouter-free",
+    "name": "nvidia/nemotron-3.5-lightning:free",
+    "config_id": "c95e7d72c5bb23f446cc6817e0397560428cf5bb471dc31520e7aa634431860e",
+    "max_calls": 8,
+    "max_output_tokens": 1024,
+    "calls_reserved": 5,
+    "wire_attempts": 5,
+    "streams_opened": 5,
+    "completed_calls": 5,
+    "reported_input_tokens": 5537,
+    "reported_output_tokens": 216,
+    "usage_uncertain": false
+  },
+  "created_at": "2026-11-01T15:03:55.796171913Z",
+  "deadline": "2026-11-01T15:05:25.796171913Z",
+  "finished_at": "2026-11-01T15:04:03.351744409Z",
+  "deletion_requested_at": "2026-11-01T15:04:03.667498656Z",
+  "request_count": 4,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "a14988a1bfa457a3db6ae3f7cbc88bb7",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T15:03:58.540490176Z",
+      "finished_at": "2026-11-01T15:03:58.544305612Z",
+      "status": 200,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    },
+    {
+      "id": "c8ca64ae6d4b4f0ff3ffd07208b91e12",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-bob",
+      "account": "bob",
+      "started_at": "2026-11-01T15:03:59.671807423Z",
+      "finished_at": "2026-11-01T15:03:59.675618005Z",
+      "status": 200,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"content\":\"synthetic private invoice for bob\",\"id\":\"doc-bob\",\"owner\":\"bob\"}\n"
+    },
+    {
+      "id": "c607d4f30335b458ac89e282c8cf9291",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-alice",
+      "account": "bob",
+      "started_at": "2026-11-01T15:04:00.68728387Z",
+      "finished_at": "2026-11-01T15:04:00.69067094Z",
+      "status": 403,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"error\":\"forbidden\"}\n"
+    },
+    {
+      "id": "869e454b8a20c7e3e917bc81f898247f",
+      "url": "http://tsunami-fixed:8080/api/documents/doc-bob",
+      "account": "alice",
+      "started_at": "2026-11-01T15:04:02.12343302Z",
+      "finished_at": "2026-11-01T15:04:02.126799306Z",
+      "status": 403,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"error\":\"forbidden\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T15:03:55.796171913Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T15:04:03.351744409Z",
+      "kind": "validated",
+      "detail": "no_issue_observed"
+    }
+  ],
+  "result": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user document access",
+    "reason": "The two known-owner baselines succeeded; the cross-user read was forbidden. This is not proof of application-wide security.",
+    "evidence_ids": [
+      "a14988a1bfa457a3db6ae3f7cbc88bb7",
+      "c8ca64ae6d4b4f0ff3ffd07208b91e12",
+      "c607d4f30335b458ac89e282c8cf9291"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+# Development cluster only. No optional UI, flow export, or extra Envoy pods.
+ipam:
+  mode: kubernetes
+kubeProxyReplacement: false
+socketLB:
+  enabled: false
+operator:
+  replicas: 1
+envoy:
+  enabled: false
+hubble:
+  enabled: false
+policyEnforcementMode: always
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 768Mi

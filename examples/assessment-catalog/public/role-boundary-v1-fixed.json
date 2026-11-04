@@ -1,0 +1,127 @@
+{
+  "id": "6299ab27d810b1c2896ca3b125713e12",
+  "tenant": "demo-a",
+  "scenario": "fixed",
+  "state": "completed",
+  "target": "http://tsunami-fixed:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "execution": "scripted",
+  "workflow": "role-boundary/v1",
+  "assessment": {
+    "id": "role-boundary/v1",
+    "title": "Member access to an administrator summary",
+    "purpose": "Alice is an administrator and Bob is a member. Only the administrator may read this summary.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/admin/summary",
+        "object": {
+          "id": "admin-summary",
+          "owner": "administrators",
+          "content": "synthetic administrator audit summary"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "bob",
+      "path": "/api/reviewed/admin/summary",
+      "object": {
+        "id": "admin-summary",
+        "owner": "administrators",
+        "content": "synthetic administrator audit summary"
+      }
+    },
+    "expected_access": "deny",
+    "remediation": "Enforce the administrator role on the server before returning the summary. A valid member session is insufficient."
+  },
+  "assessment_digest": "a7ef0a78f172a2f6c96bd05a6980b366de8bc59b094eff09e15a611deecb829c",
+  "created_at": "2026-11-02T07:39:52.783173277Z",
+  "deadline": "2026-11-02T07:41:22.783173277Z",
+  "finished_at": "2026-11-02T07:39:53.712897301Z",
+  "deletion_requested_at": "2026-11-02T07:39:53.941287943Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "f1d965cfb579e03f38c441f7d3cafac0",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:53.69497901Z",
+      "finished_at": "2026-11-02T07:39:53.694980804Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "dad9aeced1a7a1ce3eff0b50e515fe12",
+      "url": "http://tsunami-fixed:8080/api/reviewed/admin/summary",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:53.697656212Z",
+      "finished_at": "2026-11-02T07:39:53.699845685Z",
+      "status": 200,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"id\":\"admin-summary\",\"owner\":\"administrators\",\"content\":\"synthetic administrator audit summary\"}\n"
+    },
+    {
+      "id": "4834f532a52d4f25360fe4fd1dbe22ce",
+      "url": "http://tsunami-fixed:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:53.702969461Z",
+      "finished_at": "2026-11-02T07:39:53.705278792Z",
+      "status": 200,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "bd6936625875a2b4faf95bbfe543b191",
+      "url": "http://tsunami-fixed:8080/api/reviewed/admin/summary",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:53.70770714Z",
+      "finished_at": "2026-11-02T07:39:53.710078558Z",
+      "status": 403,
+      "peer": "10.97.18.225:8080",
+      "body": "{\"error\":\"forbidden\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:39:52.783173277Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:39:53.712897301Z",
+      "kind": "validated",
+      "detail": "no_issue_observed"
+    }
+  ],
+  "result": {
+    "verdict": "no_issue_observed",
+    "title": "Member access to an administrator summary",
+    "reason": "Known immutable fixture baselines succeeded and the prohibited read returned HTTP 403. This applies only to this procedure, not application-wide security.",
+    "evidence_ids": [
+      "dad9aeced1a7a1ce3eff0b50e515fe12",
+      "4834f532a52d4f25360fe4fd1dbe22ce",
+      "bd6936625875a2b4faf95bbfe543b191"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}

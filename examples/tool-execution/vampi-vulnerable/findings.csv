@@ -1,0 +1,2 @@
+id,title,severity,cvss_score,cvss_vector,status,target,impact
+F-335c0d397cc2410c480a36a69399c44f,Cross-user book secret access,Medium,6.5,CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N,Confirmed,http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000,An authenticated synthetic peer retrieved another synthetic test account's seeded private object proof.

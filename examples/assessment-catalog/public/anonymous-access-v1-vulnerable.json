@@ -1,0 +1,127 @@
+{
+  "id": "ac827e32f8fac65815a96fc8d4dde7c9",
+  "tenant": "demo-a",
+  "scenario": "vulnerable",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "execution": "scripted",
+  "workflow": "anonymous-access/v1",
+  "assessment": {
+    "id": "anonymous-access/v1",
+    "title": "Unauthenticated access to a known private object",
+    "purpose": "Check whether the private object is readable with no Authorization header. Anonymous is an explicit broker capability.",
+    "risk": "read-only synthetic fixture",
+    "review": "initial engineering procedure; security-engineer review pending",
+    "method": "GET",
+    "max_requests": 6,
+    "baselines": [
+      {
+        "account": "alice",
+        "path": "/api/reviewed/objects/r-7f3c9a",
+        "object": {
+          "id": "r-7f3c9a",
+          "owner": "alice",
+          "content": "synthetic private ledger A"
+        }
+      },
+      {
+        "account": "bob",
+        "path": "/api/reviewed/objects/r-b82d16",
+        "object": {
+          "id": "r-b82d16",
+          "owner": "bob",
+          "content": "synthetic private ledger B"
+        }
+      }
+    ],
+    "probe": {
+      "account": "anonymous",
+      "path": "/api/reviewed/objects/r-7f3c9a",
+      "object": {
+        "id": "r-7f3c9a",
+        "owner": "alice",
+        "content": "synthetic private ledger A"
+      }
+    },
+    "expected_access": "deny",
+    "remediation": "Require authentication and object authorization before returning private data."
+  },
+  "assessment_digest": "a268470c93713fd723efb6c8721d9e1c240d3f2e4beeaec1c6501897d57d08aa",
+  "created_at": "2026-11-02T07:39:45.645382082Z",
+  "deadline": "2026-11-02T07:41:15.645382082Z",
+  "finished_at": "2026-11-02T07:39:46.702199378Z",
+  "deletion_requested_at": "2026-11-02T07:39:47.006844752Z",
+  "request_count": 3,
+  "max_requests": 6,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "6f1c35cfb81dd552579b29b1a85f52be",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:46.67426701Z",
+      "finished_at": "2026-11-02T07:39:46.674268504Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "098750e65e4c4db577af9ca563d79c2c",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "alice",
+      "started_at": "2026-11-02T07:39:46.67960902Z",
+      "finished_at": "2026-11-02T07:39:46.682768545Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    },
+    {
+      "id": "c0c23360d4c2e9a098707e3bb53293ac",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-b82d16",
+      "account": "bob",
+      "started_at": "2026-11-02T07:39:46.686489897Z",
+      "finished_at": "2026-11-02T07:39:46.689416115Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-b82d16\",\"owner\":\"bob\",\"content\":\"synthetic private ledger B\"}\n"
+    },
+    {
+      "id": "a3cb1dc0f466115efcd6dcdf8b981f3c",
+      "url": "http://tsunami-vulnerable:8080/api/reviewed/objects/r-7f3c9a",
+      "account": "anonymous",
+      "started_at": "2026-11-02T07:39:46.695401179Z",
+      "finished_at": "2026-11-02T07:39:46.699621619Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"id\":\"r-7f3c9a\",\"owner\":\"alice\",\"content\":\"synthetic private ledger A\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-02T07:39:45.645382082Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-02T07:39:46.702199378Z",
+      "kind": "validated",
+      "detail": "confirmed"
+    }
+  ],
+  "result": {
+    "verdict": "confirmed",
+    "title": "Unauthenticated access to a known private object",
+    "reason": "The probe returned the exact protected fixture object despite the reviewed deny rule; legitimate baselines also succeeded.",
+    "evidence_ids": [
+      "098750e65e4c4db577af9ca563d79c2c",
+      "c0c23360d4c2e9a098707e3bb53293ac",
+      "a3cb1dc0f466115efcd6dcdf8b981f3c"
+    ],
+    "validation": {
+      "baselines_required": 2,
+      "baselines_verified": 2,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}

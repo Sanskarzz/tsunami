@@ -1,0 +1,49 @@
+{
+  "id": "da33db9111eb3d1134bbaf521c41a005",
+  "tenant": "demo-a",
+  "scenario": "stop",
+  "state": "stopped",
+  "target": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080",
+  "mode": "scripted Mecatl / synthetic lab only / private connector",
+  "execution": "scripted",
+  "connectivity": "private",
+  "workflow": "object-ownership/v1",
+  "created_at": "2026-11-01T21:09:04.84982427Z",
+  "deadline": "2026-11-01T21:10:34.84982427Z",
+  "stop_accepted_at": "2026-11-01T21:09:05.900569918Z",
+  "deletion_requested_at": "2026-11-01T21:09:06.07324261Z",
+  "request_count": 1,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "6399aac536cc0676f6adbb33c4d6cd95",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:05.874456141Z",
+      "finished_at": "2026-11-01T21:09:05.874457946Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "82fc23605d156e4d574b0c287d8ff6ae",
+      "url": "http://tsunami-vulnerable.tsunami-customer-a.svc.cluster.local:8080/api/slow",
+      "account": "alice",
+      "started_at": "2026-11-01T21:09:05.87683355Z",
+      "finished_at": "2026-11-01T21:09:05.902592445Z",
+      "error": "request failed or was cancelled"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T21:09:04.84982427Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T21:09:05.900569918Z",
+      "kind": "stopped",
+      "detail": "durable permission revoked before acknowledgement"
+    }
+  ]
+}

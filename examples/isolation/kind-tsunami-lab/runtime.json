@@ -1,0 +1,9 @@
+{
+  "checked_at": "2026-11-01T10:47:04.389826+00:00",
+  "context": "kind-tsunami-lab",
+  "job": "tsunami-runtime-probe-nsw4t",
+  "node": "tsunami-lab-control-plane",
+  "runtime_handler": "runsc",
+  "runtime_type": "io.containerd.runsc.v1",
+  "container_checks_passed": true
+}

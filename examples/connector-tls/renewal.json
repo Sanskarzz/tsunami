@@ -1,0 +1,9 @@
+{
+  "ca_preserved": true,
+  "all_leaf_fingerprints_changed": true,
+  "signing_secret_preserved": true,
+  "emergency_secret_preserved": true,
+  "connector_pvc_preserved": true,
+  "run_pvc_preserved": true,
+  "old_valid_leaf_revocation_claimed": false
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "candidate_digest": "2dec6c5013a20be70d0bc363bb853ab0055c32e70e57580efec833e6070096be",
+    "review": {
+      "candidate_id": "F-335c0d397cc2410c480a36a69399c44f",
+      "candidate_digest": "2dec6c5013a20be70d0bc363bb853ab0055c32e70e57580efec833e6070096be",
+      "expected_revision": 0,
+      "decision": "confirm",
+      "purpose": "automated_lab_test",
+      "rationale": "Automated lab review exercises schema and evidence export; it is not human approval.",
+      "impact": "An authenticated synthetic peer retrieved another synthetic test account's seeded private object proof.",
+      "cvss_vector": "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N",
+      "revision": 1,
+      "reviewed_at": "2026-11-03T16:13:30.865805367Z",
+      "actor": "automated_lab_verifier",
+      "cvss_score": 6.5,
+      "severity": "Medium"
+    },
+    "id": "F-335c0d397cc2410c480a36a69399c44f",
+    "title": "Cross-user book secret access",
+    "procedure": "vampi-vulnerable/object-access/v2",
+    "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "status": "reviewed_confirmed",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "remediation": "Authorize every object read against the authenticated principal and intended sharing rules on the server.",
+    "run_ids": [
+      "a9b4685d4b85ed1f9cf82fd17c856732"
+    ],
+    "evidence_ids": [
+      "E-6288d6355b7c2bf46e8ed3fc28797d9f57e489900af78a2faa0ff710320fb618",
+      "E-c5b02f7521b8d6b8a33ba1dc72f62ba7af88b7bf6c3327ec576c8221d9b18bc1",
+      "E-7cb5b932b4dcc61bbffa8d00fa4924003bfe3cadf716adde300a3ac1721b50d1",
+      "E-95fb6e3752c5b563c994d918604e020448df74ef1018640ba6f69b7895eb57f8",
+      "E-5833187eac3360eed5d9f25066f17506d9e8b15e9702c317b93384124e18e4a0",
+      "E-f9e6a5152683c9759871520e58edff0ff221cd140cc569c04925d62da796e05e",
+      "E-ce7630a1e37fbacfe0d1cd143171bd60cbeb636a2bd459a3bfb7a779c50b6192"
+    ]
+  }
+]

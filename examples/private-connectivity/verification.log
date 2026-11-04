@@ -1,0 +1,12 @@
+VERIFY_CREATED run=6ceff5d3c6517b45689c58824e7a248d scenario=vulnerable connectivity=private
+PASS vulnerable    verdict=confirmed          requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=55eb384fe63f4dafb4dea97c208a3059 scenario=fixed connectivity=private
+PASS fixed         verdict=no_issue_observed  requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=e5f274e512b83af022028598ad3e5578 scenario=inconclusive connectivity=private
+PASS inconclusive  verdict=inconclusive       requests=3 scope_denials=1 stop_drain_ms=0
+VERIFY_CREATED run=d12b1f8192fda8631cc844977d653d6a scenario=redirect connectivity=private
+PASS redirect      verdict=inconclusive       requests=1 scope_denials=2 stop_drain_ms=0
+VERIFY_CREATED run=6714050a5d177b81d0d3a1b47a98ee91 scenario=stop connectivity=private
+PASS stop          verdict=stopped            requests=1 scope_denials=1 stop_drain_ms=29
+PASS tripwire: zero requests; lab target observed request cancellation
+Completed 5 scenario checks; reports in /tmp/tsunami-artifacts

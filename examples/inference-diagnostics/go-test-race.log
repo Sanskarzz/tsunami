@@ -1,0 +1,10 @@
+?   	github.com/Sanskarzz/tsunami/cmd/tsunami	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/assessment	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/connector	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/demo	21.621s
+ok  	github.com/Sanskarzz/tsunami/internal/inference	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/isolation	(cached)
+ok  	github.com/Sanskarzz/tsunami/internal/kube	(cached)
+?   	github.com/Sanskarzz/tsunami/internal/lab	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/platform	(cached)
+?   	github.com/Sanskarzz/tsunami/internal/worker	[no test files]

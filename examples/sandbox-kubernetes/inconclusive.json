@@ -1,0 +1,74 @@
+{
+  "id": "ab5f320a465f52939d808ca8130216f6",
+  "tenant": "demo-a",
+  "scenario": "inconclusive",
+  "state": "completed",
+  "target": "http://tsunami-vulnerable:8080",
+  "mode": "scripted Mecatl / synthetic lab only",
+  "created_at": "2026-11-01T10:45:22.671817039Z",
+  "deadline": "2026-11-01T10:46:52.671817039Z",
+  "finished_at": "2026-11-01T10:45:23.835260764Z",
+  "deletion_requested_at": "2026-11-01T10:45:24.31771209Z",
+  "request_count": 3,
+  "max_requests": 12,
+  "active_requests": 0,
+  "captures": [
+    {
+      "id": "d01db65dcfe9bddc3db9f95cb82eee5f",
+      "url": "http://not-approved.invalid/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:45:23.749959821Z",
+      "finished_at": "2026-11-01T10:45:23.749964052Z",
+      "blocked": true,
+      "error": "destination is outside the approved origin"
+    },
+    {
+      "id": "e9bee2c1f621b1fcd1177f5ebd862c06",
+      "url": "http://tsunami-vulnerable:8080/api/documents/doc-alice",
+      "account": "alice",
+      "started_at": "2026-11-01T10:45:23.762682743Z",
+      "finished_at": "2026-11-01T10:45:23.77419764Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"content\":\"synthetic private invoice for alice\",\"id\":\"doc-alice\",\"owner\":\"alice\"}\n"
+    },
+    {
+      "id": "a979f61f3a2d30c541ebc496a21ac366",
+      "url": "http://tsunami-vulnerable:8080/api/documents/doc-bob",
+      "account": "bob",
+      "started_at": "2026-11-01T10:45:23.786301378Z",
+      "finished_at": "2026-11-01T10:45:23.798562821Z",
+      "status": 200,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"content\":\"synthetic private invoice for bob\",\"id\":\"doc-bob\",\"owner\":\"bob\"}\n"
+    },
+    {
+      "id": "d0786e0aee799e6a32c4dbfac627cbab",
+      "url": "http://tsunami-vulnerable:8080/api/documents/unknown",
+      "account": "bob",
+      "started_at": "2026-11-01T10:45:23.81075177Z",
+      "finished_at": "2026-11-01T10:45:23.822650806Z",
+      "status": 404,
+      "peer": "10.97.190.42:8080",
+      "body": "{\"error\":\"not found\"}\n"
+    }
+  ],
+  "events": [
+    {
+      "at": "2026-11-01T10:45:22.671817039Z",
+      "kind": "created",
+      "detail": "server-owned lab policy; no arbitrary target selection"
+    },
+    {
+      "at": "2026-11-01T10:45:23.835260764Z",
+      "kind": "validated",
+      "detail": "inconclusive"
+    }
+  ],
+  "result": {
+    "verdict": "inconclusive",
+    "title": "Cross-user document access",
+    "reason": "Both known-owner baselines and a conclusive cross-user response are required.",
+    "evidence_ids": []
+  }
+}

@@ -1,0 +1,4 @@
+EVAL_CREATED run=957e0ff21a276e7dc74bd984617ebfb9 scenario=vulnerable
+EVAL run=957e0ff21a276e7dc74bd984617ebfb9 vulnerable expected=confirmed          actual=confirmed          match=true mode=OpenRouter free model / synthetic lab only
+EVAL_CREATED run=17854af34144c1929aa549dba4b96695 scenario=fixed
+EVAL run=17854af34144c1929aa549dba4b96695 fixed      expected=no_issue_observed  actual=no_issue_observed  match=true mode=OpenRouter free model / synthetic lab only

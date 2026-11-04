@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  generateName: tsunami-network-probe-
+  labels:
+    app.kubernetes.io/part-of: tsunami
+spec:
+  backoffLimit: 0
+  activeDeadlineSeconds: 60
+  template:
+    metadata:
+      labels:
+        tsunami-role: runner
+    spec:
+      serviceAccountName: tsunami-runner
+      automountServiceAccountToken: false
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: probe
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [network-probe]
+          env:
+            - name: TSUNAMI_PROBE_BROKER
+              value: http://$(TSUNAMI_CONTROL_SERVICE_HOST):8080
+            # The harness replaces this with service/pod/platform addresses
+            # gathered from the explicitly selected development cluster.
+            - name: TSUNAMI_PROBE_DESTINATIONS
+              value: '{"tripwire-service":"http://$(TSUNAMI_TRIPWIRE_SERVICE_HOST):8080"}'
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 100m, memory: 64Mi}

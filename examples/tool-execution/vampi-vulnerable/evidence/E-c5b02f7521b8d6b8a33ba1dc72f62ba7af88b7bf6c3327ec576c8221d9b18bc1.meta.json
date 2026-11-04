@@ -1,0 +1,9 @@
+{
+  "id": "E-c5b02f7521b8d6b8a33ba1dc72f62ba7af88b7bf6c3327ec576c8221d9b18bc1",
+  "type": "request_response",
+  "path": "evidence/c5b02f7521b8d6b8a33ba1dc72f62ba7af88b7bf6c3327ec576c8221d9b18bc1.json",
+  "description": "Broker-captured GET using account alias peer",
+  "finding_id": "F-335c0d397cc2410c480a36a69399c44f",
+  "captured_at": "2026-11-03T16:13:30.23910878Z",
+  "tool": "tsunami-http-broker"
+}

@@ -1,0 +1,15 @@
+go run ./cmd/tsunami diagnose-inference --out artifacts/inference-diagnostics
+FAULT mode=success expected=ok actual=ok passed=true wire_attempts=1 released_tools=1
+FAULT mode=missing_usage expected=ok actual=ok passed=true wire_attempts=1 released_tools=1
+FAULT mode=http_401 expected=upstream_http_401 actual=upstream_http_401 passed=true wire_attempts=1 released_tools=0
+FAULT mode=http_429 expected=upstream_http_429 actual=upstream_http_429 passed=true wire_attempts=1 released_tools=0
+FAULT mode=http_503 expected=upstream_http_503 actual=upstream_http_503 passed=true wire_attempts=1 released_tools=0
+FAULT mode=no_headers expected=model_deadline_exceeded actual=model_deadline_exceeded passed=true wire_attempts=1 released_tools=0
+FAULT mode=headers_only expected=model_deadline_exceeded actual=model_deadline_exceeded passed=true wire_attempts=1 released_tools=0
+FAULT mode=stop_after_headers expected=model_cancelled actual=model_cancelled passed=true wire_attempts=1 released_tools=0
+FAULT mode=truncated_tool expected=model_stream_truncated actual=model_stream_truncated passed=true wire_attempts=1 released_tools=0
+FAULT mode=output_limit expected=model_output_token_limit actual=model_output_token_limit passed=true wire_attempts=1 released_tools=0
+FAULT mode=unknown_incomplete expected=model_response_incomplete actual=model_response_incomplete passed=true wire_attempts=1 released_tools=0
+FAULT mode=event_rate_limit expected=upstream_event_http_429 actual=upstream_event_http_429 passed=true wire_attempts=1 released_tools=0
+FAULT mode=invalid_usage expected=model_invalid_usage actual=model_invalid_usage passed=true wire_attempts=1 released_tools=0
+FAULT mode=reply_limit expected=model_reply_limit actual=model_reply_limit passed=true wire_attempts=1 released_tools=0

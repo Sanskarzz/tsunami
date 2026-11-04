@@ -1,0 +1,310 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: tsunami
+  labels:
+    app.kubernetes.io/part-of: tsunami
+    pod-security.kubernetes.io/enforce: restricted
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tsunami-control
+automountServiceAccountToken: true
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tsunami-runner
+automountServiceAccountToken: false
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tsunami-job-controller
+rules:
+  - apiGroups: [batch]
+    resources: [jobs]
+    verbs: [create, get, delete]
+  - apiGroups: [""]
+    resources: [secrets]
+    verbs: [create, delete]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tsunami-job-controller
+subjects:
+  - kind: ServiceAccount
+    name: tsunami-control
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: tsunami-job-controller
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tsunami-state
+spec:
+  accessModes: [ReadWriteOnce]
+  resources:
+    requests:
+      storage: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsunami-control
+spec:
+  selector:
+    tsunami-role: control
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsunami-vulnerable
+spec:
+  selector:
+    tsunami-fixture: vulnerable
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsunami-fixed
+spec:
+  selector:
+    tsunami-fixture: fixed
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tsunami-tripwire
+spec:
+  selector:
+    tsunami-fixture: tripwire
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tsunami-vulnerable
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tsunami-fixture: vulnerable
+  template:
+    metadata:
+      labels:
+        tsunami-role: lab
+        tsunami-fixture: vulnerable
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: fixture
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [lab]
+          env:
+            - name: LAB_REDIRECT_TO
+              value: http://tsunami-tripwire:8080/api/documents/doc-alice
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: [ALL]
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 200m, memory: 64Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tsunami-fixed
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tsunami-fixture: fixed
+  template:
+    metadata:
+      labels:
+        tsunami-role: lab
+        tsunami-fixture: fixed
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: fixture
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [lab, --fixed]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            httpGet: {path: /healthz, port: 8080}
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 200m, memory: 64Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tsunami-tripwire
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tsunami-fixture: tripwire
+  template:
+    metadata:
+      labels:
+        # Deliberately outside the fixture ingress policy: the network probe
+        # must establish RUNNER EGRESS denial, not pass because ingress blocked it.
+        tsunami-role: tripwire
+        tsunami-fixture: tripwire
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: fixture
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [lab, --fixed]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            httpGet: {path: /healthz, port: 8080}
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {cpu: 100m, memory: 64Mi}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tsunami-control
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      tsunami-role: control
+  template:
+    metadata:
+      labels:
+        tsunami-role: control
+    spec:
+      serviceAccountName: tsunami-control
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        fsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: control
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [serve]
+          env:
+            - name: TSUNAMI_ALLOW_UNSANDBOXED_LAB
+              value: "true"
+            - name: TSUNAMI_STATE_PATH
+              value: /data/state.db
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          readinessProbe:
+            httpGet: {path: /healthz, port: 8080}
+          resources:
+            requests: {cpu: 50m, memory: 64Mi}
+            limits: {cpu: 500m, memory: 256Mi}
+          volumeMounts:
+            - name: operator
+              mountPath: /run/operator
+              readOnly: true
+            - name: state
+              mountPath: /data
+      volumes:
+        - name: operator
+          secret:
+            secretName: tsunami-operator
+        - name: state
+          persistentVolumeClaim:
+            claimName: tsunami-state
+---
+# These policies express the intended paths. Confirm enforcement behavior with
+# the independent probe; policy objects alone do not prove full containment.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tsunami-runner-boundary
+spec:
+  podSelector:
+    matchLabels:
+      tsunami-role: runner
+  policyTypes: [Ingress, Egress]
+  ingress: []
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              tsunami-role: control
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: tsunami-fixture-boundary
+spec:
+  podSelector:
+    matchLabels:
+      tsunami-role: lab
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels: {tsunami-role: control}
+        - podSelector:
+            matchLabels: {tsunami-role: verifier}
+      ports:
+        - protocol: TCP
+          port: 8080

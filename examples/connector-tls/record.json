@@ -1,0 +1,34 @@
+{
+  "recorded_at": "2026-11-01T21:13:16.718751819Z",
+  "context": "kind-tsunami-lab",
+  "transport": "mutual TLS 1.3 with exact role/tenant URI SANs",
+  "inference": "scripted only; no model calls",
+  "checks": [
+    {
+      "phase": "before-renewal",
+      "source_job": "tsunami-private-verify-zd82v",
+      "assessment_image_id": "sha256:8256ae1c3e57801de3eada4bf36bbcc4037b6657611203f6f90eb498ba23059e",
+      "private_stop_broker_drain_ms": 28,
+      "worker_runtime_class": "gvisor",
+      "five_scenarios_passed": true,
+      "tenant_b_private_creation_denied": true,
+      "connector_outage_no_target_traffic": true
+    },
+    {
+      "phase": "after-renewal",
+      "source_job": "tsunami-private-verify-pps7h",
+      "assessment_image_id": "sha256:8256ae1c3e57801de3eada4bf36bbcc4037b6657611203f6f90eb498ba23059e",
+      "private_stop_broker_drain_ms": 27,
+      "worker_runtime_class": "gvisor",
+      "five_scenarios_passed": true,
+      "tenant_b_private_creation_denied": true,
+      "connector_outage_no_target_traffic": true
+    }
+  ],
+  "leaf_renewal_verified": true,
+  "CA_replacement_refused_on_missing_or_different_material": true,
+  "emergency_cutoff_unchanged": true,
+  "main_connector_available": true,
+  "other_links_remain_synthetic_http": true,
+  "operator_diagnostic": "local CLI built from current source; read-only loopback port-forward to deployed connector"
+}

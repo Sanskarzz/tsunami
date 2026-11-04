@@ -1,0 +1,21 @@
+{
+  "engagement_schema_valid": true,
+  "artifact_hashes_valid": true,
+  "artifact_files_verified": 8,
+  "artifacts": 8,
+  "finding_candidates": 1,
+  "reviewed_findings": 1,
+  "finding_and_evidence_schemas_valid": true,
+  "reviewed_finding_files_verified": 1,
+  "reviewed_evidence_files_verified": 7,
+  "final_finding_schema_export": "reviewed_findings_only",
+  "schema_sha256": "47c4143fae299724fefbbf40e84d799323cb7d0ade9e7b749370384f2adb2d47",
+  "schema_hashes": {
+    "engagement.json": "47c4143fae299724fefbbf40e84d799323cb7d0ade9e7b749370384f2adb2d47",
+    "finding.json": "ca23c3267b232b9ef1cd0b08a025f924e4e640bca0aeba96cefbb41898569fc1",
+    "evidence.json": "760f397367ed2980d4b2cb68cd68dd8afe76607ed15fada9a5e5aad0b4612c41"
+  },
+  "jsonschema_version": "4.19.2",
+  "scripts_executed": false,
+  "remote_refs_allowed": false
+}

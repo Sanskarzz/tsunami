@@ -1,0 +1,55 @@
+# Intentionally unrestricted ingress: runner denial must not be masked by the
+# VAmPI application's own ingress policy. No credentials or outbound access.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: application-tripwire
+  namespace: tsunami-app-lab
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {tsunami-app-lab: tripwire}
+  template:
+    metadata:
+      labels: {tsunami-app-lab: tripwire}
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        runAsGroup: 65532
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: tripwire
+          image: tsunami:dev
+          imagePullPolicy: IfNotPresent
+          args: [lab]
+          env: [{name: LISTEN_ADDR, value: ':5000'}]
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          resources:
+            requests: {cpu: 10m, memory: 8Mi}
+            limits: {cpu: 100m, memory: 32Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: application-tripwire
+  namespace: tsunami-app-lab
+spec:
+  selector: {tsunami-app-lab: tripwire}
+  ports: [{port: 5000, targetPort: 5000}]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: application-tripwire
+  namespace: tsunami-app-lab
+spec:
+  podSelector:
+    matchLabels: {tsunami-app-lab: tripwire}
+  policyTypes: [Ingress, Egress]
+  ingress: [{}]
+  egress: []

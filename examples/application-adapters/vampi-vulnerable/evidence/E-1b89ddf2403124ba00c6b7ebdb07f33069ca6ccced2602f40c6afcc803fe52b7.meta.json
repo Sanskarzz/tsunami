@@ -1,0 +1,9 @@
+{
+  "id": "E-1b89ddf2403124ba00c6b7ebdb07f33069ca6ccced2602f40c6afcc803fe52b7",
+  "type": "request_response",
+  "path": "evidence/1b89ddf2403124ba00c6b7ebdb07f33069ca6ccced2602f40c6afcc803fe52b7.json",
+  "description": "Broker-captured GET using account alias owner",
+  "finding_id": "F-8f9c4d794bb1a5fd573c41a62a048781",
+  "captured_at": "2026-11-02T19:16:34.409772984Z",
+  "tool": "tsunami-http-broker"
+}

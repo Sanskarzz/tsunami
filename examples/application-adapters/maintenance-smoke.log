@@ -1,0 +1,6 @@
+python3 scripts/verify-engagement.py --context kind-tsunami-lab --application
+APPLICATION_RUN application=vampi-fixed engagement=1e5ff86582872e3ae3750ecda0342dd7 run=9f60d3680fe41355867c13ba5df609d3
+APPLICATION_RESULT application=vampi-fixed engagement=1e5ff86582872e3ae3750ecda0342dd7 verdict=no_issue_observed requests=7 candidates=0 reviewed_findings=0
+APPLICATION_RUN application=vampi-vulnerable engagement=ea6dae4ee09d1970a6318b6d65c01fc7 run=1726420bb4ff25755fbd2ff75c4487a3
+APPLICATION_RESULT application=vampi-vulnerable engagement=ea6dae4ee09d1970a6318b6d65c01fc7 verdict=confirmed requests=7 candidates=1 reviewed_findings=1
+PASS scripted application verification; records in artifacts/application-adapters/tsunami-application-p6rlp; no external model calls.

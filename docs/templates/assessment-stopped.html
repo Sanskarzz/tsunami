@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Local Tsunami interface concept. Fictional data and simulated actions; no backend connection.">
+  <meta name="referrer" content="no-referrer">
+  <title>Assessment stopped · Tsunami UI preview</title>
+  <link rel="stylesheet" href="assets/styles.css">
+  <script src="assets/preview.js" defer></script>
+</head>
+<body data-page="assessment-stopped" data-nav="assessments">
+  <div data-shell></div>
+  <div class="layout">
+    <div data-topbar="Assessment stopped"></div>
+    <main class="content" id="main">
+<div class="page-head"><div><div class=eyebrow>Assessment / demo-014</div><h1>Permission revoked. Cleanup pending.</h1><p>This stopped-state concept keeps execution permission, request draining and process cleanup distinct.</p></div><div class="actions"><a class="button primary" href="findings.html" ><span data-icon="shield" aria-hidden="true"></span>Review retained evidence</a></div></div><div class="section-space"><div class="notice amber"><span data-icon="info" aria-hidden="true"></span><div>All states below are simulated. This screen is not evidence of measured Stop latency or a completed Kubernetes cleanup.</div></div></div><div class="stop-grid section-space"><div class="stop-card"><span class="callout-number">01</span><h3>Execution permission</h3><span class="pill green">Revoked · simulated</span><p style="margin-top:9px">No new actions or child runs may be authorized.</p></div><div class="stop-card"><span class="callout-number">02</span><h3>Active target requests</h3><span class="pill green">Drained · simulated</span><p style="margin-top:9px">The sample target connection has ended. Already-performed effects cannot be undone.</p></div><div class="stop-card"><span class="callout-number">03</span><h3>Worker cleanup</h3><span class="pill amber">Pending · simulated</span><p style="margin-top:9px">A cleanup request is not proof that the worker has exited.</p></div></div><div class="split"><div class="stack"><section class="card"><div class="card-header"><div><h2>What was tested</h2><p class="muted small">Stopped work does not become completed coverage.</p></div></div><div class=""><div class="table-wrap compact"><table><thead><tr><th scope="col">Procedure</th><th scope="col">Recorded outcome</th><th scope="col">Coverage</th></tr></thead><tbody><tr data-searchable><td>Private object access</td><td><span class="pill amber">Candidate retained</span></td><td>Evidence remains available</td></tr><tr data-searchable><td>Intentional sharing control</td><td>No issue observed</td><td>Completed sample</td></tr><tr data-searchable><td>Anonymous object access</td><td><span class="pill gray">Interrupted</span></td><td>Incomplete — no clean verdict</td></tr><tr data-searchable><td>Administrator boundary</td><td>Unavailable</td><td>Not tested</td></tr></tbody></table></div></div></section><section class="card"><div class="card-header"><div><h2>What happens next</h2></div></div><div class="card-pad"><ol class="numbered"><li>Review evidence already captured.</li><li>Follow cleanup status until it is confirmed.</li><li>Resolve the reason for stopping before another assessment.</li><li>Start a separately approved new assessment; stopped work is not silently resumed.</li></ol></div></section></div><aside class="stack"><section class="card"><div class="card-header"><div><h2>Stop history</h2></div></div><div class="card-pad"><ul class="timeline"><li class="stopped"><strong>Stop accepted</strong><div class="muted">Permission recorded as revoked.</div></li><li><strong>Requests cancelled</strong><div class="muted">Example response drain completed.</div></li><li class="blocked"><strong>Cleanup requested</strong><div class="muted">Awaiting executor confirmation.</div></li></ul></div></section><a class="button " href="assessment-new.html" ><span data-icon="plus" aria-hidden="true"></span>Prepare a new assessment</a><a class="button " href="assessment-run.html" ><span data-icon="back" aria-hidden="true"></span>Back to running-state preview</a></aside></div>
+      <footer class="page-footer"><span>Tsunami / Interface direction / Fictional demo workspace</span><span><a href="index.html">All screens</a> · <a href="../design.md">Product design</a> · <a href="README.md">Prototype notes</a></span></footer>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,41 @@
+CATALOG_CREATED run=b66d015bf192b3b40831ed88f1f67a08 assessment=anonymous-access/v1 variant=vulnerable
+CATALOG run=b66d015bf192b3b40831ed88f1f67a08 assessment=anonymous-access/v1 variant=vulnerable expected=confirmed actual=confirmed match=true evidence_complete=true
+CATALOG_CREATED run=1660aaf1b2514c65d75a58a236de25f1 assessment=anonymous-access/v1 variant=fixed
+CATALOG run=1660aaf1b2514c65d75a58a236de25f1 assessment=anonymous-access/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=ffca288437f355acdf805b484dceaa13 assessment=missing-object/v1 variant=vulnerable
+CATALOG run=ffca288437f355acdf805b484dceaa13 assessment=missing-object/v1 variant=vulnerable expected=inconclusive actual=inconclusive match=true evidence_complete=true
+CATALOG_CREATED run=5281dc7f709dd81836073b8aced75629 assessment=missing-object/v1 variant=fixed
+CATALOG run=5281dc7f709dd81836073b8aced75629 assessment=missing-object/v1 variant=fixed expected=inconclusive actual=inconclusive match=true evidence_complete=true
+CATALOG_CREATED run=e8b6a96a7763833d3d2eee22005228b9 assessment=opaque-ownership/v1 variant=vulnerable
+CATALOG run=e8b6a96a7763833d3d2eee22005228b9 assessment=opaque-ownership/v1 variant=vulnerable expected=confirmed actual=confirmed match=true evidence_complete=true
+CATALOG_CREATED run=7f1a5bab8dc829bcb575c8234bda2e08 assessment=opaque-ownership/v1 variant=fixed
+CATALOG run=7f1a5bab8dc829bcb575c8234bda2e08 assessment=opaque-ownership/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=8a410ce0b0db80a51c574a1513bd1219 assessment=role-boundary/v1 variant=vulnerable
+CATALOG run=8a410ce0b0db80a51c574a1513bd1219 assessment=role-boundary/v1 variant=vulnerable expected=confirmed actual=confirmed match=true evidence_complete=true
+CATALOG_CREATED run=f8865e398c48174b2ef0e8ad4b7e2fae assessment=role-boundary/v1 variant=fixed
+CATALOG run=f8865e398c48174b2ef0e8ad4b7e2fae assessment=role-boundary/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=fc38a77e21c0bf6ffe7ec958aa292dd8 assessment=shared-access/v1 variant=vulnerable
+CATALOG run=fc38a77e21c0bf6ffe7ec958aa292dd8 assessment=shared-access/v1 variant=vulnerable expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=e429c3c9237451a9e0afd28d4478e50d assessment=shared-access/v1 variant=fixed
+CATALOG run=e429c3c9237451a9e0afd28d4478e50d assessment=shared-access/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=b36e2ce48ab83cf188b76e2ab88f0128 assessment=anonymous-access/v1 variant=vulnerable
+CATALOG run=b36e2ce48ab83cf188b76e2ab88f0128 assessment=anonymous-access/v1 variant=vulnerable expected=confirmed actual=confirmed match=true evidence_complete=true
+CATALOG_CREATED run=ee93373dd7ab89c1eaf90e810b3716ff assessment=anonymous-access/v1 variant=fixed
+CATALOG run=ee93373dd7ab89c1eaf90e810b3716ff assessment=anonymous-access/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=a3c42e9741d28066c5a0774319868bab assessment=missing-object/v1 variant=vulnerable
+CATALOG run=a3c42e9741d28066c5a0774319868bab assessment=missing-object/v1 variant=vulnerable expected=inconclusive actual=inconclusive match=true evidence_complete=true
+CATALOG_CREATED run=7791f196f10a7ffe286ede99f569bb75 assessment=missing-object/v1 variant=fixed
+CATALOG run=7791f196f10a7ffe286ede99f569bb75 assessment=missing-object/v1 variant=fixed expected=inconclusive actual=inconclusive match=true evidence_complete=true
+CATALOG_CREATED run=0fe73095b28ae991a0e9936ee99225d2 assessment=opaque-ownership/v1 variant=vulnerable
+CATALOG run=0fe73095b28ae991a0e9936ee99225d2 assessment=opaque-ownership/v1 variant=vulnerable expected=confirmed actual=confirmed match=true evidence_complete=true
+CATALOG_CREATED run=09f03de3b840d93c9ab2b7cf1079afe2 assessment=opaque-ownership/v1 variant=fixed
+CATALOG run=09f03de3b840d93c9ab2b7cf1079afe2 assessment=opaque-ownership/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=be53712f8218fe9c00bad0aae10bcc3e assessment=role-boundary/v1 variant=vulnerable
+CATALOG run=be53712f8218fe9c00bad0aae10bcc3e assessment=role-boundary/v1 variant=vulnerable expected=confirmed actual=confirmed match=true evidence_complete=true
+CATALOG_CREATED run=5bd655afe1610817d13bc9816ee43011 assessment=role-boundary/v1 variant=fixed
+CATALOG run=5bd655afe1610817d13bc9816ee43011 assessment=role-boundary/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=2b3700fb14a9c7ded02400976455e523 assessment=shared-access/v1 variant=vulnerable
+CATALOG run=2b3700fb14a9c7ded02400976455e523 assessment=shared-access/v1 variant=vulnerable expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_CREATED run=e78f8fdc7ef0682dec7e8f3eda4a5070 assessment=shared-access/v1 variant=fixed
+CATALOG run=e78f8fdc7ef0682dec7e8f3eda4a5070 assessment=shared-access/v1 variant=fixed expected=no_issue_observed actual=no_issue_observed match=true evidence_complete=true
+CATALOG_SUMMARY total=20 matched=20 missed=0 false_positives=0 inconclusive=4 incomplete_evidence=0 mode=scripted
