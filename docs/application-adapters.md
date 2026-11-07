@@ -6,11 +6,13 @@ VAmPI source is pinned to `f16052dce83f05847133ec98f01c5193a41de7d8` under its M
 
 ## What is configured
 
-A trusted startup file supplies a tenant, application ID, origin, explicit destination addresses, two bearer credentials, and a public read plan. API callers select only an application registered for their tenant. They cannot register a URL, choose credentials, modify selectors, or provide a verdict. `GET /v1/applications` returns public plans to the authenticated operator; workers cannot read that registry.
+A trusted startup file supplies a tenant, application ID, origin, explicit destination addresses, two bearer credentials, and a public read plan. Assessment callers select only an application registered for their tenant; workers cannot register a URL, choose credentials, modify selectors or provide a verdict. The subsequent [protected onboarding path](application-onboarding.md) can register supported synthetic bearer/JSON integrations after explicit prerequisite validation, then creates an unapproved assessment draft. `GET /v1/applications` returns public plans to the authenticated operator; workers cannot read that registry.
+
+The [local preparation command](binding-preparation.md) can now derive the plan from supplied synthetic baselines and explicit selectors/rules. VAmPI setup captures legitimate responses and invokes it. That preparation does not register the application, assign credentials, approve scope or substitute for actual run evidence.
 
 The generic matcher supports string fields selected by bounded JSON pointers in objects, not arrays, scripts or arbitrary expressions. The configuration supplies each account's identity assertion, two legitimate object reads, the cross-user probe, proof hashes, and the intended allow/deny rule. The VAmPI response fields are configuration, not a special branch in the validator.
 
-The supported profile is `http-object-access/v2`; its procedure is `{application}/object-access/v2`. Its normal sequence is:
+This document describes `http-object-access/v2`; its procedure is `{application}/object-access/v2`. The separate [property-access profile](property-access.md) now checks field filtering in an allowed object response without changing this profile's semantics. The object-access sequence is:
 
 1. Verify the owner identity.
 2. Verify the peer identity.

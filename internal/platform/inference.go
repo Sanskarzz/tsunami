@@ -21,7 +21,7 @@ func (s *Server) Infer(parent context.Context, id string, in inference.Request) 
 		return inference.Reply{}, err
 	}
 	stopParent := context.AfterFunc(parent, cancel)
-	defer func() { stopParent(); cancel(); s.mu.Lock(); delete(s.active[id], op); s.mu.Unlock() }()
+	defer func() { stopParent(); cancel(); s.finishOperation(id, op) }()
 	s.mu.Lock()
 	if s.modelActive[id] || s.modelInFlight >= 2 {
 		s.mu.Unlock()
@@ -39,6 +39,8 @@ func (s *Server) Infer(parent context.Context, id string, in inference.Request) 
 			return errors.New("assessment policy changed")
 		}
 		r.Model.CallsReserved++
+		now := time.Now().UTC()
+		tracked(r).LastAdmittedAt = &now
 		r.Model.UsageUncertain = true
 		deadline, _ := ctx.Deadline()
 		observation = inference.NewObservation(r.Model.CallsReserved, deadline)

@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/operator-journey",
+  "authorized": false,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 0,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "b5ddcbf90d6692170fef7e1a6c7e9709",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 0,
+    "scope_digest": "42a1d960810b8ada9b9f1f0238b28546b783395e1efe4c5863caea4939af91fe"
+  },
+  "name": "Web/API authorization assessment",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080"
+  ],
+  "start_date": "2026-11-06",
+  "status": "On-Hold",
+  "target": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+  "target_type": "api"
+}

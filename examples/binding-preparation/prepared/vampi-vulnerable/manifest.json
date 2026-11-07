@@ -1,0 +1,11 @@
+{
+  "version": "tsunami.prepared-application/v1",
+  "input_sha256": "1c94d7dc2d79f2745f3906389ebdc7c6c778c23743216746c5f95f53cb102c7c",
+  "plan_sha256": "90034972e69fbf3592ddf08179ff67039d581d3b411ef05c70b6ed8956aafc57",
+  "status": "pending_operator_registration_and_scope_approval",
+  "target_requests": 0,
+  "credential_aliases": [
+    "owner",
+    "peer"
+  ]
+}

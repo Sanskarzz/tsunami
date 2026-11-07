@@ -17,11 +17,12 @@ import (
 )
 
 type appFlags struct {
-	fixed, wrongIdentity, deleted, generic atomic.Bool
-	expiredPeer                            atomic.Bool
-	requests                               atomic.Int32
-	block                                  atomic.Bool
-	started, cancelled                     chan struct{}
+	fixed, wrongIdentity, deleted, generic                atomic.Bool
+	expiredPeer                                           atomic.Bool
+	requests                                              atomic.Int32
+	block                                                 atomic.Bool
+	property, redacted, deniedProperty, ambiguousProperty atomic.Bool
+	started, cancelled                                    chan struct{}
 }
 
 func applicationFixture(t *testing.T) (*Server, *Store, ApplicationConfig, *appFlags) {
@@ -61,6 +62,24 @@ func applicationFixture(t *testing.T) (*Server, *Store, ApplicationConfig, *appF
 			return
 		}
 		if r.URL.Path == "/objects/a" {
+			if who == "second" && flags.property.Load() {
+				if flags.deniedProperty.Load() {
+					w.WriteHeader(403)
+					return
+				}
+				if flags.ambiguousProperty.Load() {
+					fmt.Fprint(w, `{"error":"generic success"}`)
+					return
+				}
+				if flags.redacted.Load() {
+					fmt.Fprint(w, `{"identifier":"a","owner":"first","private":"[redacted]"}`)
+					return
+				}
+				if flags.fixed.Load() {
+					fmt.Fprint(w, `{"identifier":"a","owner":"first"}`)
+					return
+				}
+			}
 			if flags.deleted.Load() && who == "first" {
 				w.WriteHeader(404)
 				return
@@ -93,6 +112,111 @@ func applicationFixture(t *testing.T) (*Server, *Store, ApplicationConfig, *appF
 		t.Fatal(err)
 	}
 	return s, store, c, flags
+}
+
+func TestPropertyAccessProfileUsesVerifiedPrivateBaselinesAndFiltering(t *testing.T) {
+	for _, test := range []struct{ mode, want string }{{"leaked", "confirmed"}, {"filtered", "no_issue_observed"}, {"redacted", "inconclusive"}, {"denied", "inconclusive"}, {"generic", "inconclusive"}, {"expired", "inconclusive"}, {"deleted_after_probe", "inconclusive"}} {
+		t.Run(test.mode, func(t *testing.T) {
+			s, _, c, flags := applicationFixture(t)
+			c.Plan.ID = "property-api"
+			c.Plan.Version = application.PropertyAccessProfile
+			c.Plan.ExpectedAccess = "filtered"
+			c.Plan.DenialStatuses = nil
+			if err := s.RegisterApplication(c); err != nil {
+				t.Fatal(err)
+			}
+			flags.property.Store(true)
+			flags.fixed.Store(test.mode == "filtered")
+			flags.redacted.Store(test.mode == "redacted")
+			flags.deniedProperty.Store(test.mode == "denied")
+			flags.ambiguousProperty.Store(test.mode == "generic")
+			flags.expiredPeer.Store(test.mode == "expired")
+			_, r := applicationEngagement(t, s, c)
+			if r.ProcedureID() != "property-api/property-access/v1" {
+				t.Fatal("wrong procedure selected")
+			}
+			for i, read := range r.Application.Reads() {
+				if i == 5 && test.mode == "deleted_after_probe" {
+					flags.deleted.Store(true)
+				}
+				executeAppReads(t, s, r, []application.Read{read})
+			}
+			result, err := s.Finish(r.ID)
+			if err != nil || result.Verdict != test.want {
+				t.Fatalf("got %+v, %v", result, err)
+			}
+			if result.Validation.BaselinesRequired != 6 || !strings.Contains(r.ProcedureRemediation(), "property") {
+				t.Fatal("property validation/remediation was not selected")
+			}
+		})
+	}
+}
+
+func TestPropertyProfileRejectsUnclearOrUnsupportedPolicies(t *testing.T) {
+	for _, variant := range []string{"allow", "deny", "denial_status", "nested", "missing_object_identity"} {
+		t.Run(variant, func(t *testing.T) {
+			s, _, c, _ := applicationFixture(t)
+			c.Plan.ID, c.Plan.Version, c.Plan.ExpectedAccess, c.Plan.DenialStatuses = "property-policy", application.PropertyAccessProfile, "filtered", nil
+			switch variant {
+			case "allow", "deny":
+				c.Plan.ExpectedAccess = variant
+			case "denial_status":
+				c.Plan.DenialStatuses = []int{403}
+			case "nested":
+				c.Plan.Baselines[0].Hashes = map[string]string{"/nested/private": c.Plan.Probe.Hashes["/private"]}
+				c.Plan.Probe.Hashes = c.Plan.Baselines[0].Hashes
+			case "missing_object_identity":
+				c.Plan.Baselines[0].Equals = map[string]string{"/owner": "first"}
+				c.Plan.Probe.Equals = c.Plan.Baselines[0].Equals
+			}
+			if err := s.RegisterApplication(c); err == nil {
+				t.Fatal("ambiguous property policy accepted")
+			}
+		})
+	}
+}
+
+func TestLaterFilteringCannotEraseCapturedPropertyExposure(t *testing.T) {
+	for _, ordered := range []bool{true, false} {
+		t.Run(fmt.Sprintf("ordered_baselines_%t", ordered), func(t *testing.T) {
+			s, store, c, flags := applicationFixture(t)
+			c.Plan.ID, c.Plan.Version, c.Plan.ExpectedAccess, c.Plan.DenialStatuses = "repeated-property", application.PropertyAccessProfile, "filtered", nil
+			flags.property.Store(true)
+			if err := s.RegisterApplication(c); err != nil {
+				t.Fatal(err)
+			}
+			_, run := applicationEngagement(t, s, c)
+			reads := run.Application.Reads()
+			if ordered {
+				executeAppReads(t, s, run, reads[:4])
+			}
+			executeAppReads(t, s, run, reads[4:5]) // First response exposes the value.
+			snapshot, _ := store.Get(run.ID)
+			exposed := snapshot.Captures[len(snapshot.Captures)-1].ID
+			flags.fixed.Store(true)
+			if !ordered {
+				executeAppReads(t, s, run, reads[:4])
+			}
+			executeAppReads(t, s, run, reads[4:]) // Later response filters it.
+			result, err := s.Finish(run.ID)
+			want := "inconclusive"
+			if ordered {
+				want = "confirmed"
+			}
+			if err != nil || result.Verdict != want {
+				t.Fatalf("earlier leak erased: %+v %v", result, err)
+			}
+			found := false
+			for _, id := range result.EvidenceIDs {
+				if id == exposed {
+					found = true
+				}
+			}
+			if !found {
+				t.Fatal("earlier exposure disappeared from referenced evidence")
+			}
+		})
+	}
 }
 
 func applicationEngagement(t *testing.T, s *Server, c ApplicationConfig) (Engagement, Run) {

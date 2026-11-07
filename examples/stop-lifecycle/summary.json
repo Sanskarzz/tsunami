@@ -1,0 +1,516 @@
+{
+  "checked_at": "2026-11-05T07:21:38.024966+00:00",
+  "context": "kind-tsunami-lab",
+  "external_model_calls": 0,
+  "checks": [
+    {
+      "case": "run",
+      "passed": true,
+      "startup_routes": {
+        "applications": {
+          "state": "ready"
+        },
+        "curl": {
+          "state": "ready"
+        },
+        "model": {
+          "state": "ready"
+        },
+        "private": {
+          "state": "unavailable",
+          "code": "private_configuration_unavailable"
+        },
+        "public": {
+          "state": "ready"
+        },
+        "scheduler": {
+          "state": "ready"
+        }
+      },
+      "control_image_id": "sha256:4637812e21d0bf31c9c7c76031f00704deab31cbb979fa2555ea1f1d4d26a999",
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "6d42224bc151d86a1daf915b48c86021",
+      "run_id": "a8537f946f63709f8b0057da668be538",
+      "target_held": {
+        "requests": 5,
+        "active": 1,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:40.308363934Z",
+        "probe_started_at": "2026-11-05T07:21:40.308363934Z"
+      },
+      "runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:22c61e4b02030e088a7cf556ccae0465faa0033b79ca4fb0905b1506a9d7e179",
+      "held_age_at_stop_ms": 319.8,
+      "stop_requested_at": "2026-11-05T07:21:40.628805+00:00",
+      "api_ack_ms": 6.36,
+      "target_cancelled": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:40.308363934Z",
+        "probe_started_at": "2026-11-05T07:21:40.308363934Z",
+        "probe_cancelled_at": "2026-11-05T07:21:40.634069542Z"
+      },
+      "target_cancel_observed_ms": 10.52,
+      "after_stop": {
+        "run_id": "a8537f946f63709f8b0057da668be538",
+        "permission": "revoked",
+        "revocation_reason": "run_stop",
+        "revoked_at": "2026-11-05T07:21:40.632110462Z",
+        "expires_at": "2026-11-05T07:23:08.318073324Z",
+        "execution": "dispatch_intent",
+        "dispatch_intent_at": "2026-11-05T07:21:38.762140337Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:40.305449441Z",
+        "local_drain_observed_at": "2026-11-05T07:21:40.636056915Z",
+        "cleanup": "pending",
+        "observation_code": "observed"
+      },
+      "runtime_after_stop": {
+        "state": "CONTAINER_EXITED",
+        "exit_proven": true
+      },
+      "runtime_end_observed_ms": 278.92,
+      "final_parent_revocation": "acknowledged",
+      "after_cleanup": {
+        "run_id": "a8537f946f63709f8b0057da668be538",
+        "permission": "revoked",
+        "revocation_reason": "run_stop",
+        "revoked_at": "2026-11-05T07:21:40.632110462Z",
+        "expires_at": "2026-11-05T07:23:08.318073324Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:38.762140337Z",
+        "exit_observed_at": "2026-11-05T07:21:41.270275336Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:40.305449441Z",
+        "local_drain_observed_at": "2026-11-05T07:21:40.636056915Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-05T07:21:40.769151539Z",
+        "api_resources_absent_at": "2026-11-05T07:21:42.763096419Z",
+        "observation_code": "observed"
+      },
+      "target_final": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:40.308363934Z",
+        "probe_started_at": "2026-11-05T07:21:40.308363934Z",
+        "probe_cancelled_at": "2026-11-05T07:21:40.634069542Z"
+      }
+    },
+    {
+      "case": "engagement",
+      "passed": true,
+      "startup_routes": {
+        "applications": {
+          "state": "ready"
+        },
+        "curl": {
+          "state": "ready"
+        },
+        "model": {
+          "state": "ready"
+        },
+        "private": {
+          "state": "unavailable",
+          "code": "private_configuration_unavailable"
+        },
+        "public": {
+          "state": "ready"
+        },
+        "scheduler": {
+          "state": "ready"
+        }
+      },
+      "control_image_id": "sha256:4637812e21d0bf31c9c7c76031f00704deab31cbb979fa2555ea1f1d4d26a999",
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "1f04e3ff53105a7f4160cf82c3a1ad26",
+      "run_id": "d8ba48dbf01ba70363a6bb5b2c58039b",
+      "target_held": {
+        "requests": 5,
+        "active": 1,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:44.696076011Z",
+        "probe_started_at": "2026-11-05T07:21:44.696076011Z"
+      },
+      "runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:22c61e4b02030e088a7cf556ccae0465faa0033b79ca4fb0905b1506a9d7e179",
+      "held_age_at_stop_ms": 298.47,
+      "stop_requested_at": "2026-11-05T07:21:44.994572+00:00",
+      "api_ack_ms": 4.07,
+      "target_cancelled": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:44.696076011Z",
+        "probe_started_at": "2026-11-05T07:21:44.696076011Z",
+        "probe_cancelled_at": "2026-11-05T07:21:44.998185897Z"
+      },
+      "target_cancel_observed_ms": 6.19,
+      "after_stop": {
+        "run_id": "d8ba48dbf01ba70363a6bb5b2c58039b",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:21:44.996442793Z",
+        "expires_at": "2026-11-05T07:23:13.007318845Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:43.268388641Z",
+        "worker_observed_at": "2026-11-05T07:21:44.763196546Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:44.691771069Z",
+        "local_drain_observed_at": "2026-11-05T07:21:44.999815115Z",
+        "cleanup": "pending",
+        "observation_code": "observed"
+      },
+      "runtime_after_stop": {
+        "state": "CONTAINER_EXITED",
+        "exit_proven": true
+      },
+      "runtime_end_observed_ms": 410.44,
+      "final_parent_revocation": "acknowledged",
+      "after_cleanup": {
+        "run_id": "d8ba48dbf01ba70363a6bb5b2c58039b",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:21:44.996442793Z",
+        "expires_at": "2026-11-05T07:23:13.007318845Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:43.268388641Z",
+        "worker_observed_at": "2026-11-05T07:21:44.763196546Z",
+        "exit_observed_at": "2026-11-05T07:21:46.26477081Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:44.691771069Z",
+        "local_drain_observed_at": "2026-11-05T07:21:44.999815115Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-05T07:21:45.268535452Z",
+        "api_resources_absent_at": "2026-11-05T07:21:47.762687097Z",
+        "observation_code": "observed"
+      },
+      "target_final": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:44.696076011Z",
+        "probe_started_at": "2026-11-05T07:21:44.696076011Z",
+        "probe_cancelled_at": "2026-11-05T07:21:44.998185897Z"
+      }
+    },
+    {
+      "case": "api-outage",
+      "passed": true,
+      "startup_routes": {
+        "applications": {
+          "state": "ready"
+        },
+        "curl": {
+          "state": "ready"
+        },
+        "model": {
+          "state": "ready"
+        },
+        "private": {
+          "state": "unavailable",
+          "code": "private_configuration_unavailable"
+        },
+        "public": {
+          "state": "ready"
+        },
+        "scheduler": {
+          "state": "ready"
+        }
+      },
+      "control_image_id": "sha256:4637812e21d0bf31c9c7c76031f00704deab31cbb979fa2555ea1f1d4d26a999",
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "746766db1c88febd1d6b92eef27f8885",
+      "run_id": "7cc4d2bedab4be9f1e2703a630ec89da",
+      "target_held": {
+        "requests": 5,
+        "active": 1,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:49.718552686Z",
+        "probe_started_at": "2026-11-05T07:21:49.718552686Z"
+      },
+      "runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:22c61e4b02030e088a7cf556ccae0465faa0033b79ca4fb0905b1506a9d7e179",
+      "api_fault_observed": {
+        "run_id": "7cc4d2bedab4be9f1e2703a630ec89da",
+        "permission": "active",
+        "expires_at": "2026-11-05T07:23:18.015112896Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:48.266469034Z",
+        "worker_observed_at": "2026-11-05T07:21:49.763348425Z",
+        "activity": "active_locally",
+        "local_operations": 1,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:49.714849833Z",
+        "cleanup": "not_requested",
+        "observation_code": "executor_observation_unavailable"
+      },
+      "held_age_at_stop_ms": 4560.37,
+      "stop_requested_at": "2026-11-05T07:21:54.278958+00:00",
+      "api_ack_ms": 6.18,
+      "target_cancelled": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:49.718552686Z",
+        "probe_started_at": "2026-11-05T07:21:49.718552686Z",
+        "probe_cancelled_at": "2026-11-05T07:21:54.284519057Z"
+      },
+      "target_cancel_observed_ms": 10.48,
+      "after_stop": {
+        "run_id": "7cc4d2bedab4be9f1e2703a630ec89da",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:21:54.281906921Z",
+        "expires_at": "2026-11-05T07:23:18.015112896Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:48.266469034Z",
+        "worker_observed_at": "2026-11-05T07:21:49.763348425Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:49.714849833Z",
+        "local_drain_observed_at": "2026-11-05T07:21:54.286555425Z",
+        "cleanup": "pending",
+        "observation_code": "executor_observation_unavailable"
+      },
+      "runtime_after_stop": {
+        "state": "CONTAINER_EXITED",
+        "exit_proven": true
+      },
+      "runtime_end_observed_ms": 435.44,
+      "final_parent_revocation": "acknowledged",
+      "after_cleanup": {
+        "run_id": "7cc4d2bedab4be9f1e2703a630ec89da",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:21:54.281906921Z",
+        "expires_at": "2026-11-05T07:23:18.015112896Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:48.266469034Z",
+        "worker_observed_at": "2026-11-05T07:21:49.763348425Z",
+        "exit_observed_at": "2026-11-05T07:21:56.76517549Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:21:49.714849833Z",
+        "local_drain_observed_at": "2026-11-05T07:21:54.286555425Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-05T07:21:55.352884901Z",
+        "api_resources_absent_at": "2026-11-05T07:21:58.265502034Z",
+        "observation_code": "observed"
+      },
+      "target_final": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:21:49.718552686Z",
+        "probe_started_at": "2026-11-05T07:21:49.718552686Z",
+        "probe_cancelled_at": "2026-11-05T07:21:54.284519057Z"
+      }
+    },
+    {
+      "case": "restart",
+      "passed": true,
+      "startup_routes": {
+        "applications": {
+          "state": "ready"
+        },
+        "curl": {
+          "state": "ready"
+        },
+        "model": {
+          "state": "ready"
+        },
+        "private": {
+          "state": "unavailable",
+          "code": "private_configuration_unavailable"
+        },
+        "public": {
+          "state": "ready"
+        },
+        "scheduler": {
+          "state": "ready"
+        }
+      },
+      "control_image_id": "sha256:4637812e21d0bf31c9c7c76031f00704deab31cbb979fa2555ea1f1d4d26a999",
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "a97b4f92591870152275d77713a053a4",
+      "run_id": "e82b3a366f07118724a6f119e3a9d4bc",
+      "target_held": {
+        "requests": 5,
+        "active": 1,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:22:00.351104688Z",
+        "probe_started_at": "2026-11-05T07:22:00.351104688Z"
+      },
+      "runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:22c61e4b02030e088a7cf556ccae0465faa0033b79ca4fb0905b1506a9d7e179",
+      "api_fault_observed": {
+        "run_id": "e82b3a366f07118724a6f119e3a9d4bc",
+        "permission": "active",
+        "expires_at": "2026-11-05T07:23:28.54104294Z",
+        "execution": "dispatch_intent",
+        "dispatch_intent_at": "2026-11-05T07:21:58.765568863Z",
+        "activity": "active_locally",
+        "local_operations": 1,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:22:00.347325106Z",
+        "cleanup": "not_requested",
+        "observation_code": "executor_observation_unavailable"
+      },
+      "held_age_at_stop_ms": 4489.48,
+      "stop_requested_at": "2026-11-05T07:22:04.840607+00:00",
+      "api_ack_ms": 4.18,
+      "target_cancelled": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:22:00.351104688Z",
+        "probe_started_at": "2026-11-05T07:22:00.351104688Z",
+        "probe_cancelled_at": "2026-11-05T07:22:04.844305259Z"
+      },
+      "target_cancel_observed_ms": 6.02,
+      "after_stop": {
+        "run_id": "e82b3a366f07118724a6f119e3a9d4bc",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:22:04.842582412Z",
+        "expires_at": "2026-11-05T07:23:28.54104294Z",
+        "execution": "dispatch_intent",
+        "dispatch_intent_at": "2026-11-05T07:21:58.765568863Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:22:00.347325106Z",
+        "local_drain_observed_at": "2026-11-05T07:22:04.845870371Z",
+        "cleanup": "pending",
+        "observation_code": "executor_observation_unavailable"
+      },
+      "runtime_after_stop": {
+        "state": "CONTAINER_EXITED",
+        "exit_proven": true
+      },
+      "runtime_end_observed_ms": 439.09,
+      "after_restart": {
+        "run_id": "e82b3a366f07118724a6f119e3a9d4bc",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:22:04.842582412Z",
+        "expires_at": "2026-11-05T07:23:28.54104294Z",
+        "execution": "dispatch_intent",
+        "dispatch_intent_at": "2026-11-05T07:21:58.765568863Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:22:00.347325106Z",
+        "local_drain_observed_at": "2026-11-05T07:22:04.845870371Z",
+        "cleanup": "pending",
+        "observation_code": "executor_observation_unavailable"
+      },
+      "final_parent_revocation": "acknowledged",
+      "after_cleanup": {
+        "run_id": "e82b3a366f07118724a6f119e3a9d4bc",
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-05T07:22:04.842582412Z",
+        "expires_at": "2026-11-05T07:23:28.54104294Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-05T07:21:58.765568863Z",
+        "exit_observed_at": "2026-11-05T07:22:08.651530005Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-05T07:22:00.347325106Z",
+        "local_drain_observed_at": "2026-11-05T07:22:04.845870371Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-05T07:22:08.661033844Z",
+        "api_resources_absent_at": "2026-11-05T07:22:10.142235134Z",
+        "observation_code": "observed"
+      },
+      "target_final": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-05T07:22:00.351104688Z",
+        "probe_started_at": "2026-11-05T07:22:00.351104688Z",
+        "probe_cancelled_at": "2026-11-05T07:22:04.844305259Z"
+      }
+    }
+  ],
+  "limitations": [
+    "One owned Kind node; no arbitrary node partition, production load or hostile sandbox qualification.",
+    "Core readiness is state/revocation readiness. Route status describes startup configuration, not live provider connectivity.",
+    "API resource absence is not proof of process exit on a partitioned node. CRI observations are separately recorded.",
+    "Times are local observations, not a production 60-second guarantee."
+  ]
+}

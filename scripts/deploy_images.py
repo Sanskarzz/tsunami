@@ -3,6 +3,22 @@ import copy
 import json
 
 
+def manifest_json(raw):
+    """kubectl renders multi-document YAML as consecutive JSON objects."""
+    remaining = raw.strip()
+    decoder = json.JSONDecoder()
+    items = []
+    while remaining:
+        item, offset = decoder.raw_decode(remaining)
+        if not isinstance(item, dict):
+            raise ValueError("expected Kubernetes manifest objects")
+        items.append(item)
+        remaining = remaining[offset:].lstrip()
+    if not items:
+        raise ValueError("no Kubernetes manifests")
+    return items[0] if len(items) == 1 else {"apiVersion": "v1", "kind": "List", "items": items}
+
+
 def image_from_control(control):
     containers = control["spec"]["template"]["spec"]["containers"]
     container = next(c for c in containers if c["name"] == "control")

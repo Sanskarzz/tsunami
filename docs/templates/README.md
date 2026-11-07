@@ -1,5 +1,7 @@
 # Tsunami UI direction
 
+A separate [running local operator UI](../local-ui.md) now connects the existing lab APIs. The 14 templates in this directory remain fictional future-product previews; they have not been turned into a customer portal.
+
 Open [index.html](index.html) in a browser. It links all 14 product screens, and **Start the walkthrough** follows the intended journey. Everything is local HTML/CSS/JavaScript; there is no build step, dependency installation or external asset service.
 
 These are design templates, not an implemented frontend. They make no API calls, start no agents, contact no targets and perform no authentication. All application names, domains, credentials references, counts, elapsed times, findings and reviews are fictional. They are separate from the repository's recorded lab results.

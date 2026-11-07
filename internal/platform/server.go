@@ -11,6 +11,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/http/httptrace"
+	"net/netip"
 	"net/url"
 	"strings"
 	"sync"
@@ -27,7 +28,10 @@ type Scheduler interface {
 }
 
 type Server struct {
-	EnableCurlAdapter bool                                        // trusted startup switch; not a worker capability
+	EnableCurlAdapter bool           // trusted startup switch; not a worker capability
+	SetupKey          []byte         // optional key mounted only in the trusted control plane
+	SetupDenied       []netip.Prefix // trusted infrastructure exclusions, outside customer/agent input
+	setupActive       map[string]context.CancelFunc
 	Applications      map[string]map[string]RegisteredApplication // tenant -> operator-owned application ID
 	Store             *Store
 	Targets           map[string]Target
@@ -43,10 +47,13 @@ type Server struct {
 	modelActive   map[string]bool
 	modelInFlight int
 	modelIngress  chan struct{}
+	processID     string
+	health        map[string]RouteHealth
+	shuttingDown  bool
 }
 
 func NewServer(store *Store, targets map[string]Target, admins map[string]string) *Server {
-	return &Server{Store: store, Targets: targets, AdminTokens: admins, Mode: "scripted Mecatl / synthetic lab only", active: map[string]map[string]context.CancelFunc{}, modelIngress: make(chan struct{}, 2)}
+	return &Server{Store: store, Targets: targets, AdminTokens: admins, Mode: "scripted Mecatl / synthetic lab only", active: map[string]map[string]context.CancelFunc{}, modelIngress: make(chan struct{}, 2), processID: randomID()}
 }
 
 func (s *Server) Snapshot(id string) (Run, error) {
@@ -103,8 +110,7 @@ func decodeLimit(w http.ResponseWriter, r *http.Request, v any, maxBytes int64) 
 }
 
 func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path == "/healthz" {
-		w.WriteHeader(200)
+	if s.serveHealth(w, r) {
 		return
 	}
 	if r.URL.Path == "/v1/applications" {
@@ -121,7 +127,21 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		for _, configured := range s.Applications[tenant] {
 			items = append(items, configured.Plan)
 		}
+		if len(s.SetupKey) == 32 {
+			plans, err := s.Store.onboardedPlans(tenant)
+			if err != nil {
+				problem(w, 503, errors.New("application state unavailable"))
+				return
+			}
+			for _, plan := range plans {
+				items = append(items, plan)
+			}
+		}
 		writeJSON(w, 200, items)
+		return
+	}
+	if r.URL.Path == "/v1/onboarding" || strings.HasPrefix(r.URL.Path, "/v1/onboarding/") {
+		s.serveOnboarding(w, r)
 		return
 	}
 	if r.Method == "POST" && r.URL.Path == "/v1/stop-all" {
@@ -172,6 +192,14 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				RequiredProvider    string `json:"required_provider"`
 			}
 			if !decode(w, r, &in) {
+				return
+			}
+			route := "public"
+			if in.Connectivity == "private" {
+				route = "private"
+			}
+			if err := s.CheckAdmission(route, in.Execution == "live", false); err != nil {
+				problem(w, 503, err)
 				return
 			}
 			if in.Scenario != "vulnerable" && in.Scenario != "fixed" && in.Scenario != "inconclusive" && in.Scenario != "redirect" && in.Scenario != "stop" {
@@ -363,6 +391,15 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		problem(w, 404, ErrNotFound)
 		return
 	}
+	if len(parts) == 4 && parts[3] == "status" && r.Method == "GET" {
+		status, err := s.Status(id)
+		if err != nil {
+			problem(w, 500, errors.New("run status unavailable"))
+		} else {
+			writeJSON(w, 200, status)
+		}
+		return
+	}
 	if len(parts) == 3 && r.Method == "GET" {
 		snap, e := s.Snapshot(id)
 		if e != nil {
@@ -395,6 +432,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) Stop(id string) error {
+	return s.stop(id, "run_stop")
+}
+
+func (s *Server) stop(id, reason string) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	err := s.Store.Update(id, func(r *Run) error {
@@ -404,6 +445,7 @@ func (s *Server) Stop(id string) error {
 		now := time.Now().UTC()
 		r.State = Stopped
 		r.StopAcceptedAt = &now
+		revoke(r, reason, now)
 		r.Events = append(r.Events, Event{now, "stopped", "durable permission revoked before acknowledgement"})
 		return nil
 	})
@@ -420,6 +462,15 @@ func (s *Server) StopGroup(tenant string, global bool) ([]string, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	ids, err := s.Store.StopGroup(tenant, global)
+	if err != nil {
+		return nil, err
+	}
+	setupIDs, err := s.Store.stopSetups(tenant, global)
+	for _, id := range setupIDs {
+		if cancel := s.setupActive[id]; cancel != nil {
+			cancel()
+		}
+	}
 	if err != nil {
 		return nil, err
 	}
@@ -441,6 +492,9 @@ func (s *Server) beginFor(id string, timeout time.Duration) (context.Context, co
 	if err != nil {
 		return nil, nil, "", err
 	}
+	if err := s.admissionLocked(routeFor(r), r.Execution == "live", r.Executor != ""); err != nil {
+		return nil, nil, "", err
+	}
 	if r.State != Running || time.Now().After(r.Deadline) {
 		return nil, nil, "", errors.New("run has no permission to execute")
 	}
@@ -453,6 +507,25 @@ func (s *Server) beginFor(id string, timeout time.Duration) (context.Context, co
 	}
 	ctx, cancel := context.WithDeadline(context.Background(), deadline)
 	op := randomID()
+	err = s.Store.Update(id, func(r *Run) error {
+		if r.State != Running || time.Now().After(r.Deadline) {
+			return errors.New("run permission revoked")
+		}
+		kind := "target"
+		if timeout > 10*time.Second {
+			kind = "model"
+		}
+		l := tracked(r)
+		if len(l.Operations) >= 32 {
+			return errors.New("uncertain operation allowance exhausted")
+		}
+		l.Operations[op] = OperationRecord{Process: s.processID, Kind: kind, StartedAt: time.Now().UTC()}
+		return nil
+	})
+	if err != nil {
+		cancel()
+		return nil, nil, "", err
+	}
 	if s.active[id] == nil {
 		s.active[id] = map[string]context.CancelFunc{}
 	}
@@ -471,6 +544,8 @@ func (s *Server) reserve(id string) error {
 			return errors.New("request budget exceeded")
 		}
 		r.RequestCount++
+		now := time.Now().UTC()
+		tracked(r).LastAdmittedAt = &now
 		return nil
 	})
 }
@@ -481,7 +556,7 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 		return nil, err
 	}
 	stopParent := context.AfterFunc(parent, cancel)
-	defer func() { stopParent(); cancel(); s.mu.Lock(); delete(s.active[id], op); s.mu.Unlock() }()
+	defer func() { stopParent(); cancel(); s.finishOperation(id, op) }()
 	r, err := s.Store.Get(id)
 	if err != nil {
 		return nil, err
@@ -525,16 +600,22 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 			captures = append(captures, cap)
 			return captures, e
 		}
-		if e = s.reserve(id); e != nil {
+		if e = s.reserveTarget(ctx, id); e != nil {
 			return captures, e
 		}
 		req, e := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
 		if e != nil {
 			return captures, e
 		}
+		var responseCredentials map[string]string
 		// Synthetic fixture credentials only; no agent-controlled Authorization or Host.
 		if r.Application != nil {
-			credential := s.Applications[r.Tenant][r.Application.ID].credentials[in.Account]
+			configured, ok := s.application(r.Tenant, r.Application.ID)
+			if !ok {
+				return captures, errors.New("application permission unavailable")
+			}
+			credential := configured.credentials[in.Account]
+			responseCredentials = configured.credentials
 			if credential == "" {
 				return captures, errors.New("application credential unavailable")
 			}
@@ -567,6 +648,10 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 			cap.Error = "response size limit exceeded"
 		} else {
 			cap.Body = string(body)
+		}
+		if reflectsCredential(cap.Body, responseCredentials) {
+			cap.Body = ""
+			cap.Error = "response reflected an assigned credential"
 		}
 		if err := s.capture(id, &cap); err != nil {
 			return captures, err
@@ -715,17 +800,21 @@ func (s *Server) Reconcile(ctx context.Context) {
 			}
 			for _, r := range runs {
 				if !terminal(r.State) && time.Now().After(r.Deadline) {
-					_ = s.Stop(r.ID)
+					_ = s.stop(r.ID, "deadline")
 					continue
 				}
 				if s.Scheduler == nil {
 					continue
 				}
+				s.observeExecution(ctx, r)
 				if terminal(r.State) {
 					if r.DeletionRequestedAt != nil {
 						continue
 					}
-					if err := s.Scheduler.Stop(ctx, r.ID); err != nil {
+					cleanupCtx, done := context.WithTimeout(ctx, 2*time.Second)
+					err := s.Scheduler.Stop(cleanupCtx, r.ID)
+					done()
+					if err != nil {
 						slog.Warn("workload cleanup pending", "run", r.ID)
 					} else {
 						_ = s.Store.Update(r.ID, func(run *Run) error { now := time.Now().UTC(); run.DeletionRequestedAt = &now; return nil })
@@ -734,10 +823,19 @@ func (s *Server) Reconcile(ctx context.Context) {
 				}
 				allowCreate := false
 				if r.State == Pending {
+					if s.CheckAdmission(routeFor(r), r.Execution == "live", r.Executor != "") != nil {
+						continue
+					}
 					s.mu.Lock()
+					if s.admissionLocked(routeFor(r), r.Execution == "live", r.Executor != "") != nil {
+						s.mu.Unlock()
+						continue
+					}
 					err = s.Store.Update(r.ID, func(run *Run) error {
 						if run.State == Pending {
 							run.State = Running
+							now := time.Now().UTC()
+							tracked(run).DispatchIntentAt = &now
 							allowCreate = true
 						}
 						return nil
@@ -756,7 +854,8 @@ func (s *Server) Reconcile(ctx context.Context) {
 				if err != nil {
 					continue
 				}
-				if err = s.Scheduler.Ensure(ctx, latest, token); err != nil {
+				err = s.Scheduler.Ensure(ctx, latest, token)
+				if err != nil {
 					if errors.Is(err, ErrWorkerFailed) {
 						_ = s.Store.Fail(r.ID)
 						continue

@@ -1,0 +1,4 @@
+positive-before: PASS; tsunami-curl-positive-before-r2mv8
+runner: PASS; tsunami-curl-runner-cl9hq
+positive-after: PASS; tsunami-curl-positive-after-q79r9
+PASS selected curl bypass checks; records in artifacts/showcase/run-20261106T090905Z/network

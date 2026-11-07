@@ -1,0 +1,65 @@
+{
+  "version": "http-property-access/v1",
+  "id": "property-stop",
+  "title": "Owner-only note exposed through a shared record",
+  "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+  "approved_addresses": [
+    "10.97.129.133"
+  ],
+  "credential_set_id": "",
+  "synthetic_data_only": true,
+  "owner_pointer": "/owner",
+  "identity": [
+    {
+      "account": "owner",
+      "path": "/cases/stop/me",
+      "equals": {
+        "/name": "owner"
+      }
+    },
+    {
+      "account": "peer",
+      "path": "/cases/stop/me",
+      "equals": {
+        "/name": "peer"
+      }
+    }
+  ],
+  "baselines": [
+    {
+      "account": "owner",
+      "path": "/cases/stop/records/9c4f997b745b8e08aff2d3f7",
+      "equals": {
+        "/id": "9c4f997b745b8e08aff2d3f7",
+        "/owner": "owner"
+      },
+      "sha256": {
+        "/private_note": "92286e76457e126e31c1a985ab9f0d72cbc917e71bd7c3251e27d0316a6f1b7a"
+      }
+    },
+    {
+      "account": "peer",
+      "path": "/cases/stop/records/3f397d751aa5ca32856fe974",
+      "equals": {
+        "/id": "3f397d751aa5ca32856fe974",
+        "/owner": "peer"
+      },
+      "sha256": {
+        "/private_note": "d06a78b31c634310558887215c92a95fe8d1ead9c2f80a09c02a50117af5883a"
+      }
+    }
+  ],
+  "probe": {
+    "account": "peer",
+    "path": "/cases/stop/records/9c4f997b745b8e08aff2d3f7",
+    "equals": {
+      "/id": "9c4f997b745b8e08aff2d3f7",
+      "/owner": "owner"
+    },
+    "sha256": {
+      "/private_note": "92286e76457e126e31c1a985ab9f0d72cbc917e71bd7c3251e27d0316a6f1b7a"
+    }
+  },
+  "expected_access": "filtered",
+  "denial_statuses": []
+}

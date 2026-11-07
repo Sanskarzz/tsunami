@@ -8,6 +8,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -16,6 +17,37 @@ import (
 	"github.com/Sanskarzz/tsunami/internal/platform"
 	"github.com/Sanskarzz/tsunami/internal/toolcontract"
 )
+
+func TestObserveDoesNotTreatMissingResourcesAsProcessExit(t *testing.T) {
+	for _, test := range []struct {
+		name, pods      string
+		missing, exited bool
+	}{
+		{"removed", `{"items":[]}`, true, false},
+		{"exited", `{"items":[{"metadata":{"uid":"owned-pod"},"status":{"containerStatuses":[{"state":{"terminated":{}}}]}}]}`, false, true},
+		{"unreported", `{"items":[{"metadata":{"uid":"owned-pod"}}]}`, false, false},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if strings.Contains(r.URL.Path, "/pods") {
+					_, _ = w.Write([]byte(test.pods))
+				} else {
+					w.WriteHeader(404)
+				}
+			}))
+			defer api.Close()
+			path := filepath.Join(t.TempDir(), "token")
+			if err := os.WriteFile(path, []byte("synthetic-token"), 0600); err != nil {
+				t.Fatal(err)
+			}
+			scheduler := &Scheduler{Client: api.Client(), Host: api.URL, Namespace: "tsunami", tokenPath: path}
+			got, err := scheduler.Observe(context.Background(), platform.Run{ID: "owned"})
+			if err != nil || got.ResourcesAbsent != test.missing || got.Exited != test.exited {
+				t.Fatalf("incorrect execution observation: %+v, %v", got, err)
+			}
+		})
+	}
+}
 
 func TestMissingDispatchedJobIsNotRecreated(t *testing.T) {
 	var posts atomic.Int64
@@ -55,6 +87,14 @@ func TestRejectedCleanupStaysPendingAndIsRetried(t *testing.T) {
 	var allow atomic.Bool
 	var deletes atomic.Int32
 	api := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "GET" {
+			if strings.Contains(r.URL.Path, "pods") {
+				_, _ = w.Write([]byte(`{"items":[]}`))
+			} else {
+				w.WriteHeader(404)
+			}
+			return
+		}
 		if r.Method != "DELETE" {
 			t.Error("unexpected dispatch after Stop")
 		}

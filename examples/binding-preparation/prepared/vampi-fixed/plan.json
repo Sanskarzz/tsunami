@@ -1,0 +1,69 @@
+{
+  "version": "http-object-access/v2",
+  "id": "vampi-fixed",
+  "title": "Cross-user book secret access",
+  "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+  "approved_addresses": [
+    "10.97.254.51"
+  ],
+  "credential_set_id": "",
+  "synthetic_data_only": true,
+  "owner_pointer": "/owner",
+  "identity": [
+    {
+      "account": "owner",
+      "path": "/me",
+      "equals": {
+        "/data/username": "tsunami_owner_2902c60f"
+      }
+    },
+    {
+      "account": "peer",
+      "path": "/me",
+      "equals": {
+        "/data/username": "tsunami_peer_40c31fe6"
+      }
+    }
+  ],
+  "baselines": [
+    {
+      "account": "owner",
+      "path": "/books/v1/tsunami-owner-88faf472274b",
+      "equals": {
+        "/book_title": "tsunami-owner-88faf472274b",
+        "/owner": "tsunami_owner_2902c60f"
+      },
+      "sha256": {
+        "/secret": "b2a5808f24aeae74000d6ffd1d5499b917f459c08e2e481dbb82a7a4f70e51ee"
+      }
+    },
+    {
+      "account": "peer",
+      "path": "/books/v1/tsunami-peer-cf5a8482ce24",
+      "equals": {
+        "/book_title": "tsunami-peer-cf5a8482ce24",
+        "/owner": "tsunami_peer_40c31fe6"
+      },
+      "sha256": {
+        "/secret": "349137afdbde0bc0656abd505f09caf2fb17d9ebfcfd20ed2dc5b801943273ce"
+      }
+    }
+  ],
+  "probe": {
+    "account": "peer",
+    "path": "/books/v1/tsunami-owner-88faf472274b",
+    "equals": {
+      "/book_title": "tsunami-owner-88faf472274b",
+      "/owner": "tsunami_owner_2902c60f"
+    },
+    "sha256": {
+      "/secret": "b2a5808f24aeae74000d6ffd1d5499b917f459c08e2e481dbb82a7a4f70e51ee"
+    }
+  },
+  "expected_access": "deny",
+  "denial_statuses": [
+    401,
+    403,
+    404
+  ]
+}

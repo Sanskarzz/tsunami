@@ -1,14 +1,20 @@
 # Tsunami: product design and user journey
 
-Updated: 2026-11-04.
+Updated: 2026-11-06.
 
 This document describes the intended product and connects it to the current prototype. **Implemented**, **partial** and **planned** describe different levels of readiness. Future screens, endpoints and workflows below are not existing features unless marked implemented.
 
 The implementation status is in [track.md](track.md). Recorded experiments are in [validation-results.md](validation-results.md). This document does not replace those limits or make the project customer-ready.
 
+The [operator CLI](operator-cli.md) now connects the configured-application plan/approval/start/status/Stop/export journey. The [Stop lifecycle follow-up](stop-lifecycle.md) adds separate observations and selected failure tests. The opt-in [local operator UI](local-ui.md) now connects this existing lab journey, with an API explorer and actual evidence. Customer-facing onboarding, username/password/SSO integration and the broader product screens below remain planned.
+
+The new [property-access profile](property-access.md) tests owner-only fields in an allowed shared-record response, with separate leak, filtering and ambiguous rules. It reuses the same bounded GET path and does not add write operations or automatic customer discovery.
+
 ## 1. What the product should do
 
 A customer should be able to register an application, provide approved access, choose a testing profile, approve the boundaries and start an assessment. Tsunami should select applicable built-in tests, run permitted operations, preserve evidence and explain the result.
+
+The onboarding direction is **form first, then questions only when the setup agent needs more information**. After the initial application/access details, the agent checks what is known, asks focused questions about missing API/authentication/scope facts, and proposes applicable tests. The backend validates readiness; the user confirms the exact plan before assessment work starts. This conversation is a setup assistant, not a requirement to write attack prompts. See [the agreed readiness flow and implementation boundaries](onboarding-readiness.md). The first checked-rule version is now connected to the local UI; [its supported scope](application-onboarding.md) excludes a live-model setup planner, general login and automatic frontend discovery.
 
 The customer should not have to type instructions such as “try reading Alice's book as Bob.” That is test logic supplied by Tsunami.
 
@@ -68,7 +74,7 @@ The backend checks syntax and configuration locally. A target connection, login 
 
 Ownership/authorization verification and its operational process still need a product decision. A checkbox or an LLM interpreting “I am authorized” cannot establish authority. Current engagements record an operator authorization reference; they do not verify legal documents automatically.
 
-Today, application registration is a trusted startup file. There is no existing `POST /v1/applications` onboarding endpoint.
+Trusted startup-file registration remains available. The new `POST /v1/onboarding` path saves setup sessions and dynamically registers supported integrations only after validated prerequisites and an explicit prepare action. `POST /v1/applications` is not added. See [the actual contract](application-onboarding.md).
 
 ### Step 3: Connect test accounts and describe access rules — planned guided flow
 
@@ -76,11 +82,11 @@ For authorization testing, the user adds two test accounts, labels their roles a
 
 Credentials should go through the trusted credential service. They must not be pasted into agent prompts, ordinary logs or general report metadata. Show credential status and expiry without revealing stored values.
 
-Today the configured profile supports two broker-held bearer credentials and explicit identity/object assertions. General browser login, cookie sessions, SSO and automatic credential refresh are not implemented.
+Today the configured profile supports two broker-held bearer credentials and explicit identity/object assertions. The onboarding path now accepts protected bearer input and performs bounded own-account preflight. General browser login, cookie sessions, SSO and automatic credential refresh are not implemented.
 
 ### Step 4: Choose a testing profile — planned product selection
 
-The user selects **Web/API authorization testing**, with a clear explanation of allowed actions and prerequisites. Tsunami selects applicable procedures from its built-in catalog.
+The user selects or accepts the recommendation of **Web/API authorization testing**, with a clear explanation of allowed actions and prerequisites. The setup agent selects applicable procedures from the built-in catalog using the form, supplied documents and focused clarification. It asks only for facts still needed; it cannot approve its own scope or turn an unsupported integration into a runnable test. The typed backend readiness check and final user confirmation gate execution.
 
 The initial catalog ideas include object ownership, intentional sharing, administrator boundaries, anonymous access and missing-object controls. Their current implementations are narrow engineering procedures, not complete coverage of those vulnerability classes or a security standard.
 
@@ -109,7 +115,7 @@ An agent may propose tests, but the backend checks eligibility and permission. A
 
 Today engagements pin registered application plans or selected embedded procedure versions. Automatic profile selection and discovery-based plan generation are not implemented.
 
-### Step 6: Start and monitor — core execution implemented; UI planned
+### Step 6: Start and monitor — core execution and operator CLI implemented; UI planned
 
 Starting an assessment returns an ID promptly. Durable state records the work and reserves its allowance. The controller creates the permitted Kubernetes workload; the worker runs the selected task through Mecatl.
 
@@ -153,7 +159,7 @@ The current `http-object-access/v2` profile is more manual: identity/object path
 
 ```mermaid
 flowchart TB
-    User[Customer or operator] --> Clients[Planned UI / CLI / API client]
+    User[Customer or operator] --> Clients[Operator CLI / API client / planned UI]
     Clients --> Control[Trusted control API and durable state]
     Control --> Catalog[Versioned profiles, procedures and plan validation]
     Control --> Controller[Kubernetes workload reconciliation]
@@ -256,6 +262,8 @@ Future specialist coordination should be service-owned: tasks receive narrow per
 
 All operator routes below require tenant operator authentication. Worker routes use a different credential bound to one run. There is no general customer sign-in/UI or natural-language assessment endpoint today.
 
+`tsunami assess` uses these APIs for preconfigured owned applications. Its [guide](operator-cli.md) covers the exact command sequence, read-only watch, uncertain-start recovery and export behavior.
+
 | Step | Existing endpoint | Current behavior |
 |---|---|---|
 | List configured applications | `GET /v1/applications` | Public plans for this tenant; no target credentials |
@@ -265,6 +273,7 @@ All operator routes below require tenant operator authentication. Worker routes 
 | Follow assessment | `GET /v1/engagements/{id}` | Scope, child links and derived progress |
 | List run history | `GET /v1/runs?limit=50&cursor=...` | Tenant-bound metadata page (`items`, optional `next_cursor`); full evidence stays on individual runs |
 | Follow run | `GET /v1/runs/{id}` | State, captures, result and usage where available |
+| Observe without capture bodies | `GET /v1/runs/{id}/status` | Permission, execution/activity/cleanup observations, execution mode and request reservations; used by the CLI |
 | Stop run | `POST /v1/runs/{id}/stop` | Persist revocation and cancel tracked work |
 | Stop engagement | `POST /v1/engagements/{id}/stop` | Revoke active children and prevent new children |
 | Stop tenant | `POST /v1/stop-tenant` | Revoke this authenticated tenant's work and latch its gate |
@@ -300,7 +309,7 @@ Credential onboarding should use protected references and dedicated permissions.
 | Assessment detail | Follow tests and usage, see unavailable/inconclusive work, inspect denials and press Stop |
 | Findings and evidence | Review supporting observations, record a disposition and impact, export and request retest |
 
-For the first UI slice, use preconfigured owned applications while new onboarding/security APIs are built. It should show the real current backend results and clearly label scripted versus model execution. A button must not imply unsupported automatic discovery.
+The first UI slice used preconfigured owned applications. The new checked onboarding path adds supported bearer/JSON registration after bounded validation; broader customer onboarding remains work. It should show the real current backend results and clearly label scripted versus model execution. A button must not imply unsupported automatic discovery.
 
 Use simple status polling first. Keep Stop visible and available during running or failing work. Do not put all progress messages into a chat transcript. Render target/tool content as untrusted text and enforce tenant/evidence permissions on the server. Do not return stored target/provider secrets to the browser or put them in URLs, local storage or logs. Any credential-input form needs a protected flow to the authorized backend; client session handling is a separate identity decision.
 
@@ -312,9 +321,9 @@ The owned VAmPI vulnerable/fixed campaign already demonstrates the configured se
 
 For a coherent next product delivery:
 
-1. Keep the existing supported procedure and make launch/status/stop/report understandable through a small CLI/UI over the APIs.
-2. Add guided prerequisite/plan presentation so users choose an assessment category rather than write test instructions. Initially use owned preconfigured applications; do not claim arbitrary URL onboarding.
-3. Qualify active-request Stop with actual gVisor workers and record separate revocation, cancellation and cleanup observations.
+1. Use the implemented operator CLI to review the configured application's scope, approve, start, observe, Stop and export. A connected UI remains a separate product step.
+2. Improve prerequisite/onboarding support so users supply application facts without writing test instructions. The current preview also accepts plans compiled by checked onboarding. URL-only autonomous assessment and general login/discovery are not implemented.
+3. Extend Stop qualification beyond the recorded gVisor/API-denial/restart cases to broker crashes, uncertain acknowledgements, node partitions and load.
 4. Improve one useful built-in HTTP test/application adapter and reduce manual application-specific assertions with reviewed evidence rules.
 5. Add live application-agent behavior only with synthetic-data controls, bounded permissions and separate evaluation. Retain scripted runs as repeatable infrastructure checks.
 6. Complete customer identity, secret/evidence protection, private connectivity and failure qualification required for a limited pilot before accepting real customer data.

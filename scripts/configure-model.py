@@ -3,7 +3,7 @@
 import argparse
 import base64
 import json
-from deploy_images import image_from_control, with_image
+from deploy_images import image_from_control, with_image, manifest_json
 import re
 from pathlib import Path
 import subprocess
@@ -42,7 +42,7 @@ env = [e for e in existing_env if not e["name"].startswith("TSUNAMI_MODEL_") and
 mounts = [v for v in container.get("volumeMounts", []) if v["name"] != "model-credentials"]
 volumes = [v for v in spec.get("volumes", []) if v["name"] != "model-credentials"]
 if args.provider == "fixture":
-    fixture = json.loads(kubectl("create", "--dry-run=client", "-f", "deploy/model-fixture.yaml", "-o", "json"))
+    fixture = manifest_json(kubectl("create", "--dry-run=client", "-f", "deploy/model-fixture.yaml", "-o", "json"))
     kubectl("apply", "-f", "-", data=json.dumps(with_image(fixture, image_from_control(deployment))))
     kubectl("rollout", "restart", "deployment/tsunami-model-fixture")
     kubectl("rollout", "status", "deployment/tsunami-model-fixture", "--timeout=60s")

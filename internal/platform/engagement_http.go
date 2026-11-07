@@ -49,7 +49,7 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			if in.Application != "" {
-				configured, ok := s.Applications[tenant][in.Application]
+				configured, ok := s.application(tenant, in.Application)
 				if !ok {
 					problem(w, 400, errors.New("configured application unavailable"))
 					return
@@ -175,6 +175,10 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 200, map[string]bool{"recorded": true})
 			return
 		case "runs":
+			if err := s.CheckAdmission(routeFor(Run{Application: engagement.Application, Connectivity: engagement.Connectivity}), false, engagement.Executor != ""); err != nil {
+				problem(w, 503, err)
+				return
+			}
 			var in struct {
 				Assessment          string `json:"assessment"`
 				Execution           string `json:"execution"`
@@ -195,7 +199,7 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 			var current Target
 			var err error
 			if engagement.Application != nil {
-				configured, ok := s.Applications[tenant][engagement.Application.ID]
+				configured, ok := s.application(tenant, engagement.Application.ID)
 				if !ok || configured.Plan.Digest() != engagement.Application.Digest() {
 					problem(w, 409, errors.New("application configuration changed"))
 					return

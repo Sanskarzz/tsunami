@@ -1,0 +1,5 @@
+PASS CLI property-vulnerable: confirmed; export saved; no automatic review
+PASS CLI property-filtered: no_issue_observed; export saved; no automatic review
+PASS CLI property-ambiguous: inconclusive; export saved; no automatic review
+PASS CLI property-stop: stopped; export saved; no automatic review
+PASS compiled CLI journey; records in artifacts/showcase/run-20261106T090905Z/property

@@ -1,0 +1,4 @@
+PASS CLI vampi-vulnerable: confirmed; export saved; no automatic review
+PASS CLI vampi-fixed: no_issue_observed; export saved; no automatic review
+PASS CLI stop-lab-run: stopped; export saved; no automatic review
+PASS compiled CLI journey; records in artifacts/showcase/run-20261106T090905Z/object

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tsunami · Local assessment workspace</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/ui/styles.css">
+  <script src="/ui/app.js" type="module"></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="/ui/"><span class="brand-mark">≈</span> tsunami<span class="local-label">LOCAL</span></a>
+    <p class="nav-label">ASSESSMENT WORKSPACE</p>
+    <nav aria-label="Assessment steps">
+      <button data-page="setup" class="nav-item"><span>＋</span> Add application</button>
+      <button data-page="applications" class="nav-item selected"><span>01</span> Applications</button>
+      <button data-page="plan" class="nav-item"><span>02</span> Scope &amp; approval</button>
+      <button data-page="run" class="nav-item"><span>03</span> Run &amp; Stop</button>
+      <button data-page="evidence" class="nav-item"><span>04</span> Evidence &amp; findings</button>
+    </nav>
+    <div class="sidebar-note"><span class="tiny-tag">EXECUTION BOUNDARY</span><p>Worker → broker → target</p><small>The worker requests an action. The service owns permission, credentials and evidence.</small></div>
+    <div class="sidebar-bottom">Owned synthetic HTTP lab<br><span>Scripted Mecatl · Kubernetes Jobs</span></div>
+  </aside>
+  <div class="workspace">
+    <header class="topbar"><span>Local lab <span class="slash">/</span> Operator workspace</span><div class="connection"><span id="connection-state" class="badge">Disconnected</span><button id="disconnect" class="button subtle" disabled>Disconnect</button></div></header>
+    <main>
+      <div class="notice">Local HTTP lab · form-first setup and checked questions · bearer/JSON integrations with synthetic data. Password/SSO login and autonomous discovery are not supported.</div>
+      <section id="connect-panel" class="card connection-card">
+        <div><p class="eyebrow">CONNECT TO YOUR LOCAL CONTROL API</p><h1>Make the testing boundary visible.</h1><p>Use the tenant operator token from your private local file. It stays in page memory; this is not an application user's password.</p></div>
+        <form id="connect-form"><label for="operator-token">Operator token</label><div class="input-row"><input id="operator-token" type="password" autocomplete="off" spellcheck="false" required placeholder="Paste locally; never share on screen"><button class="button primary" id="connect">Connect</button></div><small>Same-origin API only. Nothing is saved to browser storage. Disconnecting does not Stop work.</small></form>
+      </section>
+      <div id="message" class="message" role="status" aria-live="polite" hidden></div>
+      <div class="main-grid">
+        <div class="journey">
+          <section data-panel="setup" hidden>
+            <div class="page-heading"><div><p class="eyebrow">APPLICATION ONBOARDING</p><h1>Start with what you know.</h1><p>The setup assistant asks for missing prerequisites. Saving details starts no tests.</p></div><button id="new-setup" class="button" disabled>New setup</button></div>
+            <form id="setup-form" class="card section-card">
+              <h2>Application details</h2><p class="hint">Backend details may be unknown. Use disposable test identities and records. Passwords/tokens do not belong in names, URLs, documentation or the conversation.</p>
+              <div class="field-grid"><div><label for="setup-name">Application name</label><input id="setup-name" maxlength="120" required placeholder="My development application"></div><div><label for="setup-environment">Environment</label><input id="setup-environment" maxlength="40" value="dev" required></div></div>
+              <label for="setup-frontend">Frontend URL</label><input id="setup-frontend" type="url" required placeholder="https://frontend.example.test">
+              <label for="setup-reference">Testing authorization reference</label><input id="setup-reference" maxlength="256" required placeholder="Reference to your agreed dev testing scope">
+              <label for="setup-source">Use an existing reviewed lab integration (optional)</label><select id="setup-source"><option value="">New integration · ask for missing facts</option></select>
+              <details><summary>Additional details, if already known</summary>
+                <label for="setup-api">Backend API origin</label><input id="setup-api" type="url" placeholder="https://api.example.test">
+                <label for="setup-auth">Authentication</label><select id="setup-auth"><option value="">Not known yet</option><option value="bearer">Two bearer test tokens</option><option value="password">Username/password · adapter required</option><option value="sso">SSO/MFA · adapter required</option></select>
+                <label for="setup-identity">GET current-user path</label><input id="setup-identity" placeholder="/me">
+                <div class="field-grid"><div><label for="setup-owner">Account A's own-resource GET path</label><input id="setup-owner" placeholder="/records/disposable-record-a"></div><div><label for="setup-peer">Account B's own-resource GET path</label><input id="setup-peer" placeholder="/records/disposable-record-b"></div></div>
+                <label for="setup-rule">Intended access when B reads A's record</label><select id="setup-rule"><option value="">Ask me when needed</option><option value="deny">Access must be denied</option><option value="allow">Record and proof are intentionally shared</option><option value="filtered">Public record shared; private fields omitted</option></select>
+                <label for="setup-fields">Private synthetic proof field(s)</label><input id="setup-fields" placeholder="secret or /private_note · field names only">
+              </details>
+              <label class="check"><input id="setup-synthetic" type="checkbox"> These accounts/records contain only disposable synthetic test data.</label>
+              <button id="save-setup" class="button primary" disabled>Save details &amp; review prerequisites</button><button id="cancel-edit-setup" type="button" class="button subtle" hidden>Cancel edit</button>
+            </form>
+            <div id="setup-current" hidden>
+              <div class="card section-card"><div class="section-heading"><h2 id="setup-title">Application setup</h2><span id="setup-state" class="badge"></span></div><dl id="setup-facts" class="details"></dl><div class="actions"><button id="refresh-setup" class="button" disabled>Refresh setup</button><button id="edit-setup" class="button" disabled>Edit details</button><button id="update-setup-access" class="button" disabled>Update protected access</button><button id="stop-setup" class="button danger" disabled>Stop setup / assessment</button></div><p class="hint">Setup assistant: checked workflow, no live model calls. The backend validates prerequisites and permissions. The API explorer omits all setup request bodies and protected values.</p></div>
+              <div class="card section-card"><h2>Setup conversation</h2><div id="setup-messages" class="setup-messages"></div><div id="setup-question"></div></div>
+              <div id="setup-validation" class="card section-card" hidden><h2>Review the bounded access check</h2><p class="hint">Resolve/connection validation is separate from a security test. This grant permits exactly the listed four GETs, with the corresponding bearer identity. It sends no cross-user probe, follows no redirects and makes no model calls. Maximum 15 seconds, four requests per attempt, three attempts per setup. Each request is spaced by at least one second.</p><pre id="setup-preflight" class="code"></pre><label class="check"><input id="setup-preflight-approved" type="checkbox"> I approve these API destinations, identities and four reads for prerequisite validation.</label><button id="validate-setup" class="button primary" disabled>Validate four legitimate reads</button></div>
+              <div id="setup-ready" class="card section-card" hidden><h2>Ready for assessment review</h2><p>Four baseline reads passed and a supported plan was compiled. No cross-user security probe has run. Sessions will be rechecked during assessment.</p><button id="prepare-setup" class="button primary" disabled>Open the assessment scope for approval →</button></div>
+            </div>
+            <div class="card section-card"><h2>Saved application setups</h2><p class="hint">Recover questions and IDs after a refresh or lost response. Nothing is replayed automatically.</p><div id="setup-history">Connect to load saved setups.</div></div>
+          </section>
+          <section data-panel="applications">
+            <div class="page-heading"><div><p class="eyebrow">01 / APPLICATIONS</p><h1>Choose an approved application.</h1><p>Start with a registered target and known test identities.</p></div><button id="reload" class="button" disabled>Refresh lists</button></div>
+            <div id="application-list" class="app-grid"><div class="empty card">Connect to load real application plans. No sample results are shown here.</div></div>
+            <div class="card section-card"><div class="section-heading"><h2>Saved assessments</h2><span class="muted">Recover IDs before retrying uncertain work</span></div><div id="engagement-list" class="history-list">Not connected.</div></div>
+          </section>
+          <section data-panel="plan" hidden>
+            <div class="page-heading"><div><p class="eyebrow">02 / SCOPE &amp; APPROVAL</p><h1>Review before running.</h1><p>A draft makes no target requests. Approval and execution are separate.</p></div></div>
+            <div id="selected-application" class="card section-card empty">Choose a configured application first.</div>
+            <form id="draft-form" class="card section-card" hidden>
+              <div class="field-grid"><div><label for="assessment-name">Assessment name</label><input id="assessment-name" maxlength="120" value="Web/API authorization assessment" required></div><div><label for="authorization-ref">Authorization reference</label><input id="authorization-ref" maxlength="240" placeholder="Your permission reference, e.g. owned-lab/demo" required></div></div>
+              <label for="executor">Reviewed executor</label><select id="executor"><option value="curl-http/v1">Fixed curl adapter through the broker</option><option value="">Native broker client</option></select>
+              <p class="hint">No target password is collected. Trusted registration supplies the two bearer identities and exact access rule. A reference records your authorization context; the software does not verify ownership.</p>
+              <button id="create-draft" class="button primary" disabled>Create draft · no target traffic</button>
+            </form>
+            <div id="plan-card" class="card section-card" hidden>
+              <div class="section-heading"><h2>Saved assessment scope</h2><span id="engagement-state" class="badge"></span></div>
+              <dl id="scope-details" class="details"></dl>
+              <h3>Planned read sequence</h3><ol id="read-sequence" class="read-sequence"></ol>
+              <details><summary>Full saved scope and prerequisite assertions</summary><pre id="scope-json" class="code" tabindex="0"></pre></details>
+              <p class="hint">The test logic comes from the built-in profile. The registered application supplies identities, paths and the expected rule. Actual evidence is collected only after Start.</p>
+              <form id="approval-form"><label for="reviewed-digest">Paste the exact scope digest you reviewed</label><input id="reviewed-digest" class="mono" autocomplete="off" spellcheck="false" placeholder="64-character digest" required><label class="check"><input id="scope-reviewed" type="checkbox"> I reviewed this scope and have permission for these actions.</label><button id="approve" class="button primary" disabled>Approve this draft</button></form>
+              <button id="go-run" class="button" disabled>Continue to run →</button>
+            </div>
+          </section>
+          <section data-panel="run" hidden>
+            <div class="page-heading"><div><p class="eyebrow">03 / EXECUTION</p><h1>Observe work. Revoke permission.</h1><p>Observation, authorization and workload cleanup are different facts.</p></div></div>
+            <div class="card section-card"><dl id="run-context" class="details"><dt>Assessment</dt><dd>No assessment loaded.</dd></dl><div class="actions"><button id="start" class="button primary" disabled>Start one scripted run</button><button id="stop" class="button danger" disabled>Stop assessment</button><button id="refresh-run" class="button" disabled>Refresh status</button><button id="pause" class="button subtle" disabled>Pause observation</button></div><p id="run-help" class="hint">A Kubernetes Job executes the approved procedure. Closing this page does not Stop it. Start is never automatically retried.</p></div>
+            <div id="run-picker-wrap" class="run-picker" hidden><label for="run-picker">Stored child runs</label><select id="run-picker"></select></div>
+            <div class="status-grid" id="status-grid"><div class="card status-card"><span>Permission</span><strong id="status-permission">Not observed</strong></div><div class="card status-card"><span>Execution</span><strong id="status-execution">Not observed</strong></div><div class="card status-card"><span>Broker activity</span><strong id="status-activity">Not observed</strong></div><div class="card status-card"><span>Kubernetes cleanup</span><strong id="status-cleanup">Not observed</strong></div></div>
+            <p id="observed-at" class="hint">No status response received. Values shown later are observations, not continuous process proof.</p>
+            <div class="card section-card"><div class="section-heading"><h2>Assessment result</h2><span id="verdict" class="badge">Not assessed</span></div><p id="result-reason">The trusted validator decides from broker-captured evidence. A model's statement cannot confirm a finding.</p><p id="validation-counts" class="hint"></p><button id="go-evidence" class="button" disabled>Inspect evidence &amp; candidates →</button></div>
+            <div class="card section-card"><h2>Recorded assessment events</h2><div id="events" class="event-list">Load an assessment to read its stored events.</div></div>
+          </section>
+          <section data-panel="evidence" hidden>
+            <div class="page-heading"><div><p class="eyebrow">04 / EVIDENCE &amp; FINDINGS</p><h1>Show what supports the result.</h1><p>A supported candidate still needs impact and severity review.</p></div></div>
+            <div class="card section-card"><div class="actions"><button id="load-evidence" class="button primary" disabled>Load evidence snapshot</button><button id="download-bundle" class="button" disabled>Download bundle JSON</button><button id="download-report" class="button" disabled>Download draft Markdown</button></div><p class="hint">Explicitly loading evidence brings raw synthetic response bodies into this page. No automatic human review or severity rating is created. Downloads remain on your workstation.</p><p id="evidence-summary" class="muted">No evidence snapshot loaded.</p></div>
+            <div id="candidates" class="candidate-list"></div>
+            <div class="card section-card"><h2>Broker captures</h2><p class="hint">A blocked intent is recorded without being sent to the target. A capture is not automatically a finding.</p><div id="captures" class="capture-list">Load a snapshot to inspect captures.</div><pre id="capture-detail" class="code" tabindex="0" hidden></pre></div>
+            <details class="card section-card"><summary>Draft report · plain text</summary><pre id="draft-report" class="report-text">No report loaded.</pre></details>
+          </section>
+        </div>
+        <aside class="inspector">
+          <div class="card section-card"><p class="eyebrow">API EXPLORER</p><h2>What this screen calls</h2><p id="step-explanation" class="hint">Connect to list registered applications and saved assessments. These are operator calls, not target requests.</p><div id="api-log" class="api-log"><div class="empty">API calls will appear here.<br>Authorization headers are omitted.</div></div><details><summary>Selected request / response</summary><pre id="api-detail" class="code" tabindex="0">Select a recorded call.</pre></details></div>
+          <div class="card section-card boundary"><p class="eyebrow">WHO DECIDES?</p><p><strong>Operator</strong> approves the saved scope.</p><p><strong>Controller</strong> reconciles run state into Jobs.</p><p><strong>Mecatl</strong> runs the scripted tool sequence.</p><p><strong>Broker</strong> enforces permission, target scope and limits.</p><p><strong>Validator</strong> evaluates captured responses.</p><small>This panel explains the architecture. It is not a live trace of internal controller or tool calls.</small></div>
+        </aside>
+      </div>
+      <footer>Local operator interface · no customer login, general onboarding, or production Stop/scale guarantee. <span id="route-note"></span></footer>
+    </main>
+  </div>
+</body>
+</html>

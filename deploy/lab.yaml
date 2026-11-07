@@ -29,6 +29,9 @@ rules:
   - apiGroups: [""]
     resources: [secrets]
     verbs: [create, delete]
+  - apiGroups: [""]
+    resources: [pods]
+    verbs: [get, list]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -251,7 +254,11 @@ spec:
             readOnlyRootFilesystem: true
             capabilities: {drop: [ALL]}
           readinessProbe:
-            httpGet: {path: /healthz, port: 8080}
+            httpGet: {path: /readyz, port: 8080}
+          livenessProbe:
+            httpGet: {path: /livez, port: 8080}
+            initialDelaySeconds: 5
+            periodSeconds: 5
           resources:
             requests: {cpu: 50m, memory: 64Mi}
             limits: {cpu: 500m, memory: 256Mi}

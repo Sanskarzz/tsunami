@@ -4,9 +4,21 @@ A small API security-testing lab using the Mecatl agent engine and Kubernetes Jo
 
 The original workflow checks whether one test user can read another user's private document. A versioned catalog now adds opaque object IDs, approved sharing, administrator access, unauthenticated reads, and a missing-object control. The broker captures evidence, enforces scope, and cancels active requests when stopped.
 
-**Current status: a working synthetic lab with five authorization procedures. Scripted execution is the default. Offline checks pass; live free-model evaluations retain both successful and incomplete results. This is not an autonomous pentest product or a qualified sandbox for hostile agents.**
+**Current status: a working synthetic lab with five embedded authorization procedures and configured object/property read profiles. Scripted execution is the default. Offline checks pass; live free-model evaluations retain both successful and incomplete results. This is not an autonomous pentest product or a qualified sandbox for hostile agents.**
 
 The latest [review follow-up](docs/review-follow-up.md) fixes five implementation defects and sets the next priority: complete a useful HTTP assessment journey and qualify Stop under failures before broader executors. [Implementation tracker](docs/track.md), [product design](docs/design.md), and [local UI previews](docs/templates/index.html) distinguish working lab behavior from planned features.
+
+The [operator CLI](docs/operator-cli.md) now connects configured application selection, draft scope review, explicit approval, one scripted attempt, monitoring, Stop and private evidence export. The [recorded CLI campaign](examples/operator-journey/README.md) covers the owned vulnerable/fixed API pair and Stop after a watch timeout. A URL-only assessment is not implemented. The opt-in [local UI](docs/local-ui.md) now connects the configured-application journey to these same APIs, with an API explorer; it is not a customer portal.
+
+The new [property-access profile](docs/property-access.md) checks whether an allowed shared-record response exposes owner-only fields. Its [owned campaign](examples/property-access/README.md) records a known-value leak, correct filtering, an inconclusive redacted value and active-request Stop using the same fixed curl/broker boundary. It adds no state-changing operations or mass-assignment testing.
+
+[Binding preparation](docs/binding-preparation.md) now derives the registration plan from supplied synthetic baseline facts. It performs no network requests and grants no execution permission. Fresh [runtime records](examples/binding-preparation/README.md) link six prepared plans to their approved runs. The [CLI showcase package](docs/showcase.md) now has a fresh seven-case rehearsal, network controls and a short presenter guide; the two scoped showcase milestones are complete. This is a controlled demonstration, not customer readiness.
+
+For the existing dedicated sandbox, start with `make showcase-check`. If owned fixture credentials need refreshing, `make showcase-prepare` explicitly resets disposable lab data while preserving history. Then `make showcase` runs the core API/Stop cases, or `make showcase-extended` includes property-access controls. These use scripted Mecatl and no external models. See [the retained results](examples/showcase/README.md) and [setup/recovery instructions](docs/showcase.md).
+
+[Application onboarding](docs/application-onboarding.md) now provides a form, durable checked questions, protected bearer access, explicitly approved four-read validation and atomic registration of a supported application plus an unapproved assessment draft. The setup advisor is rule-checked, not a live LLM. Unknown backend URLs are asked for; password/SSO methods are marked unavailable. Final assessment approval/Start are still required. New integrations support only the documented synthetic bearer/JSON contract, not arbitrary website assessment.
+
+For a running frontend, use `make ui-deploy`, then a loopback control-service port-forward and open `http://127.0.0.1:8080/ui/`. The [UI guide](docs/local-ui.md) covers private operator connection and boundaries; the [API-by-API walkthrough](docs/demo-walkthrough.md) explains how to present it. Application password login and AccuKnox integration are not implemented.
 
 Run `make verify` for fresh Go race tests, vet, Python tests and checked-in export integrity. Python validator dependencies are in `scripts/requirements-test.txt`; full setup is in the follow-up. `make verify-toolkit TOOLKIT_PATH=../vapt-toolkit` additionally validates the actual separately obtained local schemas. These commands make no external model or customer-target calls.
 
@@ -55,6 +67,19 @@ flowchart LR
     M -->|conversation and run credential| G[Trusted model gateway]
     C -->|run permission and model policy| G
     G -->|opt-in; gateway adds provider credential| P[Responses model or offline API fixture]
+```
+
+```mermaid
+flowchart LR
+    O[You: operator CLI] --> C[Control API and durable state]
+    C --> K[Kubernetes reconciliation]
+    K --> W[Mecatl worker in gVisor]
+    W -->|Request intent and run token| B[Trusted HTTP broker]
+    C -->|Permission and Stop state| B
+    B --> A[Approved application]
+    B --> E[Captured HTTP evidence]
+    E --> V[Trusted result validator]
+    V --> R[Finding candidate and report]
 ```
 
 The control plane, HTTP broker, model gateway, and validator are modules in one Go process for now. Workers, fixtures, and the optional private connector run in separate pods. The private lab has a customer namespace, exact target approvals, single-use request grants, and a local emergency cutoff. Broker-to-connector traffic now uses mutual TLS with separate broker/operator identities. It does not connect to a real customer's network.
@@ -172,6 +197,8 @@ The control plane persists a disabled run/tenant/global gate before acknowledgin
 The broker checks durable state for each outbound request and reserves quota before forwarding. Target requests have a ten-second timeout; model calls have a twenty-second timeout. Both are cancelled on durable stop. These are **request timeouts**, not renewable distributed authorization leases. The optional private connector additionally enforces signed single-request expiries and a persisted emergency cutoff independent of the broker process. An external network cutoff and production partition testing remain future work. Cancelling a model request does not prove the provider stopped computing or billing.
 
 The demo measures operator stop-call to broker drain, then checks that request count does not grow. The target also observes cancellation of the active request. These local observations are not a validated 60-second guarantee under arbitrary partitions. Requests already accepted by an application cannot be undone.
+
+The [Stop lifecycle milestone](docs/stop-lifecycle.md) adds operator status separating permission, execution, local activity and cleanup. A real gVisor/curl campaign covers run/engagement Stop, denied controller API access and restart after committed revocation. [Recorded results](examples/stop-lifecycle/README.md) keep target cancellation and CRI worker exit separate. Optional configuration failures disable their execution route while leaving state/revocation readiness available.
 
 ## Private connectivity lab
 

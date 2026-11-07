@@ -129,7 +129,7 @@ engagement-verify:
 engagement-private-verify:
 	python3 scripts/verify-engagement.py --context $(CONTEXT) --private
 
-application-setup:
+application-setup: build
 	python3 scripts/setup-vampi.py --context $(CONTEXT)
 
 application-verify:
@@ -149,3 +149,39 @@ tools-verify:
 
 tools-network-check:
 	CONTEXT=$(CONTEXT) python3 scripts/tool-network-check.py
+
+.PHONY: stop-lab-setup stop-lab-verify
+stop-lab-setup:
+	python3 scripts/setup-stop-lab.py --context $(CONTEXT)
+
+stop-lab-verify:
+	python3 scripts/verify-stop-lab.py --context $(CONTEXT)
+
+.PHONY: journey-verify
+journey-verify: build
+	python3 scripts/verify-journey.py --context $(CONTEXT)
+
+.PHONY: property-lab-setup property-verify
+property-lab-setup: build
+	python3 scripts/setup-property-lab.py --context $(CONTEXT)
+
+property-verify: build
+	python3 scripts/verify-journey.py --context $(CONTEXT) --profile property
+
+# Explicitly scoped to the already provisioned dedicated owned Kind lab.
+.PHONY: showcase-check showcase-prepare showcase showcase-extended
+showcase-check:
+	python3 scripts/showcase.py check
+
+showcase-prepare:
+	python3 scripts/showcase.py prepare --include-property
+
+showcase:
+	python3 scripts/showcase.py run
+
+showcase-extended:
+	python3 scripts/showcase.py run --include-property
+
+.PHONY: ui-deploy
+ui-deploy:
+	python3 scripts/configure-ui.py

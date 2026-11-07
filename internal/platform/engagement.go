@@ -152,6 +152,15 @@ func putEngagement(tx *bolt.Tx, e Engagement) error {
 }
 
 func (s *Store) CreateEngagement(tenant, target string, in EngagementInput, plans ...application.Plan) (Engagement, error) {
+	e, err := buildEngagement(tenant, target, in, plans...)
+	if err != nil {
+		return Engagement{}, err
+	}
+	err = s.db.Update(func(tx *bolt.Tx) error { return putEngagementLimited(tx, e) })
+	return e, err
+}
+
+func buildEngagement(tenant, target string, in EngagementInput, plans ...application.Plan) (Engagement, error) {
 	var e Engagement
 	configured := len(plans) == 1
 	if in.Executor != "" && (in.Executor != toolcontract.CurlHTTP || !configured) {
@@ -185,26 +194,27 @@ func (s *Store) CreateEngagement(tenant, target string, in EngagementInput, plan
 	}
 	sort.Slice(e.Items, func(i, j int) bool { return e.Items[i].Procedure < e.Items[j].Procedure })
 	e.ScopeDigest = e.digest()
-	err := s.db.Update(func(tx *bolt.Tx) error {
-		count := 0
-		if err := tx.Bucket([]byte("engagements")).ForEach(func(_, v []byte) error {
-			var other Engagement
-			if json.Unmarshal(v, &other) != nil {
-				return errors.New("invalid engagement state")
-			}
-			if other.Tenant == tenant {
-				count++
-			}
-			return nil
-		}); err != nil {
-			return err
+	return e, nil
+}
+
+func putEngagementLimited(tx *bolt.Tx, e Engagement) error {
+	count := 0
+	if err := tx.Bucket([]byte("engagements")).ForEach(func(_, v []byte) error {
+		var other Engagement
+		if json.Unmarshal(v, &other) != nil {
+			return errors.New("invalid engagement state")
 		}
-		if count >= 100 {
-			return errors.New("lab tenant engagement limit reached")
+		if other.Tenant == e.Tenant {
+			count++
 		}
-		return putEngagement(tx, e)
-	})
-	return e, err
+		return nil
+	}); err != nil {
+		return err
+	}
+	if count >= 100 {
+		return errors.New("lab tenant engagement limit reached")
+	}
+	return putEngagement(tx, e)
 }
 
 func (s *Store) ApproveEngagement(tenant, id string) error {
@@ -354,6 +364,7 @@ func (s *Store) StopEngagement(tenant, id string) ([]string, error) {
 			}
 			r.State = Stopped
 			r.StopAcceptedAt = &now
+			revoke(&r, "engagement_stop", now)
 			r.Events = append(r.Events, Event{now, "stopped", "engagement permission revoked"})
 			data, err := json.Marshal(r)
 			if err != nil {

@@ -1,0 +1,4 @@
+PASS browser vampi-vulnerable: confirmed; one explicit run; unreviewed evidence exported.
+PASS browser vampi-fixed: no_issue_observed; one explicit run; unreviewed evidence exported.
+PASS browser stop-lab-run: stopped; one explicit run; unreviewed evidence exported.
+PASS browser qualification. Records: artifacts/ui/browser-20261106T114341951Z

@@ -3,9 +3,9 @@
 import argparse
 import base64
 from contextlib import contextmanager
-import hashlib
 import json
-from deploy_images import deployed_image, with_image
+from deploy_images import deployed_image, with_image, manifest_json
+from application_registry import merge_applications, write_private_json, binding_compiler, prepare_plan
 import os
 from pathlib import Path
 import secrets
@@ -31,6 +31,7 @@ def main():
     args = parser.parse_args()
     if args.context != "kind-tsunami-lab":
         parser.error("use the dedicated kind-tsunami-lab context")
+    binding_compiler()
     base = ["kubectl", "--context", args.context]
 
     def kube(*argv, data=None):
@@ -57,7 +58,7 @@ def main():
         subprocess.run(["docker", "build", "-f", "deploy/applications/VAmPI.Dockerfile", "-t", IMAGE, str(source)], stdout=log, stderr=subprocess.STDOUT, check=True)
     subprocess.run(["kind", "load", "docker-image", IMAGE, "--name", "tsunami-lab"], stdout=subprocess.DEVNULL, check=True)
     apply({"apiVersion": "v1", "kind": "Namespace", "metadata": {"name": NAMESPACE, "labels": {"pod-security.kubernetes.io/enforce": "restricted"}}})
-    tripwire = json.loads(kube("create", "--dry-run=client", "-f", "deploy/applications/network-tripwire.yaml", "-o", "json"))
+    tripwire = manifest_json(kube("create", "--dry-run=client", "-f", "deploy/applications/network-tripwire.yaml", "-o", "json"))
     apply(with_image(tripwire, deployed_image(kube)))
     for name, vulnerable in [("vampi-vulnerable", "1"), ("vampi-fixed", "0")]:
         labels = {"app": name, "tsunami-app-lab": "vampi"}
@@ -88,17 +89,19 @@ def main():
         opener = urllib.request.build_opener(urllib.request.ProxyHandler({}), NoRedirect())
         url = f"http://127.0.0.1:{port}"
 
-        def call(path, body=None, token=None):
+        def call(path, body=None, token=None, capture=False):
             data = None if body is None else json.dumps(body).encode()
             headers = {"Content-Type": "application/json"}
             if token:
                 headers["Authorization"] = "Bearer " + token
             request = urllib.request.Request(url + path, data=data, headers=headers)
             with opener.open(request, timeout=5) as response:
+                status = response.status
                 raw = response.read((64 << 10) + 1)
             if len(raw) > 64 << 10:
                 raise RuntimeError("setup response exceeds limit")
-            return json.loads(raw)
+            parsed = json.loads(raw)
+            return {"status": status, "body": parsed} if capture else parsed
 
         try:
             for _ in range(100):
@@ -123,8 +126,7 @@ def main():
     configurations = []
     for name in ["vampi-vulnerable", "vampi-fixed"]:
         credentials = {}
-        identities = []
-        baselines = []
+        observations = {}
         with forward(name) as call:
             call("/createdb")  # Only the dedicated, disposable lab database.
             for alias in ["owner", "peer"]:
@@ -138,17 +140,15 @@ def main():
                     raise RuntimeError("synthetic account login failed")
                 call("/books/v1", {"book_title": title, "secret": proof}, token)
                 credentials[alias] = token
-                identities.append({"account": alias, "path": "/me", "equals": {"/data/username": username}})
-                baselines.append({"account": alias, "path": "/books/v1/" + title, "equals": {"/book_title": title, "/owner": username}, "sha256": {"/secret": hashlib.sha256(proof.encode()).hexdigest()}})
+                observations[alias] = {"identity": call("/me", token=token, capture=True), "object": call("/books/v1/" + title, token=token, capture=True)}
         ip = kube("-n", NAMESPACE, "get", "service", name, "-o", "jsonpath={.spec.clusterIP}").strip()
-        probe = dict(baselines[0], account="peer")
-        plan = {"version": "http-object-access/v2", "id": name, "title": "Cross-user book secret access", "origin": f"http://{name}.{NAMESPACE}.svc.cluster.local:5000",
-                "approved_addresses": [ip], "synthetic_data_only": True, "owner_pointer": "/owner", "identity": identities, "baselines": baselines,
-                "probe": probe, "expected_access": "deny", "denial_statuses": [401, 403, 404]}
+        plan = prepare_plan({"version": "tsunami.application-binding/v1", "profile": "http-object-access/v2", "id": name, "title": "Cross-user book secret access", "origin": f"http://{name}.{NAMESPACE}.svc.cluster.local:5000", "approved_addresses": [ip], "synthetic_data_only": True, "expected_access": "deny", "identity_path": "/me", "identity_pointer": "/data/username", "object_path_template": "/books/v1/{id}", "object_id_pointer": "/book_title", "owner_pointer": "/owner", "protected_pointers": ["/secret"], "owner": observations["owner"], "peer": observations["peer"]})
         configurations.append({"tenant": "demo-a", "plan": plan, "credentials": credentials})
+    existing = json.loads(kube("-n", "tsunami", "get", "secret", "tsunami-applications", "--ignore-not-found", "-o", "json") or "null")
+    previous = json.loads(base64.b64decode(existing["data"]["config.json"])) if existing else []
+    configurations = merge_applications(previous, configurations)
     local = Path(".local/application-config.json")
-    local.write_text(json.dumps(configurations, indent=2) + "\n")
-    local.chmod(0o600)
+    write_private_json(local, configurations)
     apply({"apiVersion": "v1", "kind": "Secret", "metadata": {"name": "tsunami-applications", "namespace": "tsunami"}, "type": "Opaque", "data": {"config.json": base64.b64encode(local.read_bytes()).decode()}})
     deployment = json.loads(kube("-n", "tsunami", "get", "deployment", "tsunami-control", "-o", "json"))
     pod = deployment["spec"]["template"]["spec"]
@@ -161,7 +161,7 @@ def main():
     kube("-n", "tsunami", "rollout", "status", "deployment/tsunami-control", "--timeout=90s")
     image_id = subprocess.check_output(["docker", "image", "inspect", IMAGE, "--format", "{{.Id}}"], text=True).strip()
     (records / "source.json").write_text(json.dumps({"source": SOURCE, "commit": COMMIT, "license": "MIT (upstream source retained locally, not vendored)", "image": image_id, "synthetic_data_only": True, "account_token_lifetime_seconds": 3600, "debugger_enabled": False}, indent=2) + "\n")
-    print("Owned VAmPI lab seeded; two application plans mounted only in the control plane. No model calls or assessment probes made.")
+    print("Owned VAmPI lab seeded; four legitimate baseline GETs per variant compiled into draft registration plans. No cross-user probes or model calls made. Scope approval is still required.")
 
 
 if __name__ == "__main__":

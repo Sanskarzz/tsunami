@@ -1,0 +1,6 @@
+python3 -B scripts/check-examples.py --toolkit "../vapt-toolkit"
+PASS showcase index, seven unreviewed outcomes and 54 selected network denials with reachable before/after controls.
+PASS retained UI downloads, three browser outcomes, lost Start recovery and independent Stop observations.
+PASS onboarding readiness controls, four baseline reads, inferred plan and actual gVisor assessment evidence.
+PASS 32 materialized bundles, 240 artifacts and 20 historical trial hashes.
+Actual local toolkit schemas: PASS

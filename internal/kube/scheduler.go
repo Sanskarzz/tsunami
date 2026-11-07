@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -25,6 +26,57 @@ type Scheduler struct {
 	Host, Namespace, Image, Broker, RuntimeClass string
 	ToolImage                                    string
 	tokenPath                                    string
+}
+
+// Pod termination is a Kubernetes observation. Missing API objects alone never
+// prove that a process on a partitioned node has exited.
+func (s *Scheduler) Observe(ctx context.Context, r platform.Run) (platform.ExecutionObservation, error) {
+	var out platform.ExecutionObservation
+	status, _, err := s.call(ctx, "GET", "/apis/batch/v1/namespaces/"+s.Namespace+"/jobs/run-"+r.ID, nil)
+	if err != nil {
+		return out, err
+	}
+	jobMissing := status == 404
+	_, data, err := s.call(ctx, "GET", "/api/v1/namespaces/"+s.Namespace+"/pods?labelSelector="+url.QueryEscape("tsunami-run="+r.ID), nil)
+	if err != nil {
+		return out, err
+	}
+	var pods struct {
+		Items []struct {
+			Metadata struct {
+				UID string `json:"uid"`
+			} `json:"metadata"`
+			Status struct {
+				ContainerStatuses []struct {
+					State struct {
+						Running    *struct{} `json:"running"`
+						Terminated *struct{} `json:"terminated"`
+					} `json:"state"`
+				} `json:"containerStatuses"`
+			} `json:"status"`
+		} `json:"items"`
+	}
+	if err = json.Unmarshal(data, &pods); err != nil {
+		return out, err
+	}
+	out.ResourcesAbsent = jobMissing && len(pods.Items) == 0
+	allExited := len(pods.Items) > 0
+	for _, pod := range pods.Items {
+		out.PodUID = pod.Metadata.UID
+		if len(pod.Status.ContainerStatuses) == 0 {
+			allExited = false
+		}
+		for _, container := range pod.Status.ContainerStatuses {
+			if container.State.Running != nil {
+				out.Running = true
+			}
+			if container.State.Terminated == nil {
+				allExited = false
+			}
+		}
+	}
+	out.Exited = allExited
+	return out, nil
 }
 
 func InCluster(namespace, image, broker, runtime string) (*Scheduler, error) {
@@ -84,6 +136,9 @@ func (s *Scheduler) call(ctx context.Context, method, path string, in any) (int,
 }
 
 func (s *Scheduler) Ensure(ctx context.Context, r platform.Run, token string) error {
+	// Bound Kubernetes RPCs, not the lifetime of an asynchronous local worker.
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
 	image := s.Image
 	if r.Executor != "" {
 		if r.Executor != toolcontract.CurlHTTP || s.RuntimeClass != "gvisor" || s.ToolImage == "" || r.Application == nil || r.Execution != "scripted" {

@@ -28,7 +28,7 @@ func OpenStore(path string) (*Store, error) {
 		return nil, err
 	}
 	err = db.Update(func(tx *bolt.Tx) error {
-		for _, name := range []string{"runs", "credentials", "gates", "engagements", "finding_reviews", "review_history"} {
+		for _, name := range []string{"runs", "credentials", "gates", "engagements", "finding_reviews", "review_history", "onboarding", "onboarding_secrets", "onboarding_evidence", "onboarded_apps"} {
 			if _, e := tx.CreateBucketIfNotExists([]byte(name)); e != nil {
 				return e
 			}
@@ -43,6 +43,8 @@ func OpenStore(path string) (*Store, error) {
 }
 
 func (s *Store) Close() error { return s.db.Close() }
+
+func (s *Store) Ping() error { return s.db.View(func(*bolt.Tx) error { return nil }) }
 
 func (s *Store) Fail(id string) error {
 	return s.Update(id, func(r *Run) error {
@@ -95,7 +97,8 @@ type createOptions struct {
 func (s *Store) create(tenant, scenario, target, mode string, model *ModelUsage, connectivity string, options createOptions) (Run, error) {
 	now := time.Now().UTC()
 	r := Run{ID: randomID(), Tenant: tenant, Scenario: scenario, State: Pending,
-		Target: target, Mode: mode, CreatedAt: now, Deadline: now.Add(90 * time.Second),
+		Lifecycle: &Lifecycle{Version: 1, FromCreation: true},
+		Target:    target, Mode: mode, CreatedAt: now, Deadline: now.Add(90 * time.Second),
 		Execution: "scripted", Connectivity: connectivity, Workflow: "object-ownership/v1", Model: model,
 		MaxRequests: 12, Captures: []Capture{}, Events: []Event{{now, "created", "server-owned lab policy; no arbitrary target selection"}}}
 	if model != nil {
@@ -165,6 +168,11 @@ func (s *Store) StopGroup(tenant string, global bool) ([]string, error) {
 				now := time.Now().UTC()
 				r.State = Stopped
 				r.StopAcceptedAt = &now
+				reason := "tenant_stop"
+				if global {
+					reason = "global_stop"
+				}
+				revoke(&r, reason, now)
 				r.Events = append(r.Events, Event{now, "stopped", "durable permission revoked"})
 				data, err := json.Marshal(r)
 				if err != nil {

@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/operator-journey",
+  "authorized": false,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 1,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "f57d946ec7817fdbff8900935718f273",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 1,
+    "scope_digest": "f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c"
+  },
+  "name": "Web/API authorization assessment",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000"
+  ],
+  "start_date": "2026-11-05",
+  "status": "On-Hold",
+  "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+  "target_type": "api"
+}

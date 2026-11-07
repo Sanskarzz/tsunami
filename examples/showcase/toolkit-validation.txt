@@ -1,0 +1,4 @@
+python3 -B scripts/check-examples.py --toolkit "../vapt-toolkit"
+PASS showcase index, seven unreviewed outcomes and 54 selected network denials with reachable before/after controls.
+PASS 25 materialized bundles, 188 artifacts and 20 historical trial hashes.
+Actual local toolkit schemas: PASS

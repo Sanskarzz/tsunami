@@ -1,0 +1,3205 @@
+
+$ tsunami assess applications 
+[
+  {
+    "id": "stop-lab-api-outage",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "stop-lab-engagement",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "stop-lab-restart",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "stop-lab-run",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "vampi-fixed",
+    "title": "Cross-user book secret access",
+    "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "vampi-vulnerable",
+    "title": "Cross-user book secret access",
+    "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "profile": "http-object-access/v2"
+  }
+]
+
+$ tsunami assess plan --application vampi-vulnerable --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-object-access/v2",
+      "id": "vampi-vulnerable",
+      "title": "Cross-user book secret access",
+      "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+      "approved_addresses": [
+        "10.97.122.76"
+      ],
+      "credential_set_id": "9470c18b172654f774bcb184a18518fe5e5541a660b1d3401570f646294525c0",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_owner_10638c1b"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_peer_40299577"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/books/v1/tsunami-owner-b26069a13dba",
+          "equals": {
+            "/book_title": "tsunami-owner-b26069a13dba",
+            "/owner": "tsunami_owner_10638c1b"
+          },
+          "sha256": {
+            "/secret": "6875eaba4d14c942cda9c174fbdccdb9c5688242bc7fc760b09cb280cfa7e2a7"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/books/v1/tsunami-peer-4b22fe0cda77",
+          "equals": {
+            "/book_title": "tsunami-peer-4b22fe0cda77",
+            "/owner": "tsunami_peer_40299577"
+          },
+          "sha256": {
+            "/secret": "8e44b9a407020d64c36f4ce8751ca69264e0df17c966a739f5c3611606974254"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/books/v1/tsunami-owner-b26069a13dba",
+        "equals": {
+          "/book_title": "tsunami-owner-b26069a13dba",
+          "/owner": "tsunami_owner_10638c1b"
+        },
+        "sha256": {
+          "/secret": "6875eaba4d14c942cda9c174fbdccdb9c5688242bc7fc760b09cb280cfa7e2a7"
+        }
+      },
+      "expected_access": "deny",
+      "denial_statuses": [
+        401,
+        403,
+        404
+      ]
+    },
+    "id": "f57d946ec7817fdbff8900935718f273",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "scenario": "application",
+    "created_at": "2026-11-05T14:02:01.66492396Z",
+    "expires_at": "2026-11-05T15:02:01.66492396Z",
+    "scope_digest": "f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "vampi-vulnerable/object-access/v2",
+        "definition_digest": "0fb5b9c70f196af1cfd861efcc7788ebc2d224c42be56488e7d3abde484f94be",
+        "title": "Cross-user book secret access"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-05T14:02:01.66492396Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "vampi-vulnerable/object-access/v2",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement f57d946ec7817fdbff8900935718f273
+Engagement: f57d946ec7817fdbff8900935718f273
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c
+Approved digest: 
+Expires: 2026-11-05T15:02:01Z
+Application: "vampi-vulnerable"
+Target: "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000"
+Approved destination addresses: ["10.97.122.76"]
+Profile: "http-object-access/v2"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "deny". The service verifies identities, legitimate reads and follow-up checks.
+  1. GET "/me" as "owner"
+  2. GET "/me" as "peer"
+  3. GET "/books/v1/tsunami-owner-b26069a13dba" as "owner"
+  4. GET "/books/v1/tsunami-peer-4b22fe0cda77" as "peer"
+  5. GET "/books/v1/tsunami-owner-b26069a13dba" as "peer"
+  6. GET "/books/v1/tsunami-owner-b26069a13dba" as "owner"
+  7. GET "/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement f57d946ec7817fdbff8900935718f273 --scope-digest f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement f57d946ec7817fdbff8900935718f273
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement f57d946ec7817fdbff8900935718f273 --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement f57d946ec7817fdbff8900935718f273 --scope-digest f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-object-access/v2",
+      "id": "vampi-vulnerable",
+      "title": "Cross-user book secret access",
+      "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+      "approved_addresses": [
+        "10.97.122.76"
+      ],
+      "credential_set_id": "9470c18b172654f774bcb184a18518fe5e5541a660b1d3401570f646294525c0",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_owner_10638c1b"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_peer_40299577"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/books/v1/tsunami-owner-b26069a13dba",
+          "equals": {
+            "/book_title": "tsunami-owner-b26069a13dba",
+            "/owner": "tsunami_owner_10638c1b"
+          },
+          "sha256": {
+            "/secret": "6875eaba4d14c942cda9c174fbdccdb9c5688242bc7fc760b09cb280cfa7e2a7"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/books/v1/tsunami-peer-4b22fe0cda77",
+          "equals": {
+            "/book_title": "tsunami-peer-4b22fe0cda77",
+            "/owner": "tsunami_peer_40299577"
+          },
+          "sha256": {
+            "/secret": "8e44b9a407020d64c36f4ce8751ca69264e0df17c966a739f5c3611606974254"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/books/v1/tsunami-owner-b26069a13dba",
+        "equals": {
+          "/book_title": "tsunami-owner-b26069a13dba",
+          "/owner": "tsunami_owner_10638c1b"
+        },
+        "sha256": {
+          "/secret": "6875eaba4d14c942cda9c174fbdccdb9c5688242bc7fc760b09cb280cfa7e2a7"
+        }
+      },
+      "expected_access": "deny",
+      "denial_statuses": [
+        401,
+        403,
+        404
+      ]
+    },
+    "id": "f57d946ec7817fdbff8900935718f273",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "scenario": "application",
+    "created_at": "2026-11-05T14:02:01.66492396Z",
+    "expires_at": "2026-11-05T15:02:01.66492396Z",
+    "approved_at": "2026-11-05T14:02:01.715442611Z",
+    "scope_digest": "f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c",
+    "approved_digest": "f6156b7a673e391cb61e70410f898b0c659e2e2638f16bec1094597d9da6bf7c",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "vampi-vulnerable/object-access/v2",
+        "definition_digest": "0fb5b9c70f196af1cfd861efcc7788ebc2d224c42be56488e7d3abde484f94be",
+        "title": "Cross-user book secret access"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-05T14:02:01.66492396Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-05T14:02:01.715442611Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "vampi-vulnerable/object-access/v2",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement f57d946ec7817fdbff8900935718f273
+{
+  "engagement_id": "f57d946ec7817fdbff8900935718f273",
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-05T14:03:31.72965537Z"
+}
+
+$ tsunami assess watch --run 3ac07c43f1cce1a46659613d90568398 --timeout 100s
+Run 3ac07c43f1cce1a46659613d90568398: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="not_active" execution="queued" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 3ac07c43f1cce1a46659613d90568398: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 3ac07c43f1cce1a46659613d90568398: mode="scripted" executor="curl-http/v1" target_requests_reserved=1
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 3ac07c43f1cce1a46659613d90568398: mode="scripted" executor="curl-http/v1" target_requests_reserved=6
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 3ac07c43f1cce1a46659613d90568398: mode="scripted" executor="curl-http/v1" target_requests_reserved=7
+  permission="closed" execution="dispatch_intent" activity="no_local_work" cleanup="pending" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+  verdict="confirmed" reason="The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked."
+  confirmed = supported candidate awaiting review; no_issue_observed covers this test only; inconclusive is not a pass.
+Watching is read-only. Permission closure is separate from request drain and cleanup. Use status again for later observations; use export --engagement ID --out NEW_DIRECTORY for evidence.
+
+$ tsunami assess stop --engagement f57d946ec7817fdbff8900935718f273
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "pending",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess start --engagement f57d946ec7817fdbff8900935718f273
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement f57d946ec7817fdbff8900935718f273 --out artifacts/operator-journey/20261105T140201Z/vampi-vulnerable
+Saved private export to "artifacts/operator-journey/20261105T140201Z/vampi-vulnerable": 1 candidates, 0 reviewed findings, 8 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run 3ac07c43f1cce1a46659613d90568398
+{
+  "run_id": "3ac07c43f1cce1a46659613d90568398",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:31.72965537Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:01.839400745Z",
+  "exit_observed_at": "2026-11-05T14:02:04.830836641Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:03.903857243Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-05T14:02:04.324950668Z",
+  "api_resources_absent_at": "2026-11-05T14:02:07.334967278Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Cross-user book secret access",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "evidence_ids": [
+      "a40b55677dc97f1b387224d22cfb37c5",
+      "0d08cc14727b584c89b43462d27365ef",
+      "9ee052f3445659e34fdc2e271ffcd115",
+      "fc251ed1e8a4face90802ff072d12f56",
+      "be9d6c991b726c1b1b62fad93a81ca22",
+      "46b832f40bd31e70af60d07ca743fb48",
+      "5637b1aea13aa3d571f4cb9f2270c175"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess plan --application vampi-fixed --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-object-access/v2",
+      "id": "vampi-fixed",
+      "title": "Cross-user book secret access",
+      "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+      "approved_addresses": [
+        "10.97.254.51"
+      ],
+      "credential_set_id": "dd2d00ad60edc019e6fa72b450eec3dab4fe2cbea7d3c1b0130a6dde5084319d",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_owner_202089b8"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_peer_34f9d08e"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/books/v1/tsunami-owner-c6d4c4d8ebc3",
+          "equals": {
+            "/book_title": "tsunami-owner-c6d4c4d8ebc3",
+            "/owner": "tsunami_owner_202089b8"
+          },
+          "sha256": {
+            "/secret": "9b24c8e56782e945dfe7c929c91b4fb6534f138a063ed1db53359c8915d9985a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/books/v1/tsunami-peer-be8a60b9c0e4",
+          "equals": {
+            "/book_title": "tsunami-peer-be8a60b9c0e4",
+            "/owner": "tsunami_peer_34f9d08e"
+          },
+          "sha256": {
+            "/secret": "53f87933138eb3c33025c44606784cd69a0e970dd08bc96c1035b8f9bb29e856"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/books/v1/tsunami-owner-c6d4c4d8ebc3",
+        "equals": {
+          "/book_title": "tsunami-owner-c6d4c4d8ebc3",
+          "/owner": "tsunami_owner_202089b8"
+        },
+        "sha256": {
+          "/secret": "9b24c8e56782e945dfe7c929c91b4fb6534f138a063ed1db53359c8915d9985a"
+        }
+      },
+      "expected_access": "deny",
+      "denial_statuses": [
+        401,
+        403,
+        404
+      ]
+    },
+    "id": "55d144695ee4fa5ddb91299ca9ad7568",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+    "scenario": "application",
+    "created_at": "2026-11-05T14:02:07.403151132Z",
+    "expires_at": "2026-11-05T15:02:07.403151132Z",
+    "scope_digest": "dd3fc7b99a29d23ae33b5a783852ad9874e4aa58a32ad1517bed6e0c9e4de51f",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "vampi-fixed/object-access/v2",
+        "definition_digest": "c8cdadf59ee08e5d8abff1220d3e190c789ab263f930574cf72659c6fca56ecf",
+        "title": "Cross-user book secret access"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-05T14:02:07.403151132Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "vampi-fixed/object-access/v2",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement 55d144695ee4fa5ddb91299ca9ad7568
+Engagement: 55d144695ee4fa5ddb91299ca9ad7568
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: dd3fc7b99a29d23ae33b5a783852ad9874e4aa58a32ad1517bed6e0c9e4de51f
+Approved digest: 
+Expires: 2026-11-05T15:02:07Z
+Application: "vampi-fixed"
+Target: "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000"
+Approved destination addresses: ["10.97.254.51"]
+Profile: "http-object-access/v2"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "deny". The service verifies identities, legitimate reads and follow-up checks.
+  1. GET "/me" as "owner"
+  2. GET "/me" as "peer"
+  3. GET "/books/v1/tsunami-owner-c6d4c4d8ebc3" as "owner"
+  4. GET "/books/v1/tsunami-peer-be8a60b9c0e4" as "peer"
+  5. GET "/books/v1/tsunami-owner-c6d4c4d8ebc3" as "peer"
+  6. GET "/books/v1/tsunami-owner-c6d4c4d8ebc3" as "owner"
+  7. GET "/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement 55d144695ee4fa5ddb91299ca9ad7568 --scope-digest dd3fc7b99a29d23ae33b5a783852ad9874e4aa58a32ad1517bed6e0c9e4de51f
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement 55d144695ee4fa5ddb91299ca9ad7568
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement 55d144695ee4fa5ddb91299ca9ad7568 --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement 55d144695ee4fa5ddb91299ca9ad7568 --scope-digest dd3fc7b99a29d23ae33b5a783852ad9874e4aa58a32ad1517bed6e0c9e4de51f
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-object-access/v2",
+      "id": "vampi-fixed",
+      "title": "Cross-user book secret access",
+      "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+      "approved_addresses": [
+        "10.97.254.51"
+      ],
+      "credential_set_id": "dd2d00ad60edc019e6fa72b450eec3dab4fe2cbea7d3c1b0130a6dde5084319d",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_owner_202089b8"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/me",
+          "equals": {
+            "/data/username": "tsunami_peer_34f9d08e"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/books/v1/tsunami-owner-c6d4c4d8ebc3",
+          "equals": {
+            "/book_title": "tsunami-owner-c6d4c4d8ebc3",
+            "/owner": "tsunami_owner_202089b8"
+          },
+          "sha256": {
+            "/secret": "9b24c8e56782e945dfe7c929c91b4fb6534f138a063ed1db53359c8915d9985a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/books/v1/tsunami-peer-be8a60b9c0e4",
+          "equals": {
+            "/book_title": "tsunami-peer-be8a60b9c0e4",
+            "/owner": "tsunami_peer_34f9d08e"
+          },
+          "sha256": {
+            "/secret": "53f87933138eb3c33025c44606784cd69a0e970dd08bc96c1035b8f9bb29e856"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/books/v1/tsunami-owner-c6d4c4d8ebc3",
+        "equals": {
+          "/book_title": "tsunami-owner-c6d4c4d8ebc3",
+          "/owner": "tsunami_owner_202089b8"
+        },
+        "sha256": {
+          "/secret": "9b24c8e56782e945dfe7c929c91b4fb6534f138a063ed1db53359c8915d9985a"
+        }
+      },
+      "expected_access": "deny",
+      "denial_statuses": [
+        401,
+        403,
+        404
+      ]
+    },
+    "id": "55d144695ee4fa5ddb91299ca9ad7568",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+    "scenario": "application",
+    "created_at": "2026-11-05T14:02:07.403151132Z",
+    "expires_at": "2026-11-05T15:02:07.403151132Z",
+    "approved_at": "2026-11-05T14:02:07.447623784Z",
+    "scope_digest": "dd3fc7b99a29d23ae33b5a783852ad9874e4aa58a32ad1517bed6e0c9e4de51f",
+    "approved_digest": "dd3fc7b99a29d23ae33b5a783852ad9874e4aa58a32ad1517bed6e0c9e4de51f",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "vampi-fixed/object-access/v2",
+        "definition_digest": "c8cdadf59ee08e5d8abff1220d3e190c789ab263f930574cf72659c6fca56ecf",
+        "title": "Cross-user book secret access"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-05T14:02:07.403151132Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-05T14:02:07.447623784Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "vampi-fixed/object-access/v2",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement 55d144695ee4fa5ddb91299ca9ad7568
+{
+  "engagement_id": "55d144695ee4fa5ddb91299ca9ad7568",
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-05T14:03:37.456961958Z"
+}
+
+$ tsunami assess watch --run e9d08b3707b0a72d1ce28636d268e485 --timeout 100s
+Run e9d08b3707b0a72d1ce28636d268e485: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="not_active" execution="queued" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="" worker_observed_at=<nil> exit_observed_at=<nil>
+Run e9d08b3707b0a72d1ce28636d268e485: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run e9d08b3707b0a72d1ce28636d268e485: mode="scripted" executor="curl-http/v1" target_requests_reserved=1
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run e9d08b3707b0a72d1ce28636d268e485: mode="scripted" executor="curl-http/v1" target_requests_reserved=6
+  permission="active" execution="worker_observed" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=2026-11-05 14:02:09.330502483 +0000 UTC exit_observed_at=<nil>
+Run e9d08b3707b0a72d1ce28636d268e485: mode="scripted" executor="curl-http/v1" target_requests_reserved=7
+  permission="closed" execution="worker_observed" activity="no_local_work" cleanup="delete_accepted" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=2026-11-05 14:02:09.330502483 +0000 UTC exit_observed_at=<nil>
+  verdict="no_issue_observed" reason="The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance."
+  confirmed = supported candidate awaiting review; no_issue_observed covers this test only; inconclusive is not a pass.
+Watching is read-only. Permission closure is separate from request drain and cleanup. Use status again for later observations; use export --engagement ID --out NEW_DIRECTORY for evidence.
+
+$ tsunami assess stop --engagement 55d144695ee4fa5ddb91299ca9ad7568
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess start --engagement 55d144695ee4fa5ddb91299ca9ad7568
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement 55d144695ee4fa5ddb91299ca9ad7568 --out artifacts/operator-journey/20261105T140201Z/vampi-fixed
+Saved private export to "artifacts/operator-journey/20261105T140201Z/vampi-fixed": 0 candidates, 0 reviewed findings, 8 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess status --run e9d08b3707b0a72d1ce28636d268e485
+{
+  "run_id": "e9d08b3707b0a72d1ce28636d268e485",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-05T14:03:37.456961958Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:07.827264458Z",
+  "worker_observed_at": "2026-11-05T14:02:09.330502483Z",
+  "exit_observed_at": "2026-11-05T14:02:10.829892875Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:09.571190829Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-05T14:02:09.838616349Z",
+  "api_resources_absent_at": "2026-11-05T14:02:11.8375565Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Cross-user book secret access",
+    "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+    "evidence_ids": [
+      "d339337459a91298ab70edbb8673cea3",
+      "048af39641f403cf1f4af3194b7c8bcc",
+      "e0fcf80c70573b7dd7b9733bb9e1c11d",
+      "d81a1c3e2c92d80211c30a0f7853f545",
+      "621fda1b05c54560e8b690fe3f8e5d0e",
+      "e4c8599452ddd65f5b9f1a4d883fcb6b",
+      "b83364cd62128fabac3a852e6c5d96fe"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "deny"
+    }
+  }
+}
+
+$ tsunami assess plan --application stop-lab-run --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-object-access/v2",
+      "id": "stop-lab-run",
+      "title": "Owned held-request Stop test",
+      "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.186.203"
+      ],
+      "credential_set_id": "25c21a77def79292a6a3b89af4c8abd65c6813c511d5f1c145652afc2ba27282",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/run/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/run/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/run/objects/owner",
+          "equals": {
+            "/id": "owner",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/proof": "6b272333dbb8f7eadc24675fc4b8b0b268f7c2054ee81753201cac59d669a486"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/run/objects/peer",
+          "equals": {
+            "/id": "peer",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/proof": "7a9b3d2c305e3b99b3c5c228c16cc39acbd1f72679a30aec813415cd65e2959d"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/run/objects/owner",
+        "equals": {
+          "/id": "owner",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/proof": "6b272333dbb8f7eadc24675fc4b8b0b268f7c2054ee81753201cac59d669a486"
+        }
+      },
+      "expected_access": "deny",
+      "denial_statuses": [
+        401,
+        403,
+        404
+      ]
+    },
+    "id": "492536a1fd98f0a3c33d121e849c61ff",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-05T14:02:12.056323961Z",
+    "expires_at": "2026-11-05T15:02:12.056323961Z",
+    "scope_digest": "7094538d10d5d778c7422b594966de20a9c0d92027b30554a42931c0d54e1734",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "stop-lab-run/object-access/v2",
+        "definition_digest": "c055b4f1bd311989e20674c30de04ed62457ffff5b3d30183b2958cf5298e1ef",
+        "title": "Owned held-request Stop test"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-05T14:02:12.056323961Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "stop-lab-run/object-access/v2",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement 492536a1fd98f0a3c33d121e849c61ff
+Engagement: 492536a1fd98f0a3c33d121e849c61ff
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: 7094538d10d5d778c7422b594966de20a9c0d92027b30554a42931c0d54e1734
+Approved digest: 
+Expires: 2026-11-05T15:02:12Z
+Application: "stop-lab-run"
+Target: "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080"
+Approved destination addresses: ["10.97.186.203"]
+Profile: "http-object-access/v2"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "deny". The service verifies identities, legitimate reads and follow-up checks.
+  1. GET "/cases/run/me" as "owner"
+  2. GET "/cases/run/me" as "peer"
+  3. GET "/cases/run/objects/owner" as "owner"
+  4. GET "/cases/run/objects/peer" as "peer"
+  5. GET "/cases/run/objects/owner" as "peer"
+  6. GET "/cases/run/objects/owner" as "owner"
+  7. GET "/cases/run/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement 492536a1fd98f0a3c33d121e849c61ff --scope-digest 7094538d10d5d778c7422b594966de20a9c0d92027b30554a42931c0d54e1734
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement 492536a1fd98f0a3c33d121e849c61ff
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement 492536a1fd98f0a3c33d121e849c61ff --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement 492536a1fd98f0a3c33d121e849c61ff --scope-digest 7094538d10d5d778c7422b594966de20a9c0d92027b30554a42931c0d54e1734
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-object-access/v2",
+      "id": "stop-lab-run",
+      "title": "Owned held-request Stop test",
+      "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.186.203"
+      ],
+      "credential_set_id": "25c21a77def79292a6a3b89af4c8abd65c6813c511d5f1c145652afc2ba27282",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/run/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/run/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/run/objects/owner",
+          "equals": {
+            "/id": "owner",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/proof": "6b272333dbb8f7eadc24675fc4b8b0b268f7c2054ee81753201cac59d669a486"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/run/objects/peer",
+          "equals": {
+            "/id": "peer",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/proof": "7a9b3d2c305e3b99b3c5c228c16cc39acbd1f72679a30aec813415cd65e2959d"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/run/objects/owner",
+        "equals": {
+          "/id": "owner",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/proof": "6b272333dbb8f7eadc24675fc4b8b0b268f7c2054ee81753201cac59d669a486"
+        }
+      },
+      "expected_access": "deny",
+      "denial_statuses": [
+        401,
+        403,
+        404
+      ]
+    },
+    "id": "492536a1fd98f0a3c33d121e849c61ff",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-05T14:02:12.056323961Z",
+    "expires_at": "2026-11-05T15:02:12.056323961Z",
+    "approved_at": "2026-11-05T14:02:12.099440248Z",
+    "scope_digest": "7094538d10d5d778c7422b594966de20a9c0d92027b30554a42931c0d54e1734",
+    "approved_digest": "7094538d10d5d778c7422b594966de20a9c0d92027b30554a42931c0d54e1734",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "stop-lab-run/object-access/v2",
+        "definition_digest": "c055b4f1bd311989e20674c30de04ed62457ffff5b3d30183b2958cf5298e1ef",
+        "title": "Owned held-request Stop test"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-05T14:02:12.056323961Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-05T14:02:12.099440248Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "stop-lab-run/object-access/v2",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement 492536a1fd98f0a3c33d121e849c61ff
+{
+  "engagement_id": "492536a1fd98f0a3c33d121e849c61ff",
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-05T14:03:42.11637292Z"
+}
+
+$ tsunami assess watch --run d1f094ba483bb189485bbcc505cd39bf --timeout 1s
+Run d1f094ba483bb189485bbcc505cd39bf: mode="scripted" executor="curl-http/v1" target_requests_reserved=5
+  permission="active" execution="worker_observed" activity="active_locally" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=2026-11-05 14:02:13.833416654 +0000 UTC exit_observed_at=<nil>
+tsunami: watch ended before permission closed; work may still be active; inspect status or use stop --engagement ID
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "active",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "active_locally",
+  "local_operations": 1,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "cleanup": "not_requested",
+  "observation_code": "observed"
+}
+
+$ tsunami assess stop --engagement 492536a1fd98f0a3c33d121e849c61ff
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "pending",
+  "observation_code": "observed"
+}
+
+$ tsunami assess start --engagement 492536a1fd98f0a3c33d121e849c61ff
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement 492536a1fd98f0a3c33d121e849c61ff --out artifacts/operator-journey/20261105T140201Z/stop-lab-run
+Saved private export to "artifacts/operator-journey/20261105T140201Z/stop-lab-run": 0 candidates, 0 reviewed findings, 6 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "pending",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d1f094ba483bb189485bbcc505cd39bf
+{
+  "run_id": "d1f094ba483bb189485bbcc505cd39bf",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-05T14:02:15.24024682Z",
+  "expires_at": "2026-11-05T14:03:42.11637292Z",
+  "execution": "unknown_after_resource_removal",
+  "dispatch_intent_at": "2026-11-05T14:02:12.335009822Z",
+  "worker_observed_at": "2026-11-05T14:02:13.833416654Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-05T14:02:13.992028288Z",
+  "local_drain_observed_at": "2026-11-05T14:02:15.24684878Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-05T14:02:15.339850573Z",
+  "api_resources_absent_at": "2026-11-05T14:02:16.332048592Z",
+  "observation_code": "observed"
+}

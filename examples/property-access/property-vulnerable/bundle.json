@@ -1,0 +1,266 @@
+{
+  "toolkit_findings": [],
+  "toolkit_evidence": [],
+  "version": "tsunami.engagement-export/v2",
+  "synthetic_only": true,
+  "view": {
+    "engagement": {
+      "executor": "curl-http/v1",
+      "application": {
+        "version": "http-property-access/v1",
+        "id": "property-vulnerable",
+        "title": "Owner-only note exposed through a shared record",
+        "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+        "approved_addresses": [
+          "10.97.129.133"
+        ],
+        "credential_set_id": "29fbdea7f8f8672e8dfbbfc4c4201d88d18a73750e4b12488304ce45500bf905",
+        "synthetic_data_only": true,
+        "owner_pointer": "/owner",
+        "identity": [
+          {
+            "account": "owner",
+            "path": "/cases/vulnerable/me",
+            "equals": {
+              "/name": "owner"
+            }
+          },
+          {
+            "account": "peer",
+            "path": "/cases/vulnerable/me",
+            "equals": {
+              "/name": "peer"
+            }
+          }
+        ],
+        "baselines": [
+          {
+            "account": "owner",
+            "path": "/cases/vulnerable/records/28f62db71d2c1827b622f3bc",
+            "equals": {
+              "/id": "28f62db71d2c1827b622f3bc",
+              "/owner": "owner"
+            },
+            "sha256": {
+              "/private_note": "2777509cf815eadc0ca8c4cd1ce63a7fa98ab708300fbc41a1cbfab1d94b8c4a"
+            }
+          },
+          {
+            "account": "peer",
+            "path": "/cases/vulnerable/records/6b6442b28205e98be8ebc5d7",
+            "equals": {
+              "/id": "6b6442b28205e98be8ebc5d7",
+              "/owner": "peer"
+            },
+            "sha256": {
+              "/private_note": "2e33268905af827fe6bbbc079986cab096cfe5b6ea8c597e7a01fc473777deab"
+            }
+          }
+        ],
+        "probe": {
+          "account": "peer",
+          "path": "/cases/vulnerable/records/28f62db71d2c1827b622f3bc",
+          "equals": {
+            "/id": "28f62db71d2c1827b622f3bc",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "2777509cf815eadc0ca8c4cd1ce63a7fa98ab708300fbc41a1cbfab1d94b8c4a"
+          }
+        },
+        "expected_access": "filtered",
+        "denial_statuses": []
+      },
+      "id": "4032d0302ef4c739a92b3c147ccc893a",
+      "tenant": "demo-a",
+      "name": "Web/API authorization assessment",
+      "state": "stopped",
+      "authorization_ref": "owned-lab/operator-journey",
+      "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "scenario": "application",
+      "created_at": "2026-11-06T05:12:30.339405238Z",
+      "expires_at": "2026-11-06T06:12:30.339405238Z",
+      "approved_at": "2026-11-06T05:12:30.405468927Z",
+      "stopped_at": "2026-11-06T05:12:33.96967483Z",
+      "scope_digest": "71ccc4bbfb2da0138ae3e2fb294e8866ab679a06b6d1732ba9d094cab7a7dd3a",
+      "approved_digest": "71ccc4bbfb2da0138ae3e2fb294e8866ab679a06b6d1732ba9d094cab7a7dd3a",
+      "max_runs": 20,
+      "max_concurrent": 2,
+      "items": [
+        {
+          "procedure": "property-vulnerable/property-access/v1",
+          "definition_digest": "353c9782a369bcaf670b02a07ceba0df6e8ca4f97bf2d0193fb021d235df44fe",
+          "title": "Owner-only note exposed through a shared record"
+        }
+      ],
+      "run_ids": [
+        "711b29185127e834ff8c8cf036b50cd9"
+      ],
+      "events": [
+        {
+          "at": "2026-11-06T05:12:30.339405238Z",
+          "kind": "engagement_created",
+          "detail": "draft scope; explicit operator approval required"
+        },
+        {
+          "at": "2026-11-06T05:12:30.405468927Z",
+          "kind": "engagement_approved",
+          "detail": "operator approved pinned lab scope"
+        },
+        {
+          "at": "2026-11-06T05:12:30.419339901Z",
+          "kind": "engagement_run_reserved",
+          "detail": "711b29185127e834ff8c8cf036b50cd9"
+        },
+        {
+          "at": "2026-11-06T05:12:33.96967483Z",
+          "kind": "engagement_stopped",
+          "detail": "all active child permissions revoked atomically"
+        }
+      ]
+    },
+    "checklist": [
+      {
+        "procedure": "property-vulnerable/property-access/v1",
+        "status": "completed",
+        "verdict": "confirmed",
+        "latest_run": "711b29185127e834ff8c8cf036b50cd9"
+      }
+    ],
+    "progress": {
+      "total": 1,
+      "completed": 1,
+      "skipped": 0,
+      "pending": 0,
+      "running": 0,
+      "failed": 0,
+      "stopped": 0,
+      "inconclusive": 0
+    }
+  },
+  "toolkit_engagement": {
+    "authorization_note": "owned-lab/operator-journey",
+    "authorized": false,
+    "checklist_progress": {
+      "tsunami_authorization_v1": {
+        "completed": 1,
+        "not_applicable": 0,
+        "skipped": 0,
+        "total": 1
+      }
+    },
+    "findings": [],
+    "id": "4032d0302ef4c739a92b3c147ccc893a",
+    "metadata": {
+      "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+      "finding_candidates": 1,
+      "scope_digest": "71ccc4bbfb2da0138ae3e2fb294e8866ab679a06b6d1732ba9d094cab7a7dd3a"
+    },
+    "name": "Web/API authorization assessment",
+    "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+    "scope_in": [
+      "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+    ],
+    "start_date": "2026-11-06",
+    "status": "On-Hold",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "target_type": "api"
+  },
+  "finding_candidates": [
+    {
+      "candidate_digest": "86ed2b2742e9d89fd04034bb90df8bb32bc8a730f396701a57c26d19c3ce2e0b",
+      "id": "F-fe08dbba4bb4925a2b89d24d403c7291",
+      "title": "Owner-only note exposed through a shared record",
+      "procedure": "property-vulnerable/property-access/v1",
+      "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "status": "needs_human_review",
+      "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+      "remediation": "Authorize each response property for the requesting principal. Use an explicit public response projection and omit the protected fields from the peer's view.",
+      "run_ids": [
+        "711b29185127e834ff8c8cf036b50cd9"
+      ],
+      "evidence_ids": [
+        "E-7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9",
+        "E-1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce",
+        "E-0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71",
+        "E-32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b",
+        "E-2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff",
+        "E-ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea",
+        "E-3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24"
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": "E-e4d3db4bbaf6d0457dcfffbfd5810ebf8a2a3de5df296c2fa5a327b37dfbe2db",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "91a8dd4c42ef26530d6f1ee7dcd2dab2",
+      "path": "evidence/e4d3db4bbaf6d0457dcfffbfd5810ebf8a2a3de5df296c2fa5a327b37dfbe2db.json",
+      "sha256": "e4d3db4bbaf6d0457dcfffbfd5810ebf8a2a3de5df296c2fa5a327b37dfbe2db",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6IjkxYThkZDRjNDJlZjI2NTMwZDZmMWVlN2RjZDJkYWIyIiwidXJsIjoiaHR0cDovL25vdC1hcHByb3ZlZC5pbnZhbGlkL2FwaS9kb2N1bWVudHMvZG9jLWFsaWNlIiwiYWNjb3VudCI6ImFsaWNlIiwic3RhcnRlZF9hdCI6IjIwMjYtMTEtMDZUMDU6MTI6MzIuNzE5NTEzMTMyWiIsImZpbmlzaGVkX2F0IjoiMjAyNi0xMS0wNlQwNToxMjozMi43MTk1MTY2NDlaIiwiYmxvY2tlZCI6dHJ1ZSwiZXJyb3IiOiJkZXN0aW5hdGlvbiBpcyBvdXRzaWRlIHRoZSBhcHByb3ZlZCBvcmlnaW4ifX0="
+    },
+    {
+      "id": "E-7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "12ab2f367132c6fad04d078e1faccd3f",
+      "path": "evidence/7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9.json",
+      "sha256": "7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6IjEyYWIyZjM2NzEzMmM2ZmFkMDRkMDc4ZTFmYWNjZDNmIiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvbWUiLCJhY2NvdW50Ijoib3duZXIiLCJzdGFydGVkX2F0IjoiMjAyNi0xMS0wNlQwNToxMjozMi44ODQwMzQ4M1oiLCJmaW5pc2hlZF9hdCI6IjIwMjYtMTEtMDZUMDU6MTI6MzIuODg5NDU1NzQ5WiIsInN0YXR1cyI6MjAwLCJwZWVyIjoiMTAuOTcuMTI5LjEzMzo4MDgwIiwiYm9keSI6IntcIm5hbWVcIjpcIm93bmVyXCJ9XG4ifX0="
+    },
+    {
+      "id": "E-1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "ca4019b7f86ec65dec9a068f14821c32",
+      "path": "evidence/1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce.json",
+      "sha256": "1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6ImNhNDAxOWI3Zjg2ZWM2NWRlYzlhMDY4ZjE0ODIxYzMyIiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvbWUiLCJhY2NvdW50IjoicGVlciIsInN0YXJ0ZWRfYXQiOiIyMDI2LTExLTA2VDA1OjEyOjMzLjA2ODc1ODc4OFoiLCJmaW5pc2hlZF9hdCI6IjIwMjYtMTEtMDZUMDU6MTI6MzMuMDczMzk3NDgxWiIsInN0YXR1cyI6MjAwLCJwZWVyIjoiMTAuOTcuMTI5LjEzMzo4MDgwIiwiYm9keSI6IntcIm5hbWVcIjpcInBlZXJcIn1cbiJ9fQ=="
+    },
+    {
+      "id": "E-0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "248d723527b072f3965b546bfc76c868",
+      "path": "evidence/0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71.json",
+      "sha256": "0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6IjI0OGQ3MjM1MjdiMDcyZjM5NjViNTQ2YmZjNzZjODY4IiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvcmVjb3Jkcy8yOGY2MmRiNzFkMmMxODI3YjYyMmYzYmMiLCJhY2NvdW50Ijoib3duZXIiLCJzdGFydGVkX2F0IjoiMjAyNi0xMS0wNlQwNToxMjozMy4xOTA5Mjk0OTJaIiwiZmluaXNoZWRfYXQiOiIyMDI2LTExLTA2VDA1OjEyOjMzLjE5NTg2OTY3OVoiLCJzdGF0dXMiOjIwMCwicGVlciI6IjEwLjk3LjEyOS4xMzM6ODA4MCIsImJvZHkiOiJ7XCJpZFwiOlwiMjhmNjJkYjcxZDJjMTgyN2I2MjJmM2JjXCIsXCJvd25lclwiOlwib3duZXJcIixcInByaXZhdGVfbm90ZVwiOlwic3ludGhldGljLXByaXZhdGUtbm90ZS16THFjRm1Jb3pxeUNWZjNvRVBRMy0wMTkwSk1kMkRUaVwiLFwidGl0bGVcIjpcIlNoYXJlZCBsYWIgcmVjb3JkXCJ9XG4ifX0="
+    },
+    {
+      "id": "E-32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "1d42302060dccd0032c2ae09df9b9eb3",
+      "path": "evidence/32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b.json",
+      "sha256": "32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6IjFkNDIzMDIwNjBkY2NkMDAzMmMyYWUwOWRmOWI5ZWIzIiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvcmVjb3Jkcy82YjY0NDJiMjgyMDVlOThiZThlYmM1ZDciLCJhY2NvdW50IjoicGVlciIsInN0YXJ0ZWRfYXQiOiIyMDI2LTExLTA2VDA1OjEyOjMzLjM4NDQzNjgxNloiLCJmaW5pc2hlZF9hdCI6IjIwMjYtMTEtMDZUMDU6MTI6MzMuMzg5MDA0MzY1WiIsInN0YXR1cyI6MjAwLCJwZWVyIjoiMTAuOTcuMTI5LjEzMzo4MDgwIiwiYm9keSI6IntcImlkXCI6XCI2YjY0NDJiMjgyMDVlOThiZThlYmM1ZDdcIixcIm93bmVyXCI6XCJwZWVyXCIsXCJwcml2YXRlX25vdGVcIjpcInN5bnRoZXRpYy1wcml2YXRlLW5vdGUtSE94Z3p2dVk3WFZ6ZkdIRDFGeUJfbU5mLUZLLWhGVXNcIixcInRpdGxlXCI6XCJTaGFyZWQgbGFiIHJlY29yZFwifVxuIn19"
+    },
+    {
+      "id": "E-2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "b958c60d505805b0d0de6d416d1c3db5",
+      "path": "evidence/2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff.json",
+      "sha256": "2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6ImI5NThjNjBkNTA1ODA1YjBkMGRlNmQ0MTZkMWMzZGI1IiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvcmVjb3Jkcy8yOGY2MmRiNzFkMmMxODI3YjYyMmYzYmMiLCJhY2NvdW50IjoicGVlciIsInN0YXJ0ZWRfYXQiOiIyMDI2LTExLTA2VDA1OjEyOjMzLjU3MjUyNjgwM1oiLCJmaW5pc2hlZF9hdCI6IjIwMjYtMTEtMDZUMDU6MTI6MzMuNTc3NzI3OTA0WiIsInN0YXR1cyI6MjAwLCJwZWVyIjoiMTAuOTcuMTI5LjEzMzo4MDgwIiwiYm9keSI6IntcImlkXCI6XCIyOGY2MmRiNzFkMmMxODI3YjYyMmYzYmNcIixcIm93bmVyXCI6XCJvd25lclwiLFwicHJpdmF0ZV9ub3RlXCI6XCJzeW50aGV0aWMtcHJpdmF0ZS1ub3RlLXpMcWNGbUlvenF5Q1ZmM29FUFEzLTAxOTBKTWQyRFRpXCIsXCJ0aXRsZVwiOlwiU2hhcmVkIGxhYiByZWNvcmRcIn1cbiJ9fQ=="
+    },
+    {
+      "id": "E-ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "395f9ddc79df298640de1de5c553b58d",
+      "path": "evidence/ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea.json",
+      "sha256": "ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6IjM5NWY5ZGRjNzlkZjI5ODY0MGRlMWRlNWM1NTNiNThkIiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvcmVjb3Jkcy8yOGY2MmRiNzFkMmMxODI3YjYyMmYzYmMiLCJhY2NvdW50Ijoib3duZXIiLCJzdGFydGVkX2F0IjoiMjAyNi0xMS0wNlQwNToxMjozMy42OTQwODc1NjFaIiwiZmluaXNoZWRfYXQiOiIyMDI2LTExLTA2VDA1OjEyOjMzLjY5ODUyNzcyNVoiLCJzdGF0dXMiOjIwMCwicGVlciI6IjEwLjk3LjEyOS4xMzM6ODA4MCIsImJvZHkiOiJ7XCJpZFwiOlwiMjhmNjJkYjcxZDJjMTgyN2I2MjJmM2JjXCIsXCJvd25lclwiOlwib3duZXJcIixcInByaXZhdGVfbm90ZVwiOlwic3ludGhldGljLXByaXZhdGUtbm90ZS16THFjRm1Jb3pxeUNWZjNvRVBRMy0wMTkwSk1kMkRUaVwiLFwidGl0bGVcIjpcIlNoYXJlZCBsYWIgcmVjb3JkXCJ9XG4ifX0="
+    },
+    {
+      "id": "E-3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24",
+      "run_id": "711b29185127e834ff8c8cf036b50cd9",
+      "capture_id": "74ebe8f542a8545f9f7fb8d6def5f2ff",
+      "path": "evidence/3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24.json",
+      "sha256": "3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24",
+      "data_base64": "eyJlbmdhZ2VtZW50X2lkIjoiNDAzMmQwMzAyZWY0YzczOWE5MmIzYzE0N2NjYzg5M2EiLCJydW5faWQiOiI3MTFiMjkxODUxMjdlODM0ZmY4YzhjZjAzNmI1MGNkOSIsInByb2NlZHVyZSI6InByb3BlcnR5LXZ1bG5lcmFibGUvcHJvcGVydHktYWNjZXNzL3YxIiwiY2FwdHVyZSI6eyJpZCI6Ijc0ZWJlOGY1NDJhODU0NWY5ZjdmYjhkNmRlZjVmMmZmIiwidXJsIjoiaHR0cDovL3RzdW5hbWktcHJvcGVydHktZml4dHVyZS50c3VuYW1pLXByb3BlcnR5LWxhYi5zdmMuY2x1c3Rlci5sb2NhbDo4MDgwL2Nhc2VzL3Z1bG5lcmFibGUvbWUiLCJhY2NvdW50IjoicGVlciIsInN0YXJ0ZWRfYXQiOiIyMDI2LTExLTA2VDA1OjEyOjMzLjc5MDQzNTI5MloiLCJmaW5pc2hlZF9hdCI6IjIwMjYtMTEtMDZUMDU6MTI6MzMuNzk1MTc5MDczWiIsInN0YXR1cyI6MjAwLCJwZWVyIjoiMTAuOTcuMTI5LjEzMzo4MDgwIiwiYm9keSI6IntcIm5hbWVcIjpcInBlZXJcIn1cbiJ9fQ=="
+    }
+  ],
+  "report_markdown": "# Tsunami engagement draft\n\nWeb/API authorization assessment\n\nEngagement: `4032d0302ef4c739a92b3c147ccc893a`; state: stopped. Synthetic targets only.\n\nSelected procedures: 1; completed: 1; skipped: 0; pending: 0; running: 0; failed: 0; stopped: 0; incomplete evidence: 0.\n\nCompletion means the selected procedure captured its prerequisites and probe. It does not mean the application is secure.\n\n| Procedure | Progress | Verdict |\n|---|---|---|\n| property-vulnerable/property-access/v1 | completed | confirmed |\n\n## Finding candidates\n\nCandidates come from broker-captured evidence on owned lab data. Explicit review records are separate from the observation.\n\n### F-fe08dbba4bb4925a2b89d24d403c7291\n\nOwner-only note exposed through a shared record\n\nStatus: needs_human_review; severity: unrated.\n\nThe peer\u0026\\#39;s permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.\n\nRemediation: Authorize each response property for the requesting principal. Use an explicit public response projection and omit the protected fields from the peer\u0026\\#39;s view.\n\nEvidence IDs: E-7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9, E-1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce, E-0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71, E-32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b, E-2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff, E-ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea, E-3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24\n\n## Evidence index\n\n| Evidence | Run | Artifact path |\n|---|---|---|\n| E-e4d3db4bbaf6d0457dcfffbfd5810ebf8a2a3de5df296c2fa5a327b37dfbe2db | 711b29185127e834ff8c8cf036b50cd9 | evidence/e4d3db4bbaf6d0457dcfffbfd5810ebf8a2a3de5df296c2fa5a327b37dfbe2db.json |\n| E-7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9 | 711b29185127e834ff8c8cf036b50cd9 | evidence/7980dbf05239387b6d95bf921b2af365707b150018e4c4a47429ac6b729325b9.json |\n| E-1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce | 711b29185127e834ff8c8cf036b50cd9 | evidence/1bdcee7b975f7101c40862a7f791a640c72fc6e3cacdf10dff4cd0740ecb04ce.json |\n| E-0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71 | 711b29185127e834ff8c8cf036b50cd9 | evidence/0569445301052200297e920312ad7000e1a8a1850af3d58ea07881863fb51d71.json |\n| E-32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b | 711b29185127e834ff8c8cf036b50cd9 | evidence/32fa09211fd527cd40054ec50351c0288d159d2a6c4d624c6c0fbc898cc1ab1b.json |\n| E-2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff | 711b29185127e834ff8c8cf036b50cd9 | evidence/2459e8534adbc861dd7620b74493d6225443320fad6f6f5e926eac4ffe946aff.json |\n| E-ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea | 711b29185127e834ff8c8cf036b50cd9 | evidence/ada8c6a76672e9aae6a48db18b8680728756f13ab68e8abd08eefa93bd68d4ea.json |\n| E-3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24 | 711b29185127e834ff8c8cf036b50cd9 | evidence/3b41535885b919ee55561bcb1c3a6c82c73a07f5991abc79aca58af19507dc24.json |\n\nThis is a draft for human review. Export hashes describe bytes, not independent evidence authenticity.\n",
+  "limitations": [
+    "Owned synthetic lab data only; no general customer readiness claim.",
+    "Checklist progress covers selected Tsunami procedures, not complete OWASP coverage.",
+    "Only matching explicit reviews produce rated findings. Test-generated reviews are labeled.",
+    "Hashes identify exported bytes; they are not an independently signed or immutable evidence store."
+  ]
+}

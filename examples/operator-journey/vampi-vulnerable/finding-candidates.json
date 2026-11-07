@@ -1,0 +1,24 @@
+[
+  {
+    "candidate_digest": "f87a16f4ce67321acf0e218ff93f7bf75ca0eacbcaed0d419cc76fb9e886b93b",
+    "id": "F-2da4e093fe5ca7e5d6a4f72b555e4114",
+    "title": "Cross-user book secret access",
+    "procedure": "vampi-vulnerable/object-access/v2",
+    "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "status": "needs_human_review",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "remediation": "Authorize every object read against the authenticated principal and intended sharing rules on the server.",
+    "run_ids": [
+      "3ac07c43f1cce1a46659613d90568398"
+    ],
+    "evidence_ids": [
+      "E-07e484eba4bf8aee777899b6557565e0a8d13536e72949d548364dae9af7b0cb",
+      "E-532b9a9ace2edbced98c2f3514cfb1321ac51d5519ea25e404df92c2d0c151f7",
+      "E-3a8621752578c50f22c330f1ada432855f88309859d377976119a9994af4c28e",
+      "E-7fa41e3c2dd730e9e2c37c1cb9e94da2aaa9a4535cb9f06bca74d1ad0f0f9c5e",
+      "E-e3f72d7b3ccf988f0c2b3fb5cfa270fff0fc769c68a3b126ea8c4a775437fa7e",
+      "E-0bd0e47f1aa1be7e910fd7f3578b137212cd5e880a907819fdc119a5024cbfc0",
+      "E-26dcfac5e834526b8fb4f5cea01209f26d28d16eaa0cf38994ae338bc8ded44f"
+    ]
+  }
+]

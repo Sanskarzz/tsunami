@@ -23,6 +23,7 @@ const (
 // Runs carry server-owned policy. Agents cannot supply targets, tenant IDs,
 // ownership expectations, budgets, or a confirmed verdict.
 type Run struct {
+	Lifecycle         *Lifecycle        `json:"lifecycle,omitempty"`
 	Executor          string            `json:"executor,omitempty"`
 	EngagementID      string            `json:"engagement_id,omitempty"`
 	Application       *application.Plan `json:"application,omitempty"`

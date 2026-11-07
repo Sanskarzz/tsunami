@@ -4,10 +4,22 @@ from pathlib import Path
 import subprocess
 import unittest
 
-from deploy_images import image_from_control, with_image
+from deploy_images import image_from_control, with_image, manifest_json
 
 
 class SelectedImages(unittest.TestCase):
+    def test_multi_document_render_preserves_every_resource(self):
+        documents = [{"kind": "Service", "metadata": {"name": "tripwire"}}, self.controller(), {"kind": "NetworkPolicy", "metadata": {"name": "tripwire"}}]
+        rendered = manifest_json("\n".join(json.dumps(d) for d in documents))
+        bound = with_image(rendered, "tsunami:selected")
+        self.assertEqual(bound["kind"], "List")
+        self.assertEqual([d["kind"] for d in bound["items"]], ["Service", "Deployment", "NetworkPolicy"])
+        self.assertEqual(bound["items"][1]["spec"]["template"]["spec"]["containers"][0]["image"], "tsunami:selected")
+        self.assertEqual(manifest_json(json.dumps(documents[0])), documents[0])
+        for bad in ["", "{} broken", "[]"]:
+            with self.assertRaises(ValueError):
+                manifest_json(bad)
+
     def controller(self):
         return {"kind": "Deployment", "metadata": {"name": "tsunami-control"}, "spec": {"template": {"spec": {
             "containers": [{"name": "control", "image": "tsunami:dev", "env": [{"name": "TSUNAMI_RUNTIME_CLASS", "value": "old-runtime"}]}]}}}}

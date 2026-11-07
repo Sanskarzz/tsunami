@@ -1,0 +1,117 @@
+{
+  "version": "tsunami.showcase/v1",
+  "checked_at": "2026-11-06T09:09:06.565489+00:00",
+  "mode": "scripted_mecatl",
+  "approval": "automated_owned_lab",
+  "external_model_calls": 0,
+  "passed": true,
+  "cases": [
+    {
+      "application": "vampi-vulnerable",
+      "engagement_id": "f27939d9985805c7afee5352e6ba4e51",
+      "run_id": "fc479a57ea17510c976e1bbd3799d663",
+      "verdict": "confirmed",
+      "finding_candidates": 1,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "07e850361164a844e0d9455305852146"
+      ],
+      "bundle": "object/vampi-vulnerable/bundle.json",
+      "report": "object/vampi-vulnerable/report-draft.md",
+      "cleanup": "api_resources_absent"
+    },
+    {
+      "application": "vampi-fixed",
+      "engagement_id": "bf7bcfc699e91364c45bcdf456ec4c2c",
+      "run_id": "2f88adc4525637c01def8b8cc6bb5aaf",
+      "verdict": "no_issue_observed",
+      "finding_candidates": 0,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "f354c6da828722793914e342f6053eb2"
+      ],
+      "bundle": "object/vampi-fixed/bundle.json",
+      "report": "object/vampi-fixed/report-draft.md",
+      "cleanup": "api_resources_absent"
+    },
+    {
+      "application": "stop-lab-run",
+      "engagement_id": "b5ddcbf90d6692170fef7e1a6c7e9709",
+      "run_id": "03d7ab9c177ee36dcd5800ce551d8972",
+      "verdict": "stopped",
+      "finding_candidates": 0,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "436c5ecc1d440a0186a6f10ecf646ecd"
+      ],
+      "bundle": "object/stop-lab-run/bundle.json",
+      "report": "object/stop-lab-run/report-draft.md",
+      "cleanup": "api_resources_absent"
+    },
+    {
+      "application": "property-vulnerable",
+      "engagement_id": "736406c56111342e745d5afc4484e37f",
+      "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+      "verdict": "confirmed",
+      "finding_candidates": 1,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "f0d4323ab82de4d471dbf92aeebb40de"
+      ],
+      "bundle": "property/property-vulnerable/bundle.json",
+      "report": "property/property-vulnerable/report-draft.md",
+      "cleanup": "api_resources_absent"
+    },
+    {
+      "application": "property-filtered",
+      "engagement_id": "0fdb663b2940c7636d3c2902359b89a4",
+      "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+      "verdict": "no_issue_observed",
+      "finding_candidates": 0,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "8d4d259afc8648b7321dc7be660c9a58"
+      ],
+      "bundle": "property/property-filtered/bundle.json",
+      "report": "property/property-filtered/report-draft.md",
+      "cleanup": "api_resources_absent"
+    },
+    {
+      "application": "property-ambiguous",
+      "engagement_id": "24bf6fcbf43176d1a7ddf736e18db82f",
+      "run_id": "38a7083318e951e542821ce2683cda04",
+      "verdict": "inconclusive",
+      "finding_candidates": 0,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "b7e2e5c60f8a2328ba0f06149ca871ca"
+      ],
+      "bundle": "property/property-ambiguous/bundle.json",
+      "report": "property/property-ambiguous/report-draft.md",
+      "cleanup": "api_resources_absent"
+    },
+    {
+      "application": "property-stop",
+      "engagement_id": "b35f68545c47ddc73969d246f5a6bad7",
+      "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+      "verdict": "stopped",
+      "finding_candidates": 0,
+      "reviewed_findings": 0,
+      "blocked_capture_ids": [
+        "53b751bbc5deedc6a621252437b2cae0"
+      ],
+      "bundle": "property/property-stop/bundle.json",
+      "report": "property/property-stop/report-draft.md",
+      "cleanup": "api_resources_absent"
+    }
+  ],
+  "limitations": [
+    "Owned deliberately vulnerable/fixed applications with supplied facts; no autonomous discovery or customer readiness.",
+    "Selected single-node IPv4/TCP tests; no 1,000-agent or production Stop guarantee.",
+    "Evidence hashes identify bytes, not authenticity against a compromised trusted service."
+  ],
+  "phase": "complete",
+  "binary_sha256": "eb02258dfddb42472a9ce74ab62c1a29b4255098ae38cd5d84f3c6e2e362ae4b",
+  "control_image_id": "sha256:7ec58b2ec6dd87853c4fc812515ce26aa9d9a9526d91aac8de711002df6f4a51",
+  "network_record": "network/network.json"
+}

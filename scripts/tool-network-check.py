@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Credential-free curl bypass checks in the owned cluster; never an agent tool."""
 import copy
+import argparse
 from datetime import datetime, timezone
 import json
 from deploy_images import deployed_tool_image
@@ -11,6 +12,9 @@ import time
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, help="new output directory; default is a timestamped artifact directory")
+    args = parser.parse_args()
     context = os.environ.get("CONTEXT", "kind-tsunami-lab")
     if context != "kind-tsunami-lab":
         raise RuntimeError("use the dedicated kind-tsunami-lab context")
@@ -39,7 +43,7 @@ def main():
                     "api-service": f"https://{api}:443", "node-api": f"https://{node_ip}:6443",
                     "dns-tcp": f"http://{dns}:53", "application-tripwire": f"http://{app}:5000"}
     template = json.loads(kube("create", "--dry-run=client", "-f", "deploy/network-probe.yaml", "-o", "json"))
-    out = Path("artifacts/tool-execution") / ("network-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))
+    out = args.out or Path("artifacts/tool-execution") / ("network-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ"))
     out.mkdir(parents=True, exist_ok=False, mode=0o700)
     report = {"checked_at": datetime.now(timezone.utc).isoformat(), "context": context,
               "destinations": destinations, "checks": [], "limitations": ["Selected IPv4/TCP paths only; UDP DNS is qualified by the separate Go diagnostic.", "Not arbitrary shell containment, IPv6, metadata or production capacity qualification."]}

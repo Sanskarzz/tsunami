@@ -1,0 +1,532 @@
+[
+  {
+    "method": "GET",
+    "path": "/ui/",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/ui/styles.css",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/ui/app.js",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/ui/onboarding.js",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/applications",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/applications",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/applications",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25/approve",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25/runs",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/bfd6e2d0f3e3808606341cc9b633a3c9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/bfd6e2d0f3e3808606341cc9b633a3c9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/bfd6e2d0f3e3808606341cc9b633a3c9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/bfd6e2d0f3e3808606341cc9b633a3c9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/bfd6e2d0f3e3808606341cc9b633a3c9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/bfd6e2d0f3e3808606341cc9b633a3c9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/f1ddf3f4625d712fdf7c24644bd7ab25/export",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/applications",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10/approve",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10/runs",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/11af73601e442b6f5728ac43c13d4f82/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/11af73601e442b6f5728ac43c13d4f82/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/11af73601e442b6f5728ac43c13d4f82/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/11af73601e442b6f5728ac43c13d4f82/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/11af73601e442b6f5728ac43c13d4f82/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/2222f551d941a3fc51aca9c171667d10/export",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/applications",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514/approve",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514/runs",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514/export",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514/stop",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/a44568aa923bb8e330a64961425e18b9/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/de32aa326d436894a49f0f35c5166514/export",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding/9374221764f65d271b9aa83bec6b5b95/stop",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding/0a89fc42c6202d70e43dcf714081f1e8/stop",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3/access",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3/validate",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/onboarding/d87d354b21c67155b33489878a0c17c3/prepare",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417/approve",
+    "same_origin": true
+  },
+  {
+    "method": "POST",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417/runs",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/runs/19c236daac88b4c690f86ae126ff263d/status",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements/5a1090e40257c8be1c6a119380544417/export",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/applications",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/engagements",
+    "same_origin": true
+  },
+  {
+    "method": "GET",
+    "path": "/v1/onboarding",
+    "same_origin": true
+  }
+]

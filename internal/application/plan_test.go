@@ -29,3 +29,34 @@ func TestJSONProofRejectsAmbiguousAndWrongShapes(t *testing.T) {
 		t.Fatal("invalid selector accepted")
 	}
 }
+
+func TestPropertyFilteringRequiresThePublicObjectAndKnownPrivateValue(t *testing.T) {
+	hash := func(s string) string { sum := sha256.Sum256([]byte(s)); return hex.EncodeToString(sum[:]) }
+	r := Read{Equals: map[string]string{"/id": "record-a", "/owner": "owner"}, Hashes: map[string]string{"/private": hash("known-private-value")}}
+	for _, test := range []struct{ body, want string }{
+		{`{"id":"record-a","owner":"owner","private":"known-private-value"}`, "leaked"},
+		{`{"id":"record-a","owner":"owner","public":"hello"}`, "filtered"},
+		{`{"id":"record-a","owner":"owner","private":"[redacted]"}`, "unknown"},
+		{`{"id":"record-a","owner":"owner","private": null}`, "unknown"},
+		{`{"id":"record-a","owner":"owner","private":123}`, "unknown"},
+		{`{"id":"record-a","owner":"owner","private":{"nested":"known-private-value"}}`, "leaked"},
+		{`{"id":"record-a","owner":"owner","renamed":["known-private-value"]}`, "leaked"},
+		{`{"id":"other","owner":"owner"}`, "unknown"},
+		{`{"error":"generic success"}`, "unknown"},
+		{`[{"id":"record-a","owner":"owner"}]`, "unknown"},
+		{`{"id":"record-a","owner":"owner","private":"known-private-value","private":"[redacted]"}`, "unknown"},
+		{`{"id":"record-a","owner":"owner"} {}`, "unknown"},
+	} {
+		if got := r.PropertyResult(test.body); got != test.want {
+			t.Fatalf("property verdict %s, expected %s for %s", got, test.want, test.body)
+		}
+	}
+	r.Hashes["/second"] = hash("another-private-value")
+	if r.PropertyResult(`{"id":"record-a","owner":"owner","second":"another-private-value","private":null}`) != "leaked" {
+		t.Fatal("one proven private leak was hidden by another ambiguous property")
+	}
+	r.Hashes["/nested/private"] = hash("x")
+	if r.PropertyResult(`{"id":"record-a","owner":"owner","second":"another-private-value"}`) != "unknown" {
+		t.Fatal("unsupported nested policy accepted")
+	}
+}

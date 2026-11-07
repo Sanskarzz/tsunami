@@ -1,0 +1,27 @@
+go test -race -count=1 ./...
+ok  	github.com/Sanskarzz/tsunami/cmd/tsunami	1.038s
+ok  	github.com/Sanskarzz/tsunami/internal/application	1.024s
+ok  	github.com/Sanskarzz/tsunami/internal/assessment	1.056s
+ok  	github.com/Sanskarzz/tsunami/internal/connector	9.553s
+ok  	github.com/Sanskarzz/tsunami/internal/demo	29.973s
+ok  	github.com/Sanskarzz/tsunami/internal/httpserver	1.061s
+ok  	github.com/Sanskarzz/tsunami/internal/inference	1.254s
+ok  	github.com/Sanskarzz/tsunami/internal/isolation	1.027s
+ok  	github.com/Sanskarzz/tsunami/internal/journey	9.312s
+ok  	github.com/Sanskarzz/tsunami/internal/kube	2.091s
+ok  	github.com/Sanskarzz/tsunami/internal/lab	1.045s
+ok  	github.com/Sanskarzz/tsunami/internal/platform	5.309s
+ok  	github.com/Sanskarzz/tsunami/internal/scoring	1.035s
+?   	github.com/Sanskarzz/tsunami/internal/toolcontract	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/toolrunner	2.824s
+?   	github.com/Sanskarzz/tsunami/internal/worker	[no test files]
+go vet ./...
+python3 -B -m unittest discover -s scripts -p 'test_*.py'
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 1.304s
+
+OK
+python3 -B scripts/check-examples.py
+PASS 11 materialized bundles, 84 artifacts and 20 historical trial hashes.
+Actual local toolkit schemas: not requested; run make verify-toolkit separately.

@@ -27,26 +27,44 @@ type RegisteredApplication struct {
 // RegisterApplication is trusted startup configuration, never an agent/API
 // registration route. Credentials never enter the public plan or run record.
 func (s *Server) RegisterApplication(c ApplicationConfig) error {
+	a, err := prepareApplication(c)
+	if err != nil {
+		return err
+	}
+	if s.Applications == nil {
+		s.Applications = map[string]map[string]RegisteredApplication{}
+	}
+	if s.Applications[c.Tenant] == nil {
+		s.Applications[c.Tenant] = map[string]RegisteredApplication{}
+	}
+	if _, exists := s.Applications[c.Tenant][a.Plan.ID]; exists {
+		return errors.New("duplicate application ID for tenant")
+	}
+	s.Applications[c.Tenant][a.Plan.ID] = a
+	return nil
+}
+
+func prepareApplication(c ApplicationConfig) (RegisteredApplication, error) {
 	if c.Tenant == "" || len(c.Credentials) != 2 {
-		return errors.New("two tenant-bound application credentials required")
+		return RegisteredApplication{}, errors.New("two tenant-bound application credentials required")
 	}
 	keys := []string{}
 	for _, r := range c.Plan.Identity {
 		keys = append(keys, r.Account)
 	}
 	if len(keys) != 2 || keys[0] == keys[1] {
-		return errors.New("distinct identity aliases required")
+		return RegisteredApplication{}, errors.New("distinct identity aliases required")
 	}
 	secret := map[string]string{}
 	for _, key := range keys {
 		token := c.Credentials[key]
 		if len(token) < 32 || len(token) > 4096 || strings.ContainsAny(token, "\r\n\t ") {
-			return errors.New("invalid application credential")
+			return RegisteredApplication{}, errors.New("invalid application credential")
 		}
 		secret[key] = token
 	}
 	if secret[keys[0]] == secret[keys[1]] {
-		return errors.New("distinct test identities required")
+		return RegisteredApplication{}, errors.New("distinct test identities required")
 	}
 	data, _ := json.Marshal(struct {
 		Tenant, ID  string
@@ -55,35 +73,31 @@ func (s *Server) RegisterApplication(c ApplicationConfig) error {
 	sum := sha256.Sum256(data)
 	c.Plan.CredentialSetID = hex.EncodeToString(sum[:])
 	if err := c.Plan.Validate(); err != nil {
-		return err
+		return RegisteredApplication{}, err
 	}
 	approved := []netip.Prefix{}
 	for _, raw := range c.Plan.ApprovedAddresses {
 		if raw == os.Getenv("KUBERNETES_SERVICE_HOST") && raw != "" {
-			return errors.New("Kubernetes API is not an application target")
+			return RegisteredApplication{}, errors.New("Kubernetes API is not an application target")
 		}
 		ip, _ := netip.ParseAddr(raw)
 		approved = append(approved, netip.PrefixFrom(ip, ip.BitLen()))
 	}
 	policy, err := NewPolicy(c.Plan.Origin, approved, nil)
 	if err != nil {
-		return err
+		return RegisteredApplication{}, err
 	}
 	// Own immutable copy of all configuration, including slices/maps.
 	public, _ := json.Marshal(c.Plan)
 	var plan application.Plan
 	_ = json.Unmarshal(public, &plan)
-	if s.Applications == nil {
-		s.Applications = map[string]map[string]RegisteredApplication{}
+	publicPlan, _ := json.Marshal(plan)
+	for _, credential := range secret {
+		if strings.Contains(string(publicPlan), credential) {
+			return RegisteredApplication{}, errors.New("public plan cannot contain an assigned credential")
+		}
 	}
-	if s.Applications[c.Tenant] == nil {
-		s.Applications[c.Tenant] = map[string]RegisteredApplication{}
-	}
-	if _, exists := s.Applications[c.Tenant][plan.ID]; exists {
-		return errors.New("duplicate application ID for tenant")
-	}
-	s.Applications[c.Tenant][plan.ID] = RegisteredApplication{Plan: plan, Target: Target{URL: plan.Origin, Policy: policy.WithPaths(plan.Paths())}, credentials: secret}
-	return nil
+	return RegisteredApplication{Plan: plan, Target: Target{URL: plan.Origin, Policy: policy.WithPaths(plan.Paths())}, credentials: secret}, nil
 }
 
 func (s *Server) LoadApplications(path string) error {
@@ -117,7 +131,7 @@ func (s *Server) targetForRun(r Run) (Target, error) {
 	if r.Application == nil {
 		return s.target(r.Tenant, r.Scenario, r.Connectivity)
 	}
-	a, ok := s.Applications[r.Tenant][r.Application.ID]
+	a, ok := s.application(r.Tenant, r.Application.ID)
 	if !ok || r.Connectivity != "" || r.Application.Validate() != nil || a.Plan.Digest() != r.ApplicationDigest || r.Application.Digest() != r.ApplicationDigest {
 		return Target{}, errors.New("application permission unavailable or configuration changed")
 	}
@@ -147,6 +161,9 @@ func (r Run) ProcedureValid() bool {
 }
 func (r Run) ProcedureRemediation() string {
 	if r.Application != nil {
+		if r.Application.Version == application.PropertyAccessProfile {
+			return "Authorize each response property for the requesting principal. Use an explicit public response projection and omit the protected fields from the peer's view."
+		}
 		return "Authorize every object read against the authenticated principal and intended sharing rules on the server."
 	}
 	return r.Assessment.Remediation
@@ -154,14 +171,56 @@ func (r Run) ProcedureRemediation() string {
 
 func validateApplication(r Run) Result {
 	p := r.Application
+	if p == nil {
+		return Result{Verdict: "inconclusive", Reason: "Application plan unavailable.", EvidenceIDs: []string{}}
+	}
+	if p.Version != application.PropertyAccessProfile || !r.ProcedureValid() {
+		return validateApplicationAtProbe(r, -1)
+	}
+	// A worker may repeat an allowed read within its budget. A later filtered
+	// reply must not erase a known private value already captured by the broker.
+	unproven := []string{}
+	for i, capture := range r.Captures {
+		if capture.URL != r.Target+p.Probe.Path || capture.Account != p.Probe.Account || capture.Blocked || capture.Error != "" || capture.Status != 200 || p.Probe.PropertyResult(capture.Body) != "leaked" {
+			continue
+		}
+		result := validateApplicationAtProbe(r, i)
+		if result.Verdict == "confirmed" {
+			return result
+		}
+		unproven = append(unproven, capture.ID)
+	}
+	result := validateApplicationAtProbe(r, -1)
+	if len(unproven) > 0 && result.Verdict == "no_issue_observed" {
+		result.Verdict = "inconclusive"
+		result.Reason = "An earlier private-value exposure lacked complete ordered prerequisites. A later filtered reply cannot erase that observation."
+		for _, id := range unproven {
+			found := false
+			for _, existing := range result.EvidenceIDs {
+				if existing == id {
+					found = true
+				}
+			}
+			if !found {
+				result.EvidenceIDs = append(result.EvidenceIDs, id)
+			}
+		}
+	}
+	return result
+}
+
+func validateApplicationAtProbe(r Run, selectedProbe int) Result {
+	p := r.Application
 	out := Result{Verdict: "inconclusive", Title: p.Title, Reason: "Verified identities, legitimate reads and an owner recheck are required.", EvidenceIDs: []string{}, Validation: &ValidationDetails{BaselinesRequired: 6, ExpectedAccess: p.ExpectedAccess}}
 	if !r.ProcedureValid() {
 		return out
 	}
-	probeIndex := -1
-	for i, c := range r.Captures {
-		if c.URL == r.Target+p.Probe.Path && c.Account == p.Probe.Account {
-			probeIndex = i
+	probeIndex := selectedProbe
+	if selectedProbe < 0 {
+		for i, c := range r.Captures {
+			if c.URL == r.Target+p.Probe.Path && c.Account == p.Probe.Account {
+				probeIndex = i
+			}
 		}
 	}
 	if probeIndex < 0 {
@@ -207,6 +266,21 @@ func validateApplication(r Run) Result {
 	}
 	out.Validation.ProbeCaptured = valid(probe)
 	if out.Validation.BaselinesVerified != 6 || !out.Validation.ProbeCaptured {
+		return out
+	}
+	if p.Version == application.PropertyAccessProfile {
+		out.Reason = "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule."
+		if probe.Status != 200 {
+			return out
+		}
+		switch p.Probe.PropertyResult(probe.Body) {
+		case "leaked":
+			out.Verdict = "confirmed"
+			out.Reason = "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified."
+		case "filtered":
+			out.Verdict = "no_issue_observed"
+			out.Reason = "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities."
+		}
 		return out
 	}
 	if probe.Status == 200 && p.Probe.Matches(probe.Body) {

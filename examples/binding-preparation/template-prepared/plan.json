@@ -1,0 +1,65 @@
+{
+  "version": "http-property-access/v1",
+  "id": "owned-records",
+  "title": "Owned shared-record property test",
+  "origin": "http://owned.example.test:8080",
+  "approved_addresses": [
+    "192.0.2.20"
+  ],
+  "credential_set_id": "",
+  "synthetic_data_only": true,
+  "owner_pointer": "/owner",
+  "identity": [
+    {
+      "account": "owner",
+      "path": "/me",
+      "equals": {
+        "/name": "owner"
+      }
+    },
+    {
+      "account": "peer",
+      "path": "/me",
+      "equals": {
+        "/name": "peer"
+      }
+    }
+  ],
+  "baselines": [
+    {
+      "account": "owner",
+      "path": "/records/record_owner",
+      "equals": {
+        "/id": "record_owner",
+        "/owner": "owner"
+      },
+      "sha256": {
+        "/private_note": "6651a7428b5cd471fb959a72b54129aea77d825b0769a5bffe8f50ba5f4dc558"
+      }
+    },
+    {
+      "account": "peer",
+      "path": "/records/record_peer",
+      "equals": {
+        "/id": "record_peer",
+        "/owner": "peer"
+      },
+      "sha256": {
+        "/private_note": "88b88b94c66a70e4725e6844cb8967a1fe5ee8718533a5902a5af7dd1b9928d6"
+      }
+    }
+  ],
+  "probe": {
+    "account": "peer",
+    "path": "/records/record_owner",
+    "equals": {
+      "/id": "record_owner",
+      "/owner": "owner"
+    },
+    "sha256": {
+      "/private_note": "6651a7428b5cd471fb959a72b54129aea77d825b0769a5bffe8f50ba5f4dc558"
+    }
+  },
+  "expected_access": "filtered",
+  "denial_statuses": []
+}

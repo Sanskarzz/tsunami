@@ -1,0 +1,168 @@
+{
+  "version": "tsunami.ui-qualification/v1",
+  "checked_at": "2026-11-06T11:43:41.952Z",
+  "passed": true,
+  "context": "kind-tsunami-lab",
+  "execution": "scripted_mecatl",
+  "approval": "automated_owned_lab",
+  "external_model_calls": 0,
+  "cases": [
+    {
+      "application": "vampi-vulnerable",
+      "engagement_id": "8d38b0cee8dbd24b7984beb7fd11328e",
+      "passed": true,
+      "run_id": "75634fff085f8f6ee98ce32c1d1ffd20",
+      "verdict": "confirmed",
+      "status": {
+        "run_id": "75634fff085f8f6ee98ce32c1d1ffd20",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T11:45:14.53194307Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-06T11:43:44.580870163Z",
+        "worker_observed_at": "2026-11-06T11:43:46.06922628Z",
+        "exit_observed_at": "2026-11-06T11:43:47.558834364Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T11:43:46.497308094Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T11:43:46.574494241Z",
+        "api_resources_absent_at": "2026-11-06T11:43:49.062068216Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Cross-user book secret access",
+          "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+          "evidence_ids": [
+            "b75f87aa679f85e4b29a63686809bf7c",
+            "3c8a67e0a45e01a3e7291bd4c7ac5c40",
+            "849b397751e4a785df34cbaa78745271",
+            "103701f50232eb5376082ffb9fdcca9e",
+            "26065687fd3bdb1a6c4efdd423119839",
+            "22207ed4e5f9f818c0e4b1be1ff049b0",
+            "32e7057bac3dc1c9cb8fb15d62d5f0dc"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "bundle": "vampi-vulnerable/bundle.json",
+      "candidates": 1,
+      "blocked_captures": 1
+    },
+    {
+      "application": "vampi-fixed",
+      "engagement_id": "1f1eac2e7da9ab635fb25a8a22b1faac",
+      "passed": true,
+      "lost_start_response_recovered": true,
+      "run_id": "8148443f97bde8dd887fcec623ede844",
+      "verdict": "no_issue_observed",
+      "status": {
+        "run_id": "8148443f97bde8dd887fcec623ede844",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T11:45:19.823585174Z",
+        "execution": "unknown_after_resource_removal",
+        "dispatch_intent_at": "2026-11-06T11:43:50.062792947Z",
+        "worker_observed_at": "2026-11-06T11:43:51.569138781Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T11:43:51.50195947Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T11:43:51.579306231Z",
+        "api_resources_absent_at": "2026-11-06T11:43:53.067729915Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "no_issue_observed",
+          "title": "Cross-user book secret access",
+          "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+          "evidence_ids": [
+            "03a720b4b0d4c73d971366ffdf2897ae",
+            "84a269196d75bca51e2b4364be1bd8f2",
+            "609c4b52532dc0e94b5c1939b7e28690",
+            "df250b5b19bcb579fccada4a5bab22d7",
+            "2730a925d1f379b63639802594715814",
+            "a3a1cb1038a1c612176ba861aab8b5e2",
+            "9845f9c78fed3787ac555d679f40f5dc"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "bundle": "vampi-fixed/bundle.json",
+      "candidates": 0,
+      "blocked_captures": 1
+    },
+    {
+      "application": "stop-lab-run",
+      "engagement_id": "82e3a9a36a8e9ef1219f39695af14de7",
+      "passed": true,
+      "run_id": "124fa86ae6790feb09c7d5cc3094518f",
+      "stop_during_pending_export": true,
+      "verdict": "stopped",
+      "status": {
+        "run_id": "124fa86ae6790feb09c7d5cc3094518f",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 5,
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-06T11:43:58.976632103Z",
+        "expires_at": "2026-11-06T11:45:25.329639013Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-06T11:43:55.56892012Z",
+        "worker_observed_at": "2026-11-06T11:43:57.059066745Z",
+        "exit_observed_at": "2026-11-06T11:43:59.563552143Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T11:43:57.041688534Z",
+        "local_drain_observed_at": "2026-11-06T11:43:58.98038521Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T11:43:59.066986252Z",
+        "api_resources_absent_at": "2026-11-06T11:44:01.063446947Z",
+        "observation_code": "observed"
+      },
+      "bundle": "stop-lab-run/bundle.json",
+      "candidates": 0,
+      "blocked_captures": 1
+    }
+  ],
+  "checks": [
+    "invalid operator refused",
+    "no automatic assessment on connect",
+    "wrong digest disables approval",
+    "one POST per Start despite double click",
+    "scope denial captured",
+    "pause does not Stop",
+    "held request revocation and local drain observed",
+    "downloaded artifact hashes match",
+    "operator token absent from DOM/storage/export",
+    "lost committed Start response recovered without retry",
+    "Stop available during held viewer export",
+    "hostile API text rendered as text",
+    "mobile layout within viewport",
+    "disconnect clears display",
+    "same-origin requests only",
+    "no browser runtime exceptions"
+  ],
+  "navigation": {
+    "frameId": "5771507D4C8B6AB535E371A4804A546A",
+    "loaderId": "5E17D7F62F423C169C7E19684786FA68",
+    "isDownload": false
+  }
+}

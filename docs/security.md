@@ -58,6 +58,8 @@ Only the durable pending-to-running transition grants an initial Job creation at
 
 Successful Kubernetes deletion requests are recorded once instead of resending them for every historical run on every tick. `deletion_requested_at` means the API accepted cleanup, not that a process on a disconnected node has exited.
 
+The operator [lifecycle status endpoint](stop-lifecycle.md) separates durable permission, observed execution, active/uncertain operations and cleanup. Unfinished operation records survive process replacement without claiming a drain. Optional startup configuration failures disable their execution route while leaving the state/revocation API available. This does not provide availability after state-store or broker failure.
+
 The ten-second operation timeout must not be described as a distributed permission lease. The private lab adds a separate signed request expiry at the connector; its native tests cover expiry without a control-plane callback. A disconnected real customer-side connector and cross-node partitions are not qualified.
 
 ## Private connector boundary
@@ -99,3 +101,11 @@ Only a stopped engagement and matching candidate fingerprint can receive a revie
 The offline suite exercises origin bypasses, path/port/scheme checks, DNS rebinding, numeric-address dialing, TLS verification, cross-tenant/run credential rejection, worker verdict forgery, quota limits, cancellation observed by the target, durable tenant/global gates, and the real Mecatl-driven lab workflow.
 
 Kubernetes verification adds actual worker Jobs, mounted run identities, control-plane state on a PVC, and API-driven cancellation. It does not qualify host escape resistance, metadata/node paths, arbitrary network protocols, distributed failover, or a production stop objective.
+
+## Local operator interface
+
+The optional `/ui/` handler serves embedded assets only for loopback Host values and requires `TSUNAMI_ENABLE_UI=true` at startup. It provides no operator credential, reverse proxy, target registration or application login. The same API authentication/tenant checks apply. The browser holds the operator token in page memory, omits cookies/storage and uses fixed same-origin paths. The wrapper preserves shutdown admission and sets no-store; the UI CSP has no external script dependencies and evidence/Markdown are displayed as text. A compromised local browser, extension or workstation can still read memory or use operator authority. Stop remains independent of viewer requests; a lost mutation response is not automatically retried. See [actual scope and limits](local-ui.md) and [browser records](../examples/local-ui/README.md).
+
+## Protected onboarding preflight
+
+Authenticated operator setup APIs now hold durable typed facts/questions/revisions and an explicit bounded preflight grant. Secrets and raw preflight responses are encrypted with a control-only key and tenant/session/purpose binding; no token goes into conversation or worker configuration. The final assessment evidence retains its documented local lab storage limits. Preflight uses the existing validated-address/hostname/TLS policy, exact own-account GETs, no redirects and persistent reservations; setup/global Stop cancel it and late responses cannot grant readiness. Interrupted attempts stay uncertain, not automatically replayed. New public targets are HTTPS-only with address filtering and trusted infrastructure exclusions; private exceptions remain exact registered lab integrations. These are not complete customer identity, secret/evidence lifecycle, all-provider infrastructure exclusions or production failure/scale qualification. See [the implementation limits](application-onboarding.md).

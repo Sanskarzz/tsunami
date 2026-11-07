@@ -37,12 +37,23 @@ type Plan struct {
 	Probe             Read     `json:"probe"`
 	ExpectedAccess    string   `json:"expected_access"`
 	DenialStatuses    []int    `json:"denial_statuses"`
+	MinIntervalMillis int      `json:"min_interval_ms,omitempty"`
 }
+
+const (
+	ObjectAccessProfile   = "http-object-access/v2"
+	PropertyAccessProfile = "http-property-access/v1"
+)
 
 var slug = regexp.MustCompile(`^[a-z][a-z0-9-]{0,63}$`)
 var digest = regexp.MustCompile(`^[a-f0-9]{64}$`)
 
-func (p Plan) ProcedureID() string { return p.ID + "/object-access/v2" }
+func (p Plan) ProcedureID() string {
+	if p.Version == PropertyAccessProfile {
+		return p.ID + "/property-access/v1"
+	}
+	return p.ID + "/object-access/v2"
+}
 func (p Plan) Digest() string {
 	data, _ := json.Marshal(p)
 	sum := sha256.Sum256(data)
@@ -80,7 +91,10 @@ func (p Plan) Allows(alias, path string) bool {
 
 func (p Plan) Validate() error {
 	bad := errors.New("invalid bounded application plan")
-	if p.Version != "http-object-access/v2" || !slug.MatchString(p.ID) || strings.TrimSpace(p.Title) == "" || len(p.Title) > 120 || strings.ContainsAny(p.Title, "\r\n\t") || !p.SyntheticDataOnly || !digest.MatchString(p.CredentialSetID) {
+	if p.MinIntervalMillis != 0 && (p.MinIntervalMillis < 1000 || p.MinIntervalMillis > 5000) {
+		return bad
+	}
+	if (p.Version != ObjectAccessProfile && p.Version != PropertyAccessProfile) || !slug.MatchString(p.ID) || strings.TrimSpace(p.Title) == "" || len(p.Title) > 120 || strings.ContainsAny(p.Title, "\r\n\t") || !p.SyntheticDataOnly || !digest.MatchString(p.CredentialSetID) {
 		return bad
 	}
 	u, err := url.Parse(p.Origin)
@@ -98,7 +112,9 @@ func (p Plan) Validate() error {
 		}
 		seen[raw] = true
 	}
-	if len(p.Identity) != 2 || len(p.Baselines) != 2 || (p.ExpectedAccess != "allow" && p.ExpectedAccess != "deny") || len(p.DenialStatuses) > 3 {
+	property := p.Version == PropertyAccessProfile
+	accessValid := (!property && (p.ExpectedAccess == "allow" || p.ExpectedAccess == "deny")) || (property && p.ExpectedAccess == "filtered" && len(p.DenialStatuses) == 0)
+	if len(p.Identity) != 2 || len(p.Baselines) != 2 || !accessValid || len(p.DenialStatuses) > 3 {
 		return bad
 	}
 	for _, status := range p.DenialStatuses {
@@ -152,7 +168,76 @@ func (p Plan) Validate() error {
 	if !bytes.Equal(x, y) || !bytes.Equal(u1, u2) || len(p.Baselines[0].Hashes) == 0 || len(p.Baselines[1].Hashes) == 0 {
 		return bad
 	}
+	if property {
+		// Each sensitive pointer must be a direct object member beneath an
+		// explicitly checked parent object. Missing/wrong-shaped parents must
+		// never masquerade as correctly filtered fields. Arrays are unsupported.
+		for pointer := range p.Baselines[0].Hashes {
+			if strings.Count(pointer, "/") != 1 {
+				return bad
+			}
+		}
+		if len(p.Probe.Equals) < 2 {
+			return bad // Require public object identity as well as ownership.
+		}
+	}
 	return nil
+}
+
+// PropertyResult evaluates only direct protected members in one JSON object.
+// "leaked" needs a known owner value, including a copy under another key.
+// All protected members omitted and no known value elsewhere gives "filtered".
+// Unknown/redacted/null values, malformed JSON and wrong object identity remain
+// "unknown". This returns only a classification; bodies remain broker evidence.
+func (r Read) PropertyResult(body string) string {
+	public := Read{Equals: r.Equals}
+	if len(r.Hashes) == 0 || !public.Matches(body) {
+		return "unknown"
+	}
+	// Matches already rejected duplicate keys, trailing documents and depth/
+	// byte violations. Decode that same bounded document for member presence.
+	var object map[string]any
+	if json.Unmarshal([]byte(body), &object) != nil || object == nil {
+		return "unknown"
+	}
+	known := map[string]bool{}
+	for pointer, want := range r.Hashes {
+		if !validPointer(pointer) || strings.Count(pointer, "/") != 1 || !digest.MatchString(want) {
+			return "unknown"
+		}
+		known[want] = true
+	}
+	var leaks func(any) bool
+	leaks = func(value any) bool {
+		switch v := value.(type) {
+		case string:
+			sum := sha256.Sum256([]byte(v))
+			return known[hex.EncodeToString(sum[:])]
+		case map[string]any:
+			for _, child := range v {
+				if leaks(child) {
+					return true
+				}
+			}
+		case []any:
+			for _, child := range v {
+				if leaks(child) {
+					return true
+				}
+			}
+		}
+		return false
+	}
+	if leaks(object) {
+		return "leaked"
+	}
+	for pointer := range r.Hashes {
+		key := strings.ReplaceAll(strings.ReplaceAll(pointer[1:], "~1", "/"), "~0", "~")
+		if _, exists := object[key]; exists {
+			return "unknown"
+		}
+	}
+	return "filtered"
 }
 
 func validPointer(s string) bool {
@@ -227,46 +312,59 @@ func strictValue(d *json.Decoder, depth int) (any, error) {
 	return nil, errors.New("invalid JSON token")
 }
 
-func (r Read) Matches(body string) bool {
+// DecodeDocument uses the same bounded, duplicate-rejecting JSON contract as
+// evidence validation. It performs no reference expansion or network access.
+func DecodeDocument(body string) (any, error) {
 	if len(body) > 64<<10 {
-		return false
+		return nil, errors.New("JSON byte limit")
 	}
 	d := json.NewDecoder(strings.NewReader(body))
 	d.UseNumber()
 	value, err := strictValue(d, 0)
 	if err != nil {
-		return false
+		return nil, errors.New("invalid bounded JSON document")
 	}
 	if _, err = d.Token(); err != io.EOF {
-		return false
+		return nil, errors.New("extra JSON data")
 	}
-	lookup := func(pointer string) (string, bool) {
-		if !validPointer(pointer) {
+	return value, nil
+}
+
+// StringAt reads a string member from already decoded JSON. Arrays and implicit
+// number-to-string conversion are intentionally unsupported.
+func StringAt(value any, pointer string) (string, bool) {
+	if !validPointer(pointer) {
+		return "", false
+	}
+	current := value
+	for _, part := range strings.Split(pointer[1:], "/") {
+		obj, ok := current.(map[string]any)
+		if !ok {
 			return "", false
 		}
-		current := value
-		for _, part := range strings.Split(pointer[1:], "/") {
-			obj, ok := current.(map[string]any)
-			if !ok {
-				return "", false
-			}
-			part = strings.ReplaceAll(strings.ReplaceAll(part, "~1", "/"), "~0", "~")
-			current, ok = obj[part]
-			if !ok {
-				return "", false
-			}
+		part = strings.ReplaceAll(strings.ReplaceAll(part, "~1", "/"), "~0", "~")
+		current, ok = obj[part]
+		if !ok {
+			return "", false
 		}
-		text, ok := current.(string)
-		return text, ok
+	}
+	text, ok := current.(string)
+	return text, ok
+}
+
+func (r Read) Matches(body string) bool {
+	value, err := DecodeDocument(body)
+	if err != nil {
+		return false
 	}
 	for key, want := range r.Equals {
-		got, ok := lookup(key)
+		got, ok := StringAt(value, key)
 		if !ok || got != want {
 			return false
 		}
 	}
 	for key, want := range r.Hashes {
-		got, ok := lookup(key)
+		got, ok := StringAt(value, key)
 		if !ok {
 			return false
 		}

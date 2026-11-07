@@ -1,0 +1,4634 @@
+
+$ tsunami assess applications 
+[
+  {
+    "id": "property-ambiguous",
+    "title": "Owner-only note exposed through a shared record",
+    "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "profile": "http-property-access/v1"
+  },
+  {
+    "id": "property-filtered",
+    "title": "Owner-only note exposed through a shared record",
+    "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "profile": "http-property-access/v1"
+  },
+  {
+    "id": "property-stop",
+    "title": "Owner-only note exposed through a shared record",
+    "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "profile": "http-property-access/v1"
+  },
+  {
+    "id": "property-vulnerable",
+    "title": "Owner-only note exposed through a shared record",
+    "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "profile": "http-property-access/v1"
+  },
+  {
+    "id": "stop-lab-api-outage",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "stop-lab-engagement",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "stop-lab-restart",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "stop-lab-run",
+    "title": "Owned held-request Stop test",
+    "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "vampi-fixed",
+    "title": "Cross-user book secret access",
+    "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+    "profile": "http-object-access/v2"
+  },
+  {
+    "id": "vampi-vulnerable",
+    "title": "Cross-user book secret access",
+    "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "profile": "http-object-access/v2"
+  }
+]
+
+$ tsunami assess plan --application property-vulnerable --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-vulnerable",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "4a7f447f2fe8bb50a05e5b3a9fdbf17efe47a4152dee59ed4403d5579b84f667",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/vulnerable/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/vulnerable/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/vulnerable/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "736406c56111342e745d5afc4484e37f",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:10:55.434769526Z",
+    "expires_at": "2026-11-06T10:10:55.434769526Z",
+    "scope_digest": "8d91894765979e4ac5a88af703e7767908630eaf46b0fec1ca5b424bd1af4155",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-vulnerable/property-access/v1",
+        "definition_digest": "e2db89cb42695b218171a53b1ebf3feb36badff41e5b79ad0fcea2d709c64495",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:10:55.434769526Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-vulnerable/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement 736406c56111342e745d5afc4484e37f
+Engagement: 736406c56111342e745d5afc4484e37f
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: 8d91894765979e4ac5a88af703e7767908630eaf46b0fec1ca5b424bd1af4155
+Approved digest: 
+Expires: 2026-11-06T10:10:55Z
+Application: "property-vulnerable"
+Target: "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+Approved destination addresses: ["10.97.129.133"]
+Profile: "http-property-access/v1"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "filtered". The service verifies identities, legitimate reads and follow-up checks.
+The peer may read the public object. These owner-only fields must be omitted: ["/private_note"]. Known private values are compared by hash; redaction/unknown values are inconclusive.
+  1. GET "/cases/vulnerable/me" as "owner"
+  2. GET "/cases/vulnerable/me" as "peer"
+  3. GET "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5" as "owner"
+  4. GET "/cases/vulnerable/records/16986c617652e639ee3714ce" as "peer"
+  5. GET "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5" as "peer"
+  6. GET "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5" as "owner"
+  7. GET "/cases/vulnerable/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement 736406c56111342e745d5afc4484e37f --scope-digest 8d91894765979e4ac5a88af703e7767908630eaf46b0fec1ca5b424bd1af4155
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement 736406c56111342e745d5afc4484e37f
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement 736406c56111342e745d5afc4484e37f --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement 736406c56111342e745d5afc4484e37f --scope-digest 8d91894765979e4ac5a88af703e7767908630eaf46b0fec1ca5b424bd1af4155
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-vulnerable",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "4a7f447f2fe8bb50a05e5b3a9fdbf17efe47a4152dee59ed4403d5579b84f667",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/vulnerable/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/vulnerable/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/vulnerable/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/vulnerable/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "736406c56111342e745d5afc4484e37f",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:10:55.434769526Z",
+    "expires_at": "2026-11-06T10:10:55.434769526Z",
+    "approved_at": "2026-11-06T09:10:55.475245912Z",
+    "scope_digest": "8d91894765979e4ac5a88af703e7767908630eaf46b0fec1ca5b424bd1af4155",
+    "approved_digest": "8d91894765979e4ac5a88af703e7767908630eaf46b0fec1ca5b424bd1af4155",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-vulnerable/property-access/v1",
+        "definition_digest": "e2db89cb42695b218171a53b1ebf3feb36badff41e5b79ad0fcea2d709c64495",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:10:55.434769526Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-06T09:10:55.475245912Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-vulnerable/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement 736406c56111342e745d5afc4484e37f
+{
+  "engagement_id": "736406c56111342e745d5afc4484e37f",
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-06T09:12:25.483545777Z"
+}
+
+$ tsunami assess watch --run ec33560af96b9117eaabe4c4ffd74051 --timeout 100s
+Run ec33560af96b9117eaabe4c4ffd74051: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="not_active" execution="queued" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="" worker_observed_at=<nil> exit_observed_at=<nil>
+Run ec33560af96b9117eaabe4c4ffd74051: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run ec33560af96b9117eaabe4c4ffd74051: mode="scripted" executor="curl-http/v1" target_requests_reserved=2
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run ec33560af96b9117eaabe4c4ffd74051: mode="scripted" executor="curl-http/v1" target_requests_reserved=6
+  permission="active" execution="worker_observed" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=2026-11-06 09:10:57.141650219 +0000 UTC exit_observed_at=<nil>
+Run ec33560af96b9117eaabe4c4ffd74051: mode="scripted" executor="curl-http/v1" target_requests_reserved=7
+  permission="closed" execution="worker_observed" activity="no_local_work" cleanup="pending" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=2026-11-06 09:10:57.141650219 +0000 UTC exit_observed_at=<nil>
+  verdict="confirmed" reason="The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified."
+  confirmed = supported candidate awaiting review; no_issue_observed covers this test only; inconclusive is not a pass.
+Watching is read-only. Permission closure is separate from request drain and cleanup. Use status again for later observations; use export --engagement ID --out NEW_DIRECTORY for evidence.
+
+$ tsunami assess stop --engagement 736406c56111342e745d5afc4484e37f
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "pending",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess start --engagement 736406c56111342e745d5afc4484e37f
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement 736406c56111342e745d5afc4484e37f --out artifacts/showcase/run-20261106T090905Z/property/property-vulnerable
+Saved private export to "artifacts/showcase/run-20261106T090905Z/property/property-vulnerable": 1 candidates, 0 reviewed findings, 8 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "pending",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run ec33560af96b9117eaabe4c4ffd74051
+{
+  "run_id": "ec33560af96b9117eaabe4c4ffd74051",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:25.483545777Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:10:55.658018684Z",
+  "worker_observed_at": "2026-11-06T09:10:57.141650219Z",
+  "exit_observed_at": "2026-11-06T09:10:58.652947576Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:10:57.573710489Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-06T09:10:58.16072432Z",
+  "api_resources_absent_at": "2026-11-06T09:11:00.145509594Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "confirmed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "evidence_ids": [
+      "65e7040461f1093afe6f684d41de1194",
+      "cdcf983155f34f443cb42430ed5616ae",
+      "1873235b820319eec542ad0e22dfb617",
+      "875f9d56b2eec8d84a34572dc928234b",
+      "4df0b0e3498e8445ce865b225cafcf60",
+      "0d570270af466435d82e7ae8ebe7f987",
+      "a5a6aa32aa1176d3240644c8efdf4896"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess plan --application property-filtered --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-filtered",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "556c0728dac3513217e878eccb7198d5a98a83b57b0445e098d24dd5acdae602",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/filtered/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/filtered/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/filtered/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/filtered/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/filtered/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "0fdb663b2940c7636d3c2902359b89a4",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:11:00.299042334Z",
+    "expires_at": "2026-11-06T10:11:00.299042334Z",
+    "scope_digest": "b7f2138a228a1e2ee7145ae60db8c444255ed6ae9eae0f549377aa403b104071",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-filtered/property-access/v1",
+        "definition_digest": "43dbedfa0936be5c7e2a3b4fd0b7abbaba071482caa333252200547d08a7884f",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:11:00.299042334Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-filtered/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement 0fdb663b2940c7636d3c2902359b89a4
+Engagement: 0fdb663b2940c7636d3c2902359b89a4
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: b7f2138a228a1e2ee7145ae60db8c444255ed6ae9eae0f549377aa403b104071
+Approved digest: 
+Expires: 2026-11-06T10:11:00Z
+Application: "property-filtered"
+Target: "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+Approved destination addresses: ["10.97.129.133"]
+Profile: "http-property-access/v1"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "filtered". The service verifies identities, legitimate reads and follow-up checks.
+The peer may read the public object. These owner-only fields must be omitted: ["/private_note"]. Known private values are compared by hash; redaction/unknown values are inconclusive.
+  1. GET "/cases/filtered/me" as "owner"
+  2. GET "/cases/filtered/me" as "peer"
+  3. GET "/cases/filtered/records/60ee78e3407a9ccc12faebc5" as "owner"
+  4. GET "/cases/filtered/records/16986c617652e639ee3714ce" as "peer"
+  5. GET "/cases/filtered/records/60ee78e3407a9ccc12faebc5" as "peer"
+  6. GET "/cases/filtered/records/60ee78e3407a9ccc12faebc5" as "owner"
+  7. GET "/cases/filtered/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement 0fdb663b2940c7636d3c2902359b89a4 --scope-digest b7f2138a228a1e2ee7145ae60db8c444255ed6ae9eae0f549377aa403b104071
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement 0fdb663b2940c7636d3c2902359b89a4
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement 0fdb663b2940c7636d3c2902359b89a4 --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement 0fdb663b2940c7636d3c2902359b89a4 --scope-digest b7f2138a228a1e2ee7145ae60db8c444255ed6ae9eae0f549377aa403b104071
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-filtered",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "556c0728dac3513217e878eccb7198d5a98a83b57b0445e098d24dd5acdae602",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/filtered/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/filtered/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/filtered/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/filtered/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/filtered/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "0fdb663b2940c7636d3c2902359b89a4",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:11:00.299042334Z",
+    "expires_at": "2026-11-06T10:11:00.299042334Z",
+    "approved_at": "2026-11-06T09:11:00.357231891Z",
+    "scope_digest": "b7f2138a228a1e2ee7145ae60db8c444255ed6ae9eae0f549377aa403b104071",
+    "approved_digest": "b7f2138a228a1e2ee7145ae60db8c444255ed6ae9eae0f549377aa403b104071",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-filtered/property-access/v1",
+        "definition_digest": "43dbedfa0936be5c7e2a3b4fd0b7abbaba071482caa333252200547d08a7884f",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:11:00.299042334Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-06T09:11:00.357231891Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-filtered/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement 0fdb663b2940c7636d3c2902359b89a4
+{
+  "engagement_id": "0fdb663b2940c7636d3c2902359b89a4",
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-06T09:12:30.38611101Z"
+}
+
+$ tsunami assess watch --run 4f0e4838fdf2f0a72cf39f7ae66c6fba --timeout 100s
+Run 4f0e4838fdf2f0a72cf39f7ae66c6fba: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="not_active" execution="queued" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 4f0e4838fdf2f0a72cf39f7ae66c6fba: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 4f0e4838fdf2f0a72cf39f7ae66c6fba: mode="scripted" executor="curl-http/v1" target_requests_reserved=4
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 4f0e4838fdf2f0a72cf39f7ae66c6fba: mode="scripted" executor="curl-http/v1" target_requests_reserved=7
+  permission="closed" execution="dispatch_intent" activity="no_local_work" cleanup="pending" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+  verdict="no_issue_observed" reason="The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities."
+  confirmed = supported candidate awaiting review; no_issue_observed covers this test only; inconclusive is not a pass.
+Watching is read-only. Permission closure is separate from request drain and cleanup. Use status again for later observations; use export --engagement ID --out NEW_DIRECTORY for evidence.
+
+$ tsunami assess stop --engagement 0fdb663b2940c7636d3c2902359b89a4
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "pending",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess start --engagement 0fdb663b2940c7636d3c2902359b89a4
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement 0fdb663b2940c7636d3c2902359b89a4 --out artifacts/showcase/run-20261106T090905Z/property/property-filtered
+Saved private export to "artifacts/showcase/run-20261106T090905Z/property/property-filtered": 0 candidates, 0 reviewed findings, 8 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "pending",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "pending",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 4f0e4838fdf2f0a72cf39f7ae66c6fba
+{
+  "run_id": "4f0e4838fdf2f0a72cf39f7ae66c6fba",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:30.38611101Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:00.650815577Z",
+  "exit_observed_at": "2026-11-06T09:11:03.141505604Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:02.762159335Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-06T09:11:03.161533135Z",
+  "api_resources_absent_at": "2026-11-06T09:11:05.644697184Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "no_issue_observed",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+    "evidence_ids": [
+      "38db7f9920a1e820cdfd029f5eaeabb4",
+      "dd43fa5cf1d0a8518971c2ff66377a37",
+      "5ef9b5f783319c393d721726e91ccf6b",
+      "68324d3ca519829a1c1a9a0633cc398a",
+      "bc066b48771c5591c99fe29c1bfca459",
+      "d4a1b0d0fdc1f920afd9aed71943761a",
+      "0662c3f4c95781d154d38edb2a784a57"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess plan --application property-ambiguous --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-ambiguous",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "bd58ed6afe7db018946375e0c74b8a995af7a93a2c048cececf7cd3f4d2a7e77",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/ambiguous/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/ambiguous/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/ambiguous/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "24bf6fcbf43176d1a7ddf736e18db82f",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:11:05.853409889Z",
+    "expires_at": "2026-11-06T10:11:05.853409889Z",
+    "scope_digest": "c92e39231f9d291e4edf5264a257f24b93e41092297f87c421d7919510a3c49e",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-ambiguous/property-access/v1",
+        "definition_digest": "737fb99fa6ceadf1614fed2ce36fc587a3881cf5728f7c55bb66c101c8d1ea0c",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:11:05.853409889Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-ambiguous/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement 24bf6fcbf43176d1a7ddf736e18db82f
+Engagement: 24bf6fcbf43176d1a7ddf736e18db82f
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: c92e39231f9d291e4edf5264a257f24b93e41092297f87c421d7919510a3c49e
+Approved digest: 
+Expires: 2026-11-06T10:11:05Z
+Application: "property-ambiguous"
+Target: "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+Approved destination addresses: ["10.97.129.133"]
+Profile: "http-property-access/v1"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "filtered". The service verifies identities, legitimate reads and follow-up checks.
+The peer may read the public object. These owner-only fields must be omitted: ["/private_note"]. Known private values are compared by hash; redaction/unknown values are inconclusive.
+  1. GET "/cases/ambiguous/me" as "owner"
+  2. GET "/cases/ambiguous/me" as "peer"
+  3. GET "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5" as "owner"
+  4. GET "/cases/ambiguous/records/16986c617652e639ee3714ce" as "peer"
+  5. GET "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5" as "peer"
+  6. GET "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5" as "owner"
+  7. GET "/cases/ambiguous/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement 24bf6fcbf43176d1a7ddf736e18db82f --scope-digest c92e39231f9d291e4edf5264a257f24b93e41092297f87c421d7919510a3c49e
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement 24bf6fcbf43176d1a7ddf736e18db82f
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement 24bf6fcbf43176d1a7ddf736e18db82f --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement 24bf6fcbf43176d1a7ddf736e18db82f --scope-digest c92e39231f9d291e4edf5264a257f24b93e41092297f87c421d7919510a3c49e
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-ambiguous",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "bd58ed6afe7db018946375e0c74b8a995af7a93a2c048cececf7cd3f4d2a7e77",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/ambiguous/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/ambiguous/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/ambiguous/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/ambiguous/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "24bf6fcbf43176d1a7ddf736e18db82f",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:11:05.853409889Z",
+    "expires_at": "2026-11-06T10:11:05.853409889Z",
+    "approved_at": "2026-11-06T09:11:05.918245637Z",
+    "scope_digest": "c92e39231f9d291e4edf5264a257f24b93e41092297f87c421d7919510a3c49e",
+    "approved_digest": "c92e39231f9d291e4edf5264a257f24b93e41092297f87c421d7919510a3c49e",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-ambiguous/property-access/v1",
+        "definition_digest": "737fb99fa6ceadf1614fed2ce36fc587a3881cf5728f7c55bb66c101c8d1ea0c",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:11:05.853409889Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-06T09:11:05.918245637Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-ambiguous/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement 24bf6fcbf43176d1a7ddf736e18db82f
+{
+  "engagement_id": "24bf6fcbf43176d1a7ddf736e18db82f",
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-06T09:12:35.952783183Z"
+}
+
+$ tsunami assess watch --run 38a7083318e951e542821ce2683cda04 --timeout 100s
+Run 38a7083318e951e542821ce2683cda04: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="not_active" execution="queued" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 38a7083318e951e542821ce2683cda04: mode="scripted" executor="curl-http/v1" target_requests_reserved=0
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 38a7083318e951e542821ce2683cda04: mode="scripted" executor="curl-http/v1" target_requests_reserved=2
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 38a7083318e951e542821ce2683cda04: mode="scripted" executor="curl-http/v1" target_requests_reserved=6
+  permission="active" execution="dispatch_intent" activity="no_local_work" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+Run 38a7083318e951e542821ce2683cda04: mode="scripted" executor="curl-http/v1" target_requests_reserved=7
+  permission="closed" execution="dispatch_intent" activity="no_local_work" cleanup="delete_accepted" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+  verdict="inconclusive" reason="The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule."
+  confirmed = supported candidate awaiting review; no_issue_observed covers this test only; inconclusive is not a pass.
+Watching is read-only. Permission closure is separate from request drain and cleanup. Use status again for later observations; use export --engagement ID --out NEW_DIRECTORY for evidence.
+
+$ tsunami assess stop --engagement 24bf6fcbf43176d1a7ddf736e18db82f
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess start --engagement 24bf6fcbf43176d1a7ddf736e18db82f
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement 24bf6fcbf43176d1a7ddf736e18db82f --out artifacts/showcase/run-20261106T090905Z/property/property-ambiguous
+Saved private export to "artifacts/showcase/run-20261106T090905Z/property/property-ambiguous": 0 candidates, 0 reviewed findings, 8 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "dispatch_intent",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess status --run 38a7083318e951e542821ce2683cda04
+{
+  "run_id": "38a7083318e951e542821ce2683cda04",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 7,
+  "permission": "closed",
+  "expires_at": "2026-11-06T09:12:35.952783183Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:06.158005262Z",
+  "exit_observed_at": "2026-11-06T09:11:09.146532459Z",
+  "activity": "no_local_work",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:08.036809216Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-06T09:11:08.145404268Z",
+  "api_resources_absent_at": "2026-11-06T09:11:10.647743523Z",
+  "observation_code": "observed",
+  "assessment": {
+    "verdict": "inconclusive",
+    "title": "Owner-only note exposed through a shared record",
+    "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+    "evidence_ids": [
+      "d9719ca585d85795cb555e06d34bcf99",
+      "cdaf9646fd48507ec3575d6ebb4da62c",
+      "f2b653542f6debaaf6e973fc03c1ad6a",
+      "274febcbacc7816bf9a940e8041bf1b0",
+      "0a18b33fc6f34dd835002794bed903f0",
+      "31b3c38547dceb10870c8f7f38abd3c9",
+      "c9c66491de46612dea85352b1a5782c7"
+    ],
+    "validation": {
+      "baselines_required": 6,
+      "baselines_verified": 6,
+      "probe_captured": true,
+      "expected_access": "filtered"
+    }
+  }
+}
+
+$ tsunami assess plan --application property-stop --authorization-ref owned-lab/operator-journey --executor curl-http/v1
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-stop",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "1f86cd7481b9dc08ffe65799a406f76b2f0cdd57a0771420ded9f09681c83c1c",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/stop/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/stop/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/stop/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/stop/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/stop/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "b35f68545c47ddc73969d246f5a6bad7",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "draft",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:11:10.817563128Z",
+    "expires_at": "2026-11-06T10:11:10.817563128Z",
+    "scope_digest": "009aadbb7422a703fd130c0895980f20696859450c477ee7803b505009dfabf4",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-stop/property-access/v1",
+        "definition_digest": "0a58c604f16793a549b48c67eeebce09011fc4245a8d3e03708a4d5b5898e235",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:11:10.817563128Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-stop/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess show --engagement b35f68545c47ddc73969d246f5a6bad7
+Engagement: b35f68545c47ddc73969d246f5a6bad7
+Name: "Web/API authorization assessment"
+State: "draft"
+Authorization reference: "owned-lab/operator-journey"
+Scope digest: 009aadbb7422a703fd130c0895980f20696859450c477ee7803b505009dfabf4
+Approved digest: 
+Expires: 2026-11-06T10:11:10Z
+Application: "property-stop"
+Target: "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+Approved destination addresses: ["10.97.129.133"]
+Profile: "http-property-access/v1"
+Execution: scripted Mecatl; executor: "curl-http/v1"; no model calls
+Per attempt: 7 planned reads; at most 8 target requests in this lab profile.
+Engagement limits: 20 runs, 2 concurrent. The run deadline is returned on start.
+Expected cross-user access: "filtered". The service verifies identities, legitimate reads and follow-up checks.
+The peer may read the public object. These owner-only fields must be omitted: ["/private_note"]. Known private values are compared by hash; redaction/unknown values are inconclusive.
+  1. GET "/cases/stop/me" as "owner"
+  2. GET "/cases/stop/me" as "peer"
+  3. GET "/cases/stop/records/60ee78e3407a9ccc12faebc5" as "owner"
+  4. GET "/cases/stop/records/16986c617652e639ee3714ce" as "peer"
+  5. GET "/cases/stop/records/60ee78e3407a9ccc12faebc5" as "peer"
+  6. GET "/cases/stop/records/60ee78e3407a9ccc12faebc5" as "owner"
+  7. GET "/cases/stop/me" as "peer"
+Child runs: []
+Progress: completed=0 running=0 pending=1 failed=0 stopped=0 inconclusive=0 skipped=0
+Synthetic data only. No discovery, raw scanning, arbitrary shell or state-changing operations are approved. GET can still have side effects; approval depends on the application owner. Account validity is checked during execution.
+Review the scope above. To approve: approve --engagement b35f68545c47ddc73969d246f5a6bad7 --scope-digest 009aadbb7422a703fd130c0895980f20696859450c477ee7803b505009dfabf4
+No target requests have been made by plan creation.
+
+$ tsunami assess start --engagement b35f68545c47ddc73969d246f5a6bad7
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess approve --engagement b35f68545c47ddc73969d246f5a6bad7 --scope-digest 0000000000000000000000000000000000000000000000000000000000000000
+tsunami: approval refused: review the current unexpired draft and its exact scope digest
+
+$ tsunami assess approve --engagement b35f68545c47ddc73969d246f5a6bad7 --scope-digest 009aadbb7422a703fd130c0895980f20696859450c477ee7803b505009dfabf4
+{
+  "engagement": {
+    "executor": "curl-http/v1",
+    "application": {
+      "version": "http-property-access/v1",
+      "id": "property-stop",
+      "title": "Owner-only note exposed through a shared record",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "approved_addresses": [
+        "10.97.129.133"
+      ],
+      "credential_set_id": "1f86cd7481b9dc08ffe65799a406f76b2f0cdd57a0771420ded9f09681c83c1c",
+      "synthetic_data_only": true,
+      "owner_pointer": "/owner",
+      "identity": [
+        {
+          "account": "owner",
+          "path": "/cases/stop/me",
+          "equals": {
+            "/name": "owner"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/stop/me",
+          "equals": {
+            "/name": "peer"
+          }
+        }
+      ],
+      "baselines": [
+        {
+          "account": "owner",
+          "path": "/cases/stop/records/60ee78e3407a9ccc12faebc5",
+          "equals": {
+            "/id": "60ee78e3407a9ccc12faebc5",
+            "/owner": "owner"
+          },
+          "sha256": {
+            "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+          }
+        },
+        {
+          "account": "peer",
+          "path": "/cases/stop/records/16986c617652e639ee3714ce",
+          "equals": {
+            "/id": "16986c617652e639ee3714ce",
+            "/owner": "peer"
+          },
+          "sha256": {
+            "/private_note": "24530160c8202344f6e22b6cec1fb523c92a518e8671a3a4d17339fd5c28bd04"
+          }
+        }
+      ],
+      "probe": {
+        "account": "peer",
+        "path": "/cases/stop/records/60ee78e3407a9ccc12faebc5",
+        "equals": {
+          "/id": "60ee78e3407a9ccc12faebc5",
+          "/owner": "owner"
+        },
+        "sha256": {
+          "/private_note": "9d4ca7dbf9e3fd6c5c4e255529d8be0b2715669ee33d9ff17f3db8421c751b2a"
+        }
+      },
+      "expected_access": "filtered",
+      "denial_statuses": []
+    },
+    "id": "b35f68545c47ddc73969d246f5a6bad7",
+    "tenant": "demo-a",
+    "name": "Web/API authorization assessment",
+    "state": "active",
+    "authorization_ref": "owned-lab/operator-journey",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "scenario": "application",
+    "created_at": "2026-11-06T09:11:10.817563128Z",
+    "expires_at": "2026-11-06T10:11:10.817563128Z",
+    "approved_at": "2026-11-06T09:11:10.890655513Z",
+    "scope_digest": "009aadbb7422a703fd130c0895980f20696859450c477ee7803b505009dfabf4",
+    "approved_digest": "009aadbb7422a703fd130c0895980f20696859450c477ee7803b505009dfabf4",
+    "max_runs": 20,
+    "max_concurrent": 2,
+    "items": [
+      {
+        "procedure": "property-stop/property-access/v1",
+        "definition_digest": "0a58c604f16793a549b48c67eeebce09011fc4245a8d3e03708a4d5b5898e235",
+        "title": "Owner-only note exposed through a shared record"
+      }
+    ],
+    "run_ids": [],
+    "events": [
+      {
+        "at": "2026-11-06T09:11:10.817563128Z",
+        "kind": "engagement_created",
+        "detail": "draft scope; explicit operator approval required"
+      },
+      {
+        "at": "2026-11-06T09:11:10.890655513Z",
+        "kind": "engagement_approved",
+        "detail": "operator approved pinned lab scope"
+      }
+    ]
+  },
+  "checklist": [
+    {
+      "procedure": "property-stop/property-access/v1",
+      "status": "pending"
+    }
+  ],
+  "progress": {
+    "total": 1,
+    "completed": 0,
+    "skipped": 0,
+    "pending": 1,
+    "running": 0,
+    "failed": 0,
+    "stopped": 0,
+    "inconclusive": 0
+  }
+}
+
+$ tsunami assess start --engagement b35f68545c47ddc73969d246f5a6bad7
+{
+  "engagement_id": "b35f68545c47ddc73969d246f5a6bad7",
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution": "scripted",
+  "executor": "curl-http/v1",
+  "deadline": "2026-11-06T09:12:40.911082688Z"
+}
+
+$ tsunami assess watch --run d0f3adfc8b47337b35a4288105e58afa --timeout 1s
+Run d0f3adfc8b47337b35a4288105e58afa: mode="scripted" executor="curl-http/v1" target_requests_reserved=5
+  permission="active" execution="dispatch_intent" activity="active_locally" cleanup="not_requested" uncertain_operations=0
+  executor_observation="observed" worker_observed_at=<nil> exit_observed_at=<nil>
+tsunami: watch ended before permission closed; work may still be active; inspect status or use stop --engagement ID
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "active",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "active_locally",
+  "local_operations": 1,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "cleanup": "not_requested",
+  "observation_code": "observed"
+}
+
+$ tsunami assess stop --engagement b35f68545c47ddc73969d246f5a6bad7
+Stop acknowledged. Permission is closed; request drain and worker cleanup are separate observations.
+Next: status --run ID (use show --engagement ID to find child IDs). Target-side effects cannot be undone.
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "pending",
+  "observation_code": "observed"
+}
+
+$ tsunami assess start --engagement b35f68545c47ddc73969d246f5a6bad7
+tsunami: start requires an active, unexpired engagement with the reviewed scope approved
+
+$ tsunami assess export --engagement b35f68545c47ddc73969d246f5a6bad7 --out artifacts/showcase/run-20261106T090905Z/property/property-stop
+Saved private export to "artifacts/showcase/run-20261106T090905Z/property/property-stop": 0 candidates, 0 reviewed findings, 6 artifacts.
+Candidates need human impact/severity review. No review or CVSS score was invented. Inspect progress for incomplete tests.
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "pending",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "pending",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "worker_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "delete_accepted",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "observation_code": "observed"
+}
+
+$ tsunami assess status --run d0f3adfc8b47337b35a4288105e58afa
+{
+  "run_id": "d0f3adfc8b47337b35a4288105e58afa",
+  "execution_mode": "scripted",
+  "executor": "curl-http/v1",
+  "target_requests_reserved": 5,
+  "permission": "revoked",
+  "revocation_reason": "engagement_stop",
+  "revoked_at": "2026-11-06T09:11:14.404964125Z",
+  "expires_at": "2026-11-06T09:12:40.911082688Z",
+  "execution": "exit_observed",
+  "dispatch_intent_at": "2026-11-06T09:11:11.163685234Z",
+  "worker_observed_at": "2026-11-06T09:11:14.15277326Z",
+  "exit_observed_at": "2026-11-06T09:11:15.647058426Z",
+  "activity": "drained_locally",
+  "local_operations": 0,
+  "uncertain_operations": 0,
+  "last_admitted_at": "2026-11-06T09:11:12.934404828Z",
+  "local_drain_observed_at": "2026-11-06T09:11:14.428717962Z",
+  "cleanup": "api_resources_absent",
+  "delete_accepted_at": "2026-11-06T09:11:14.648267655Z",
+  "api_resources_absent_at": "2026-11-06T09:11:17.148744226Z",
+  "observation_code": "observed"
+}

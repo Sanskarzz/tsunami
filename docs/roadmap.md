@@ -70,7 +70,43 @@ VAmPI is an existing open-source application deployed only in our lab; no extern
 
 ## Milestone 10: first reviewed web/API executor
 
-Implemented original `curl-http/v1` for configured HTTP read plans: an actual fixed shell/curl command, private Unix bridge, broker-owned credentials and target requests, gVisor-only tools Jobs, approval-bound executor selection, bounded process I/O and cancellation. General commands and unmodified toolkit scripts remain disabled. See [implementation and qualification boundaries](tool-execution.md). Broader web/API modes and security-engineer review remain open; the next execution-profile work is VM/MCP contracts and offline mobile foundations.
+Implemented original `curl-http/v1` for configured HTTP read plans: an actual fixed shell/curl command, private Unix bridge, broker-owned credentials and target requests, gVisor-only tools Jobs, approval-bound executor selection, bounded process I/O and cancellation. General commands and unmodified toolkit scripts remain disabled. See [implementation and qualification boundaries](tool-execution.md). Broader web/API modes and security-engineer review remain open. The review prioritizes a useful HTTP journey before broader execution profiles.
+
+### Stop and lifecycle follow-up
+
+Implemented operator status for separate permission, dispatch/execution, local activity, cleanup and assessment facts; durable unfinished-operation records; administrative availability when optional configuration fails; and graceful handler/controller/store shutdown. The [owned gVisor/curl campaign](stop-lifecycle.md) tests held-request Stop for runs/engagements, controller API denial and restart after committed revocation. Target counters and CRI exit observations are recorded separately. No external model calls are needed.
+
+This covers the first two deliverables in [the review plan](review-follow-up.md#next-implementation-order) within those lab boundaries. It does not qualify broker crashes, arbitrary node partitions, remote executors or production Stop under load.
+
+### Guided operator CLI
+
+Implemented `tsunami assess` over the existing APIs: configured application selection, draft scope preview, digest-based approval, one scripted attempt, metadata-only status/watch, explicit Stop, ID recovery and private evidence export. It does not accept arbitrary targets, run a live model, silently retry starts or create finding reviews. [The guide](operator-cli.md) describes the workflow and [the compiled CLI campaign](../examples/operator-journey/README.md) records the owned VAmPI pair and Stop after read-only watch timeout under gVisor/curl.
+
+Native tests cover expired-session inconclusive results, cross-tenant denial, wrong approval, lost start response, private exports and watch/Stop semantics. Lab credential refresh now preserves other tenant/application plans; multi-document kubectl rendering is fixed. This covers the CLI portion of the review's third deliverable. General customer onboarding and a connected UI are still unfinished. Next: a useful reviewed HTTP capability or independent application, then the customer controls and wider failure qualification required for a supervised pilot.
+
+### Read-only property authorization
+
+Implemented `http-property-access/v1` for an allowed shared-record read whose private fields must be omitted. It reuses the seven-read broker/curl path and immutable scope, with separate known-value leak, correct filtering and ambiguous results. The [owned campaign](../examples/property-access/README.md) records those three controls and active-request Stop through the compiled CLI. The original object-access profile and archived results keep their meaning.
+
+Setup generates the owned fixture's identities, opaque records and proof bindings while preserving other plans; it is not general customer discovery. Native tests cover strict JSON, copied private values, denied/expired sessions, missing follow-up evidence and property-specific reviewed-finding classification. The demo exports an unrated candidate, not a human review. See [the profile and limitations](property-access.md).
+
+This adds a distinct HTTP test beyond the transport wrapper. Independent procedure review, broader response shapes, customer prerequisite binding, identity/secret/evidence controls and production failure/scale qualification remain unfinished. Mass assignment, other state-changing requests and all original toolkit script adapters remain disabled/unimplemented.
+
+### Local binding preparation
+
+Implemented `prepare-plan` for operator-supplied synthetic identity/own-object responses. It derives literal paths, assertions and protected hashes, rejects unclear/unsupported prerequisites, and emits private packages with input/plan hashes and pending-registration/approval status. It has no network client or credential input. Trusted registration still assigns credentials, scope approval is separate, and runtime validation rechecks actual responses.
+
+VAmPI setup now captures four legitimate baseline GETs per variant and uses the compiler. Property setup uses documents from its generated seed, without claiming live validation. [Retained qualification](../examples/binding-preparation/README.md) links all six prepared plans to fresh approved runtime snapshots. Existing Stop controls and expected outcomes pass. See [the preparation guide](binding-preparation.md).
+
+The scoped Axel showcase is now complete: [the package](showcase.md) adds prerequisite checks, explicit lab refresh, a presenter guide, recovery and a [fresh seven-case rehearsal](../examples/showcase/README.md) with network controls. No further milestone is required for this controlled CLI demonstration. Customer readiness and the full toolkit-inspired product retain their separate release gates; a connected UI remains planned.
+
+### Local operator UI
+
+An opt-in embedded frontend now connects the existing configured-application APIs: select, draft/review, approve, start one scripted attempt, observe, Stop and inspect/export evidence. An API explorer records this tab's actual operator calls without Authorization headers. The [presenter guide](demo-walkthrough.md) explains where decisions occur; [browser qualification](../examples/local-ui/README.md) records real Kubernetes outcomes and controlled client failure injections. This adds no target username/password login, URL onboarding, live application inference or customer portal. The original product templates remain previews.
+
+### Checked application onboarding
+
+The [onboarding path](application-onboarding.md) implements form-first setup, durable typed questions, protected origin-bound bearer access, approved four-read preflight, inferred supported bindings and atomic application/assessment-draft registration. It reuses the existing final approval/run/Stop/evidence lifecycle. A [fresh browser campaign](../examples/onboarding/README.md) qualified this path on owned VAmPI, including actual gVisor inspection. A live-model setup planner, password/SSO adapters, documentation/frontend discovery, broader contracts and customer release controls remain unfinished.
 
 ## Later
 

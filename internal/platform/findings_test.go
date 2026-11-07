@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+
+	"github.com/Sanskarzz/tsunami/internal/application"
 )
 
 func reviewedCandidate(t *testing.T) (*Server, *Store, Engagement, FindingCandidate) {
@@ -28,6 +30,39 @@ func reviewedCandidate(t *testing.T) (*Server, *Store, Engagement, FindingCandid
 
 func testReview(c FindingCandidate) ReviewInput {
 	return ReviewInput{CandidateID: c.ID, CandidateDigest: c.Digest, Decision: "confirm", Purpose: "automated_lab_test", Rationale: "Automated synthetic review exercises the contract; not human signoff.", Impact: "A synthetic authenticated peer read another synthetic account's seeded proof data.", CVSSVector: "CVSS:3.1/AV:N/AC:L/PR:L/UI:N/S:U/C:H/I:N/A:N"}
+}
+
+func TestReviewedPropertyLeakKeepsItsOwnClassificationAndRemediation(t *testing.T) {
+	s, store, config, flags := applicationFixture(t)
+	config.Plan.ID, config.Plan.Version, config.Plan.ExpectedAccess, config.Plan.DenialStatuses = "property-review", application.PropertyAccessProfile, "filtered", nil
+	flags.property.Store(true)
+	if err := s.RegisterApplication(config); err != nil {
+		t.Fatal(err)
+	}
+	e, run := applicationEngagement(t, s, config)
+	executeAppReads(t, s, run, run.Application.Reads())
+	if result, err := s.Finish(run.ID); err != nil || result.Verdict != "confirmed" {
+		t.Fatalf("missing property candidate: %+v %v", result, err)
+	}
+	_, _ = s.StopEngagement("a", e.ID)
+	bundle, err := store.ExportEngagement("a", e.ID)
+	if err != nil || len(bundle.Candidates) != 1 || len(bundle.Findings) != 0 {
+		t.Fatal("unexpected unreviewed export", err)
+	}
+	if _, err := store.ReviewFinding("a", e.ID, testReview(bundle.Candidates[0])); err != nil {
+		t.Fatal(err)
+	}
+	bundle, err = store.ExportEngagement("a", e.ID)
+	if err != nil || len(bundle.Findings) != 1 {
+		t.Fatal("review projection failed", err)
+	}
+	f := bundle.Findings[0]
+	if f.CWEID != 213 || f.Category != "Broken Object Property Level Authorization" || !strings.Contains(f.Remediation, "response property") {
+		t.Fatal("property finding was misclassified as object access")
+	}
+	if bundle.Candidates[0].Review.Purpose != "automated_lab_test" {
+		t.Fatal("test review masqueraded as human judgment")
+	}
 }
 
 func TestFindingReviewPinsEvidenceAndSurvivesRestart(t *testing.T) {

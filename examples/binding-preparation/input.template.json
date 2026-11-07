@@ -1,0 +1,24 @@
+{
+  "version": "tsunami.application-binding/v1",
+  "id": "owned-records",
+  "title": "Owned shared-record property test",
+  "profile": "http-property-access/v1",
+  "origin": "http://owned.example.test:8080",
+  "approved_addresses": ["192.0.2.20"],
+  "synthetic_data_only": true,
+  "expected_access": "filtered",
+  "identity_path": "/me",
+  "identity_pointer": "/name",
+  "object_path_template": "/records/{id}",
+  "object_id_pointer": "/id",
+  "owner_pointer": "/owner",
+  "protected_pointers": ["/private_note"],
+  "owner": {
+    "identity": {"status": 200, "body": {"name": "owner"}},
+    "object": {"status": 200, "body": {"id": "record_owner", "owner": "owner", "private_note": "synthetic-owner-proof-template-123456789"}}
+  },
+  "peer": {
+    "identity": {"status": 200, "body": {"name": "peer"}},
+    "object": {"status": 200, "body": {"id": "record_peer", "owner": "peer", "private_note": "synthetic-peer-proof-template-987654321"}}
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "version": "tsunami.binding-qualification/v1",
+  "external_model_calls": 0,
+  "prepared_applications": [
+    {
+      "application": "vampi-vulnerable",
+      "profile": "http-object-access/v2",
+      "plan_matches_registered_runtime_plan": true,
+      "server_assigned_credential_fingerprint": true,
+      "prepared_package": "prepared/vampi-vulnerable",
+      "input_sha256": "1c94d7dc2d79f2745f3906389ebdc7c6c778c23743216746c5f95f53cb102c7c",
+      "plan_sha256": "90034972e69fbf3592ddf08179ff67039d581d3b411ef05c70b6ed8956aafc57",
+      "engagement_id": "734f2944515f58bf2f978c563b837897",
+      "run_id": "bc0651ea992c1f129ef2efb1424b919a",
+      "runtime_family": "object",
+      "outcome": "confirmed"
+    },
+    {
+      "application": "vampi-fixed",
+      "profile": "http-object-access/v2",
+      "plan_matches_registered_runtime_plan": true,
+      "server_assigned_credential_fingerprint": true,
+      "prepared_package": "prepared/vampi-fixed",
+      "input_sha256": "4738fa63455acca2cc4a07f7793dbb5ec3da12e9daa369e605ff6c7965383a8f",
+      "plan_sha256": "7b6474f3d789652fabacfe59df475004addc72210b4c56f43851044166549538",
+      "engagement_id": "ea2703715202791464f946026068fabd",
+      "run_id": "eba13a861449ff2bc5105e5560ddc10d",
+      "runtime_family": "object",
+      "outcome": "no_issue_observed"
+    },
+    {
+      "application": "property-vulnerable",
+      "profile": "http-property-access/v1",
+      "plan_matches_registered_runtime_plan": true,
+      "server_assigned_credential_fingerprint": true,
+      "prepared_package": "prepared/property-vulnerable",
+      "input_sha256": "b37966cf85a0f151542c99fe7c0de8e065b591d6bdd42c376eecd5eba1d23c76",
+      "plan_sha256": "24415c1f179af87c98f2d3fd6424d62449013e315ea394e6b11a53a4dbf601a9",
+      "engagement_id": "a23fa23d907835b382669f374ab6b226",
+      "run_id": "d11958ef026f4bd36f0675df85bdedd6",
+      "runtime_family": "property",
+      "outcome": "confirmed"
+    },
+    {
+      "application": "property-filtered",
+      "profile": "http-property-access/v1",
+      "plan_matches_registered_runtime_plan": true,
+      "server_assigned_credential_fingerprint": true,
+      "prepared_package": "prepared/property-filtered",
+      "input_sha256": "25489a733eec256368b653a98e57c3a542fae22f03aaff3fd816fd5a8bf93ddd",
+      "plan_sha256": "f4eb330ff4f1295fd793ae5af205030d2e5a7c4730ac5849b6a2d2b72a1f45d3",
+      "engagement_id": "b7481eedce9a3ae7032e4e90afc3cb9a",
+      "run_id": "110bba114748f3b7c3e3016b20e6587f",
+      "runtime_family": "property",
+      "outcome": "no_issue_observed"
+    },
+    {
+      "application": "property-ambiguous",
+      "profile": "http-property-access/v1",
+      "plan_matches_registered_runtime_plan": true,
+      "server_assigned_credential_fingerprint": true,
+      "prepared_package": "prepared/property-ambiguous",
+      "input_sha256": "b84efca47b0390bc838e8bac1e88f6c38b1ba9309713b27cff2e4b8b9f475264",
+      "plan_sha256": "40c897804c7878bdf25cc69c98a2f52d8e6e4e848cf14edab943d7c1e16675d2",
+      "engagement_id": "dd51d0368a7ec002ab4d3ff9c70095b3",
+      "run_id": "fa1420543f244967f9011d60ba9bb47e",
+      "runtime_family": "property",
+      "outcome": "inconclusive"
+    },
+    {
+      "application": "property-stop",
+      "profile": "http-property-access/v1",
+      "plan_matches_registered_runtime_plan": true,
+      "server_assigned_credential_fingerprint": true,
+      "prepared_package": "prepared/property-stop",
+      "input_sha256": "dbb247f8b41b5dcabc8bedf8bf0894741f09da44341c1186c753817784c5f916",
+      "plan_sha256": "6f1c26697352b2617571903d101589cd49d1e2a7b861f9045587ebbb063b5e6e",
+      "engagement_id": "755f1ac8fb2a090569930c329b8aad2f",
+      "run_id": "bb4e499ced79dd6ea1ef259ffa32efec",
+      "runtime_family": "property",
+      "outcome": "stopped"
+    }
+  ],
+  "limitations": [
+    "Prepared source documents are operator-supplied facts, not authenticated proof or approval.",
+    "Raw binding inputs remain private locally; only prepared plans/manifests are copied.",
+    "Known intentionally vulnerable/fixed owned applications and scripted execution; no general customer readiness."
+  ]
+}

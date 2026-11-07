@@ -1,0 +1,14 @@
+{
+  "observed_at": "2026-11-06T13:59:44.227177+00:00",
+  "native_image": "tsunami:ui-20261106t135306z",
+  "control_image_id": "sha256:8a52e19703b7b15fc042082c088e774a6969003e343af03f4ffc4117e173e378",
+  "tools_image_configured": "tsunami-tools:ui-20261106t135306z",
+  "binary_sha256": "136e7f0934eed50de95d6909afea7242ad78d218cd1ef26032e9acac2b6e9008",
+  "ui_asset_sha256": {
+    "app.js": "f04961b384420dc4e20f00722bc58601d2a145cf9bab274b152bcaad5066c2cc",
+    "index.html": "7e2e276d4eb472b5c01fed2ad49dd789e6c255ebeb64b5a8ae6a65f1dd64dbe3",
+    "styles.css": "92df7ed42fd4f9ef61d13da60500ead9edb48746fe79b3cfc4666676a0d4c6fe",
+    "onboarding.js": "a51e169fae87e347a6c02317c6308e3528bffa03c9ed5f2996f3a823d91eeeb7"
+  },
+  "encryption_key": "not included; immutable control-only Secret"
+}

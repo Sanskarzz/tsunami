@@ -55,6 +55,8 @@ An agent may be wrong or compromised. It must not be able to approve its own sco
 
 The model is an aid to reasoning and coordination. It is not the security boundary. Scripted procedures remain useful for repeatability and infrastructure testing; their success must not be presented as autonomous discovery quality.
 
+The intended onboarding is form-first: the user supplies initial application/access details, then a setup agent asks only for missing or conflicting information, such as the backend API behind a frontend URL. The user does not need to specify attack steps or mechanical proof bindings. The backend checks procedure readiness and permissions, and a final explicit confirmation starts testing. Credentials use protected fields, not chat. See [the planned onboarding/readiness flow](onboarding-readiness.md); the [first checked workflow](application-onboarding.md) is implemented; a live-model setup planner, general login and automatic discovery remain work.
+
 ## 5. The role of the VAPT toolkit
 
 The friend's toolkit provides practical assessment knowledge: workflows, test ideas, expected inputs, evidence/reporting conventions, checklists and specialist-role concepts. It helps connect infrastructure design to actual security work.
@@ -95,7 +97,7 @@ There is a working owned-lab prototype: configured HTTP authorization tests, a r
 
 The VAmPI vulnerable/fixed example supplies a useful concrete result. It uses disposable accounts, known object/rule assertions and scripted execution. The curl adapter tests a controlled command path; it does not add broad discovery or unmodified script compatibility. Live-model experiments are separate and have mixed recorded outcomes.
 
-Guided onboarding, the actual product UI, automatic profile planning, general application-agent behavior, broader executors and customer-grade infrastructure are still work to do. Customer data handling, general redaction, production identity/key lifecycle, distributed budgets and measured 1,000-agent capacity are not complete. Production 60-second Stop is not verified.
+A local UI and narrow form/conversation/bearer-validation onboarding path now work. General onboarding/login, model-assisted profile planning, general application-agent behavior, broader executors and customer-grade infrastructure are still work to do. Customer data handling, general redaction, production identity/key lifecycle, distributed budgets and measured 1,000-agent capacity are not complete. Production 60-second Stop is not verified.
 
 The [HTML templates](templates/index.html) visualize the intended product only. Their fictional findings, reviews, metrics and statuses are not additional test results.
 

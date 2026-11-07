@@ -60,9 +60,17 @@ make verify
 make verify-toolkit TOOLKIT_PATH=../vapt-toolkit
 ```
 
-`make verify` runs fresh Go race tests, vet, Python tests and checks four materialized example bundles, their 32 artifact files and the 20 archived live-trial hashes. It does not download toolkit content or call a model/customer target. `verify-toolkit` additionally checks the three actual local toolkit schemas with remote reference retrieval disabled.
+`make verify` runs fresh Go race tests, vet, Python tests and now checks eighteen materialized example bundles, their 136 artifact files, six prepared/runtime plan matches and the 20 archived live-trial hashes. It does not download toolkit content or call a model/customer target. `verify-toolkit` additionally checks the three actual local toolkit schemas with remote reference retrieval disabled.
 
-During this follow-up, the native gate and actual local toolkit-schema checks passed. All ten Python tests passed, including the socket-based redirect regression that was restricted in the other session. No fresh Kubernetes deployment, active curl Stop campaign, partition/load qualification or external inference was performed. Checked-in earlier Kubernetes results remain historical evidence for their recorded builds.
+During the original review-fix pass, the native gate and actual local toolkit-schema checks passed. All ten Python tests passed, including the socket-based redirect regression that was restricted in the other session. That pass made no fresh Kubernetes deployment, active curl Stop campaign, partition/load qualification or external inference. Checked-in earlier Kubernetes results remain historical evidence for their recorded builds.
+
+The subsequent [Stop lifecycle milestone](stop-lifecycle.md) implements explicit status, graceful shutdown, and administrative availability with failed optional configuration. It repeats the native gate and records actual gVisor/curl cancellation, controller API denial and restart after committed revocation on a newly deployed build. [Exact observations](../examples/stop-lifecycle/README.md) separate those results from broader production failure/scale qualification, which remains unfinished.
+
+The [operator CLI milestone](operator-cli.md) implements the CLI portion of deliverable 3 below. Its compiled Kubernetes campaign records the owned vulnerable/fixed pair and Stop after read-only watch timeout, with unreviewed evidence exports. Thirteen Python tests and the expanded integrity/schema gate pass; the UI remains a preview. The next product deliverable is useful additional HTTP testing or an independent application, with security-engineer review and the pilot's customer controls still required.
+
+The subsequent [property-access milestone](property-access.md) adds a distinct read-only field-authorization test with explicit prerequisites, leak/filtered/ambiguous controls, generated owned-fixture bindings and active-request Stop. Its [retained results](../examples/property-access/README.md) cover the compiled CLI and actual target counters. Fourteen Python tests and the expanded gate pass. Independent security-engineer review, customer binding/onboarding and the pilot controls remain required; this is not a claim that deliverable 4's human review is complete.
+
+[Binding preparation](binding-preparation.md) now reduces manual assertion/path/hash construction for supplied synthetic facts. Six prepared plans match fresh approved runtime snapshots, with server-side credential binding kept separate. Preparation performs no target requests and is not source authentication or consent. The subsequent [showcase package](showcase.md) completes the two scoped demo milestones with prerequisite/expiry checks, explicit owned-data refresh, a presenter guide, recovery and a fresh seven-case rehearsal. Customer readiness retains the broader gates. The current integrity gate checks 28 bundles and 210 artifacts, six prepared/runtime matches and 20 original trial hashes; nineteen Python tests pass alongside Go race tests and vet.
 
 ## Next implementation order
 
@@ -74,3 +82,7 @@ During this follow-up, the native gate and actual local toolkit-schema checks pa
 6. Add VM/MCP, mobile, network and specialists only when a useful capability justifies their separate enforcement and qualification work. Interface discovery can continue as design work.
 
 This changes development priority, not the long-term product goal. The repository remains an owned-lab prototype rather than a customer-ready service.
+
+The optional [local UI](local-ui.md) now connects the existing lab API journey and adds an API-by-API presenter path. Its [real browser qualification](../examples/local-ui/README.md) covers owned vulnerable/fixed/Stop controls, lost committed Start response recovery and Stop during a held viewer response. The expanded integrity gate checks 28 bundles/210 artifacts; customer onboarding/login, release controls and independent procedure review remain open.
+
+The [checked onboarding flow](application-onboarding.md) now connects initial details, missing-information questions, encrypted bearer input, bounded preflight and atomic application/draft registration. Its [four-case browser qualification](../examples/onboarding/README.md) includes actual gVisor inspection and a supported unreviewed finding on the new owned application. The gate now checks 32 bundles/240 artifacts; broad authentication/discovery, a live-model setup planner and customer release gates remain unfinished.

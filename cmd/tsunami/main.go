@@ -23,13 +23,16 @@ import (
 	"time"
 
 	"github.com/Sanskarzz/tsunami/internal/assessment"
+	"github.com/Sanskarzz/tsunami/internal/binding"
 	"github.com/Sanskarzz/tsunami/internal/connector"
 	"github.com/Sanskarzz/tsunami/internal/demo"
+	"github.com/Sanskarzz/tsunami/internal/httpserver"
 	"github.com/Sanskarzz/tsunami/internal/inference"
 	"github.com/Sanskarzz/tsunami/internal/isolation"
-	"github.com/Sanskarzz/tsunami/internal/kube"
+	"github.com/Sanskarzz/tsunami/internal/journey"
 	"github.com/Sanskarzz/tsunami/internal/lab"
 	"github.com/Sanskarzz/tsunami/internal/platform"
+	"github.com/Sanskarzz/tsunami/internal/webui"
 	"github.com/Sanskarzz/tsunami/internal/worker"
 	"github.com/stacklok/mecatl/engine/port"
 	"github.com/stacklok/mecatl/engine/session"
@@ -62,11 +65,15 @@ func secretFile(path string) (string, error) {
 
 func run() error {
 	if len(os.Args) < 2 {
-		return errors.New("usage: tsunami local-demo | serve | worker | lab | verify")
+		return errors.New("usage: tsunami assess COMMAND | prepare-plan --input FILE --out DIR | local-demo | serve | worker | lab | verify")
 	}
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
 	switch os.Args[1] {
+	case "prepare-plan":
+		return binding.Command(ctx, os.Args[2:], os.Stdout, os.Stderr)
+	case "assess":
+		return journey.Run(ctx, os.Args[2:], os.Stdout, os.Stderr)
 	case "export-bundle":
 		fs := flag.NewFlagSet("export-bundle", flag.ContinueOnError)
 		input := fs.String("input", "", "operator-collected bundle JSON")
@@ -546,17 +553,45 @@ func run() error {
 			fmt.Printf("Completed %d scenario checks; reports in %s\n", len(summary.Checks), *out)
 		}
 		return e
+	case "property-fixture":
+		if os.Getenv("TSUNAMI_ALLOW_PROPERTY_LAB") != "true" {
+			return errors.New("owned property-fixture acknowledgement required")
+		}
+		data, err := os.ReadFile(env("TSUNAMI_PROPERTY_CONFIG_FILE", "/run/property/config.json"))
+		if err != nil || len(data) > 64<<10 {
+			return errors.New("property fixture configuration unavailable")
+		}
+		var cfg lab.PropertyFixtureConfig
+		decoder := json.NewDecoder(strings.NewReader(string(data)))
+		decoder.DisallowUnknownFields()
+		if decoder.Decode(&cfg) != nil || decoder.Decode(&struct{}{}) != io.EOF {
+			return errors.New("invalid property fixture configuration")
+		}
+		fixture, err := lab.NewPropertyFixture(cfg)
+		if err != nil {
+			return err
+		}
+		return serve(ctx, env("LISTEN_ADDR", ":8080"), fixture)
+	case "stop-fixture":
+		if os.Getenv("TSUNAMI_ALLOW_STOP_LAB") != "true" {
+			return errors.New("owned stop-fixture acknowledgement required")
+		}
+		data, err := os.ReadFile(env("TSUNAMI_STOP_CREDENTIALS_FILE", "/run/stop/credentials.json"))
+		if err != nil {
+			return errors.New("stop fixture credentials unavailable")
+		}
+		var credentials map[string]string
+		if json.Unmarshal(data, &credentials) != nil {
+			return errors.New("invalid stop fixture credentials")
+		}
+		fixture, err := lab.NewStopFixture(credentials)
+		if err != nil {
+			return err
+		}
+		return serve(ctx, env("LISTEN_ADDR", ":8080"), fixture)
 	case "serve":
 		if os.Getenv("TSUNAMI_ALLOW_UNSANDBOXED_LAB") != "true" {
 			return errors.New("this initial fixture-only runner requires explicit TSUNAMI_ALLOW_UNSANDBOXED_LAB=true; it is not an untrusted-shell sandbox")
-		}
-		v, e := platform.LabTarget(ctx, env("TSUNAMI_VULNERABLE_URL", "http://tsunami-vulnerable:8080"))
-		if e != nil {
-			return e
-		}
-		f, e := platform.LabTarget(ctx, env("TSUNAMI_FIXED_URL", "http://tsunami-fixed:8080"))
-		if e != nil {
-			return e
 		}
 		admins := map[string]string{}
 		for _, name := range []string{"admin-a", "admin-b"} {
@@ -575,90 +610,33 @@ func run() error {
 			return e
 		}
 		defer store.Close()
-		server := platform.NewServer(store, map[string]platform.Target{"vulnerable": v, "fixed": f}, admins)
+		server := platform.NewServer(store, nil, admins)
 		server.GlobalToken = global
-		server.EnableCurlAdapter = os.Getenv("TSUNAMI_ENABLE_CURL_ADAPTER") == "true"
-		if server.EnableCurlAdapter && (os.Getenv("TSUNAMI_RUNTIME_CLASS") != "gvisor" || os.Getenv("TSUNAMI_TOOL_IMAGE") == "") {
-			return errors.New("curl adapter requires gvisor and a trusted tool image")
-		}
-		if configFile := os.Getenv("TSUNAMI_APPLICATION_CONFIG_FILE"); configFile != "" {
-			if err := server.LoadApplications(configFile); err != nil {
-				return err
-			}
-		}
-		if configFile := os.Getenv("TSUNAMI_PRIVATE_CONFIG_FILE"); configFile != "" {
-			if os.Getenv("TSUNAMI_ALLOW_PRIVATE_LAB") != "true" {
-				return errors.New("private connectivity currently requires the synthetic lab acknowledgement")
-			}
-			cfg, targets, _, err := connector.LoadConfig(configFile)
-			if err != nil {
-				return err
-			}
-			if err := connector.ConfigureBroker(server, cfg, targets, env("TSUNAMI_SIGNING_KEY_FILE", "/run/connector/signing-key")); err != nil {
-				return err
-			}
-		}
-		provider := os.Getenv("TSUNAMI_MODEL_PROVIDER")
-		if provider != "" {
-			if os.Getenv("TSUNAMI_ALLOW_MODEL_CALLS") != "true" {
-				return errors.New("model configuration requires explicit TSUNAMI_ALLOW_MODEL_CALLS=true")
-			}
-			key := ""
-			if provider == "responses" || provider == "openrouter-free" {
-				key, e = secretFile(env("TSUNAMI_MODEL_KEY_FILE", "/run/model/api-key"))
-				if e != nil {
-					return errors.New("model key file unavailable")
-				}
-			}
-			baseURL := env("TSUNAMI_MODEL_BASE_URL", "https://api.openai.com/v1/")
-			server.Inference, e = inference.NewConfig(provider, os.Getenv("TSUNAMI_MODEL_ID"), baseURL, key)
-			if e != nil {
-				return e
-			}
-		}
-		broker, err := url.Parse(env("TSUNAMI_BROKER_URL", "http://tsunami-control:8080"))
-		if err != nil {
-			return err
-		}
-		ips, err := net.DefaultResolver.LookupNetIP(ctx, "ip", broker.Hostname())
-		if err != nil || len(ips) == 0 {
-			return errors.New("cannot resolve broker service")
-		}
-		prt := broker.Port()
-		if prt == "" {
-			prt = "8080"
-		}
-		broker.Host = net.JoinHostPort(ips[0].String(), prt)
-		// Workers receive the literal service IP and need no DNS egress.
-		server.Scheduler, e = kube.InCluster(env("TSUNAMI_NAMESPACE", "tsunami"), env("TSUNAMI_IMAGE", "tsunami:dev"), broker.String(), os.Getenv("TSUNAMI_RUNTIME_CLASS"))
-		if e != nil {
-			return e
-		}
-		go server.Reconcile(ctx)
+		configureRoutes(ctx, server)
+		configureScheduler(ctx, server)
+		reconcileCtx, stopReconcile := context.WithCancel(ctx)
+		reconciled := make(chan struct{})
+		go func() { defer close(reconciled); server.Reconcile(reconcileCtx) }()
+		defer func() { stopReconcile(); <-reconciled }()
 		fmt.Printf("LAB ONLY: scripted mode default; model path enabled=%t; runtimeClass=%q; no arbitrary shell\n", server.Inference != nil, os.Getenv("TSUNAMI_RUNTIME_CLASS"))
-		return serve(ctx, env("LISTEN_ADDR", ":8080"), server)
+		var handler http.Handler = server
+		if os.Getenv("TSUNAMI_ENABLE_UI") == "true" {
+			handler = webui.Handler{Next: server}
+		}
+		return serve(ctx, env("LISTEN_ADDR", ":8080"), handler)
 	default:
 		return errors.New("unknown subcommand")
 	}
 }
 
 func serve(ctx context.Context, address string, h http.Handler, tlsConfig ...*tls.Config) error {
-	s := &http.Server{Addr: address, Handler: h, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 5 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: 15 * time.Second, MaxHeaderBytes: 16 << 10}
-	go func() {
-		<-ctx.Done()
-		shutdown, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		_ = s.Shutdown(shutdown)
-	}()
-	var err error
+	listener, err := net.Listen("tcp", address)
+	if err != nil {
+		return err
+	}
 	if len(tlsConfig) > 0 {
-		s.TLSConfig = tlsConfig[0]
-		err = s.ListenAndServeTLS("", "")
-	} else {
-		err = s.ListenAndServe()
+		listener = tls.NewListener(listener, tlsConfig[0])
 	}
-	if errors.Is(err, http.ErrServerClosed) {
-		return nil
-	}
-	return err
+	server := &http.Server{Addr: address, Handler: h, ReadHeaderTimeout: 5 * time.Second, ReadTimeout: 5 * time.Second, WriteTimeout: 30 * time.Second, IdleTimeout: 15 * time.Second, MaxHeaderBytes: 16 << 10}
+	return httpserver.Serve(ctx, server, listener)
 }

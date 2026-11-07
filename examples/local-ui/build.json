@@ -1,0 +1,13 @@
+{
+  "recorded_after": "2026-11-06T11:43:41Z",
+  "native_image": "tsunami:ui-20261106t113915z",
+  "control_image_id": "sha256:f6e507c3818bf2046e2da41658e0392bced8540a7058dd6cb86b3157a573177f",
+  "tools_image_configured": "tsunami-tools:showcase-20261106t113607z",
+  "binary_sha256": "ea8116cb932228d49e7924f998b9e37c63e8e419d66f9529ba90306f2a47e46b",
+  "worker_cri_inspection": "not performed by this browser driver",
+  "ui_asset_sha256": {
+    "app.js": "d49089b2f9c895fa209ee95783a4cd2c8c947a71e8df17445e4a81c7461affea",
+    "index.html": "9c3f6b7360c900cd4676c3a91786ff5e59b469702bf6259d47fe9fa5f6d73395",
+    "styles.css": "2863a608caeea3da5c3f765b375835d668571c5a167b612cac9eb6637e2e52bf"
+  }
+}

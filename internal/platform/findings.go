@@ -12,6 +12,7 @@ import (
 	"time"
 	"unicode"
 
+	"github.com/Sanskarzz/tsunami/internal/application"
 	"github.com/Sanskarzz/tsunami/internal/scoring"
 	bolt "go.etcd.io/bbolt"
 )
@@ -174,7 +175,10 @@ func applyFindingReviews(tx *bolt.Tx, b *EngagementBundle) error {
 		}
 		c.Status = "reviewed_confirmed"
 		f := ToolkitFinding{ID: c.ID, Title: c.Title, Severity: review.Severity, CVSSScore: *review.CVSSScore, CVSSVector: review.CVSSVector, Status: "Confirmed", Category: "Broken Access Control", CWEID: 639, Description: c.Reason, Impact: review.Impact, Steps: []string{}, Evidence: []ToolkitEvidence{}, Remediation: c.Remediation, Target: c.Target, EngagementID: b.View.Engagement.ID, FoundBy: "trusted_http_validator", Tags: []string{"owned-lab", review.Purpose}}
-		if c.Procedure == "role-boundary/v1" {
+		if plan := b.View.Engagement.Application; plan != nil && plan.Version == application.PropertyAccessProfile {
+			f.Category = "Broken Object Property Level Authorization"
+			f.CWEID = 213
+		} else if c.Procedure == "role-boundary/v1" {
 			f.Category = "Broken Function Level Authorization"
 			f.CWEID = 862
 		} else if c.Procedure == "anonymous-access/v1" {

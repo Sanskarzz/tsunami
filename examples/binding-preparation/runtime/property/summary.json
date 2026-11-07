@@ -1,0 +1,437 @@
+{
+  "checked_at": "2026-11-06T06:26:58.437927+00:00",
+  "context": "kind-tsunami-lab",
+  "binary_sha256": "eb02258dfddb42472a9ce74ab62c1a29b4255098ae38cd5d84f3c6e2e362ae4b",
+  "external_model_calls": 0,
+  "profile": "property",
+  "checks": [
+    {
+      "application": "property-vulnerable",
+      "passed": true,
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "a23fa23d907835b382669f374ab6b226",
+      "run_id": "d11958ef026f4bd36f0675df85bdedd6",
+      "target_completed": {
+        "requests": 7,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 1,
+        "last_request_at": "2026-11-06T06:27:01.225634316Z",
+        "probe_started_at": "2026-11-06T06:27:01.001318334Z"
+      },
+      "result_status": {
+        "run_id": "d11958ef026f4bd36f0675df85bdedd6",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T06:28:28.86636523Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-06T06:26:59.263761184Z",
+        "worker_observed_at": "2026-11-06T06:27:00.756182051Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:01.22187226Z",
+        "cleanup": "pending",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Owner-only note exposed through a shared record",
+          "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+          "evidence_ids": [
+            "1e3454baf72d84f205f834c82b2fd783",
+            "3a1b10634f67806f895aace378a3c7f4",
+            "c7017b69f3286aa682a033fd656e591b",
+            "af5019956e786049bca41eae7f3a7c7d",
+            "900faf6ef64c50c64e0cce5b7482a8cf",
+            "9280bfed8396582b9a4d45f07cd99409",
+            "a65a1cafc368fc18e84d051bff0b07a4"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "filtered"
+          }
+        }
+      },
+      "candidates": 1,
+      "artifacts": 8,
+      "after_cleanup": {
+        "run_id": "d11958ef026f4bd36f0675df85bdedd6",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T06:28:28.86636523Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-06T06:26:59.263761184Z",
+        "worker_observed_at": "2026-11-06T06:27:00.756182051Z",
+        "exit_observed_at": "2026-11-06T06:27:02.258383778Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:01.22187226Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T06:27:01.766816683Z",
+        "api_resources_absent_at": "2026-11-06T06:27:03.757027307Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Owner-only note exposed through a shared record",
+          "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+          "evidence_ids": [
+            "1e3454baf72d84f205f834c82b2fd783",
+            "3a1b10634f67806f895aace378a3c7f4",
+            "c7017b69f3286aa682a033fd656e591b",
+            "af5019956e786049bca41eae7f3a7c7d",
+            "900faf6ef64c50c64e0cce5b7482a8cf",
+            "9280bfed8396582b9a4d45f07cd99409",
+            "a65a1cafc368fc18e84d051bff0b07a4"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "filtered"
+          }
+        }
+      },
+      "target_final": {
+        "requests": 7,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 1,
+        "last_request_at": "2026-11-06T06:27:01.225634316Z",
+        "probe_started_at": "2026-11-06T06:27:01.001318334Z"
+      }
+    },
+    {
+      "application": "property-filtered",
+      "passed": true,
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "b7481eedce9a3ae7032e4e90afc3cb9a",
+      "run_id": "110bba114748f3b7c3e3016b20e6587f",
+      "target_completed": {
+        "requests": 7,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 1,
+        "last_request_at": "2026-11-06T06:27:06.427499107Z",
+        "probe_started_at": "2026-11-06T06:27:06.146879866Z"
+      },
+      "result_status": {
+        "run_id": "110bba114748f3b7c3e3016b20e6587f",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T06:28:33.966495359Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-06T06:27:04.26092097Z",
+        "worker_observed_at": "2026-11-06T06:27:05.827383334Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:06.423339482Z",
+        "cleanup": "pending",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "no_issue_observed",
+          "title": "Owner-only note exposed through a shared record",
+          "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+          "evidence_ids": [
+            "5f5bfe3ea9e8760db9c5ed9c1c8f253a",
+            "f685ba7bed3067e974d67d6ccc220f8b",
+            "5bfc407aeed11dd13cfea410f3d14258",
+            "e8b87c508b3fa32cf00641264a77c74a",
+            "88b6b2401b5d66361f46e76190e318a8",
+            "002d45efcd8fcaba6b3e0d6d069b6958",
+            "ea605ffac04ffa9b5f6420121593e5c8"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "filtered"
+          }
+        }
+      },
+      "candidates": 0,
+      "artifacts": 8,
+      "after_cleanup": {
+        "run_id": "110bba114748f3b7c3e3016b20e6587f",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T06:28:33.966495359Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-06T06:27:04.26092097Z",
+        "worker_observed_at": "2026-11-06T06:27:05.827383334Z",
+        "exit_observed_at": "2026-11-06T06:27:07.260024196Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:06.423339482Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T06:27:06.76538094Z",
+        "api_resources_absent_at": "2026-11-06T06:27:08.757170531Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "no_issue_observed",
+          "title": "Owner-only note exposed through a shared record",
+          "reason": "The peer received the expected public object with all configured owner-only properties omitted. This covers only these fields, path and identities.",
+          "evidence_ids": [
+            "5f5bfe3ea9e8760db9c5ed9c1c8f253a",
+            "f685ba7bed3067e974d67d6ccc220f8b",
+            "5bfc407aeed11dd13cfea410f3d14258",
+            "e8b87c508b3fa32cf00641264a77c74a",
+            "88b6b2401b5d66361f46e76190e318a8",
+            "002d45efcd8fcaba6b3e0d6d069b6958",
+            "ea605ffac04ffa9b5f6420121593e5c8"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "filtered"
+          }
+        }
+      },
+      "target_final": {
+        "requests": 7,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 1,
+        "last_request_at": "2026-11-06T06:27:06.427499107Z",
+        "probe_started_at": "2026-11-06T06:27:06.146879866Z"
+      }
+    },
+    {
+      "application": "property-ambiguous",
+      "passed": true,
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "dd51d0368a7ec002ab4d3ff9c70095b3",
+      "run_id": "fa1420543f244967f9011d60ba9bb47e",
+      "target_completed": {
+        "requests": 7,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 1,
+        "last_request_at": "2026-11-06T06:27:11.206618628Z",
+        "probe_started_at": "2026-11-06T06:27:10.91772935Z"
+      },
+      "result_status": {
+        "run_id": "fa1420543f244967f9011d60ba9bb47e",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T06:28:39.018335667Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-06T06:27:09.258261536Z",
+        "worker_observed_at": "2026-11-06T06:27:10.756025356Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:11.202717981Z",
+        "cleanup": "delete_accepted",
+        "delete_accepted_at": "2026-11-06T06:27:11.263931208Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "inconclusive",
+          "title": "Owner-only note exposed through a shared record",
+          "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+          "evidence_ids": [
+            "cd4c6ded57931a754a9709e311aca5a9",
+            "e1e4a7395ae3e12c3808ce85bbb86803",
+            "4d862aacca411fab058df983df5d9637",
+            "af6cf53fccf9e908acad16aa66ce46da",
+            "951dac9db4ab37abf0ed342c361d56fe",
+            "b80fc0abef32f0ac1d06eca670708f05",
+            "0cce326be5f8aa4975f58d20ea18298d"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "filtered"
+          }
+        }
+      },
+      "candidates": 0,
+      "artifacts": 8,
+      "after_cleanup": {
+        "run_id": "fa1420543f244967f9011d60ba9bb47e",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-06T06:28:39.018335667Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-06T06:27:09.258261536Z",
+        "worker_observed_at": "2026-11-06T06:27:10.756025356Z",
+        "exit_observed_at": "2026-11-06T06:27:12.258271708Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:11.202717981Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T06:27:11.263931208Z",
+        "api_resources_absent_at": "2026-11-06T06:27:13.757604056Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "inconclusive",
+          "title": "Owner-only note exposed through a shared record",
+          "reason": "The expected public object and omitted protected fields were not established. Denial, changed/redacted values or malformed content are inconclusive for this filtering rule.",
+          "evidence_ids": [
+            "cd4c6ded57931a754a9709e311aca5a9",
+            "e1e4a7395ae3e12c3808ce85bbb86803",
+            "4d862aacca411fab058df983df5d9637",
+            "af6cf53fccf9e908acad16aa66ce46da",
+            "951dac9db4ab37abf0ed342c361d56fe",
+            "b80fc0abef32f0ac1d06eca670708f05",
+            "0cce326be5f8aa4975f58d20ea18298d"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "filtered"
+          }
+        }
+      },
+      "target_final": {
+        "requests": 7,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 1,
+        "last_request_at": "2026-11-06T06:27:11.206618628Z",
+        "probe_started_at": "2026-11-06T06:27:10.91772935Z"
+      }
+    },
+    {
+      "application": "property-stop",
+      "passed": true,
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "755f1ac8fb2a090569930c329b8aad2f",
+      "run_id": "bb4e499ced79dd6ea1ef259ffa32efec",
+      "target_held": {
+        "requests": 5,
+        "active": 1,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-06T06:27:16.102537859Z",
+        "probe_started_at": "2026-11-06T06:27:16.102537859Z"
+      },
+      "runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:d3ab4c2bd07ff0b655bef23e368221e58cc66d68529e4ac3081fa0a1c89b16f3",
+      "target_cancelled": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-06T06:27:16.102537859Z",
+        "probe_started_at": "2026-11-06T06:27:16.102537859Z",
+        "probe_cancelled_at": "2026-11-06T06:27:17.453541914Z"
+      },
+      "result_status": {
+        "run_id": "bb4e499ced79dd6ea1ef259ffa32efec",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 5,
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-06T06:27:17.451472896Z",
+        "expires_at": "2026-11-06T06:28:43.966520226Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-06T06:27:14.259160638Z",
+        "worker_observed_at": "2026-11-06T06:27:15.757995183Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:16.09829025Z",
+        "local_drain_observed_at": "2026-11-06T06:27:17.455716343Z",
+        "cleanup": "pending",
+        "observation_code": "observed"
+      },
+      "candidates": 0,
+      "artifacts": 6,
+      "after_cleanup": {
+        "run_id": "bb4e499ced79dd6ea1ef259ffa32efec",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 5,
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-06T06:27:17.451472896Z",
+        "expires_at": "2026-11-06T06:28:43.966520226Z",
+        "execution": "unknown_after_resource_removal",
+        "dispatch_intent_at": "2026-11-06T06:27:14.259160638Z",
+        "worker_observed_at": "2026-11-06T06:27:15.757995183Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-06T06:27:16.09829025Z",
+        "local_drain_observed_at": "2026-11-06T06:27:17.455716343Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-06T06:27:17.763073765Z",
+        "api_resources_absent_at": "2026-11-06T06:27:18.760675504Z",
+        "observation_code": "observed"
+      },
+      "target_final": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-06T06:27:16.102537859Z",
+        "probe_started_at": "2026-11-06T06:27:16.102537859Z",
+        "probe_cancelled_at": "2026-11-06T06:27:17.453541914Z"
+      }
+    }
+  ],
+  "limitations": [
+    "Owned synthetic data with known identities and inventory; no blind discovery or customer readiness.",
+    "Approvals in this campaign are automated lab actions, not customer authorization or human finding review.",
+    "One node and selected CLI paths; production failures, load and broad sandbox containment remain unqualified."
+  ],
+  "control_image_id": "sha256:7ec58b2ec6dd87853c4fc812515ce26aa9d9a9526d91aac8de711002df6f4a51"
+}
