@@ -469,6 +469,13 @@ func (s *Server) StopGroup(tenant string, global bool) ([]string, error) {
 	if err != nil {
 		return nil, err
 	}
+	// Assessment revocation has committed. Cancel admitted operations even if
+	// the separate onboarding transaction fails; still report that failure.
+	for _, id := range ids {
+		for _, cancel := range s.active[id] {
+			cancel()
+		}
+	}
 	setupIDs, err := s.Store.stopSetups(tenant, global)
 	for _, id := range setupIDs {
 		if cancel := s.setupActive[id]; cancel != nil {
@@ -477,11 +484,6 @@ func (s *Server) StopGroup(tenant string, global bool) ([]string, error) {
 	}
 	if err != nil {
 		return nil, err
-	}
-	for _, id := range ids {
-		for _, cancel := range s.active[id] {
-			cancel()
-		}
 	}
 	return ids, nil
 }
