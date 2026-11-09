@@ -167,10 +167,10 @@ The workflow comes from Tsunami: verify both identities, establish each account'
 ## 3. Approve that saved plan
 
 ```bash
-tsunami_api POST "/v1/engagements/$TSUNAMI_ENGAGEMENT_ID/approve" --data-raw '{}'
+tsunami_api POST "/v1/engagements/$TSUNAMI_ENGAGEMENT_ID/approve" --data-raw '{"scope_digest":"paste-the-reviewed-scope-digest"}'
 ```
 
-D6's UI binds the explicit review checkbox to the displayed scope fingerprint without typing. Changing the displayed scope clears review; raw scope and fingerprint remain under optional technical inspection. The CLI still requires the exact reviewed digest. Direct API approval has the existing empty-body contract and approves the saved immutable scope; do not invent a `scope_digest` field. Requiring that digest at the API remains D10. The server owns permission, not the checkbox. An authorization reference is an operator record, not automated verification of legal ownership.
+D6's UI binds the explicit review checkbox to the displayed scope fingerprint without typing. Changing the displayed scope clears review; raw scope and fingerprint remain under optional technical inspection. The CLI still requires the exact reviewed digest. Direct API approval requires the reviewed `scope_digest`; empty, wrong or stale values are rejected without changing permission. Copy the digest from the exact saved scope you inspected, not from another assessment. The server owns permission, not the checkbox. An authorization reference is an operator record, not automated verification of legal ownership.
 
 Show that an unapproved draft cannot start. Approval itself still launches no agent.
 

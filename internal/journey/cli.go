@@ -247,7 +247,7 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 			if e.ScopeDigest != reviewed || e.State != platform.EngagementDraft || time.Now().After(e.ExpiresAt) {
 				return errors.New("approval refused: review the current unexpired draft and its exact scope digest")
 			}
-			if err := o.Call(ctx, "POST", base+"/approve", struct{}{}, &view); err != nil {
+			if err := o.Call(ctx, "POST", base+"/approve", platform.ApprovalInput{ScopeDigest: reviewed}, &view); err != nil {
 				return fmt.Errorf("approval not confirmed; inspect show --engagement %s: %w", engagement, err)
 			}
 			return printPlan(printer, view)

@@ -41,7 +41,7 @@ All routes require the authenticated tenant operator, never a worker token.
 | `POST /v1/engagements` | Create a draft for configured lab targets |
 | `GET /v1/engagements` | List this tenant's engagements |
 | `GET /v1/engagements/{id}` | Scope, run links and derived progress |
-| `POST /v1/engagements/{id}/approve` | Approve the pinned scope; body `{}` |
+| `POST /v1/engagements/{id}/approve` | Approve the reviewed pinned scope; body `{"scope_digest":"<reviewed digest>"}`; missing/mismatched digests are rejected |
 | `POST /v1/engagements/{id}/runs` | Reserve/create an approved procedure run |
 | `POST /v1/engagements/{id}/skip` | Record a reason for an unattempted procedure |
 | `POST /v1/engagements/{id}/stop` | Revoke the engagement and active children; body `{}` |
@@ -82,7 +82,7 @@ Focused checks: `go test -race ./internal/platform -run 'TestMetadata|TestOnboar
 
 The list reads metadata only from the child JSON, excluding captures, result reasons, legacy event text and model call contents. It does not contact targets, validate credentials, revalidate historical findings, mutate scopes or close an active approval because an attempt completed. The Dashboard labels approval separately from the latest attempt and retains an explicitly stale list if refreshing fails. Focused checks: `go test -race ./internal/platform -run TestDashboard` and `make verify-ui-onboarding`.
 
-D6's UI approval checkbox binds to the displayed immutable scope digest without manual typing; changed scope clears review. The current approval endpoint still accepts `{}`. Requiring an expected digest at the API remains D10, not an implemented server-side guarantee.
+D6's UI approval checkbox binds to the displayed immutable scope digest without manual typing; changed scope clears review. D10 requires that reviewed digest at the API and compares it with the saved canonical scope in the approval transaction. Empty or mismatched approvals cannot grant permission.
 
 ## Durable activity reads (D4)
 
@@ -126,7 +126,7 @@ The source reference is checked against the authenticated tenant in the same bbo
 
 The comparison route requires tenant operator authentication; worker/unauthed access is refused. Unknown/foreign assessments or absent/foreign source links return 404. Only GET is accepted (otherwise 405); queries are rejected (400), and responses use `Cache-Control: no-store`. Invalid stored scope/bindings return an unavailable comparison; existing Stop remains separately available.
 
-In the UI, Evidence offers an explicit destination selector and new authorization reference. Saving opens Scope Review with changed bindings shown and a fresh unchecked approval checkbox. Linked approval waits for a valid current-scope comparison in this client; backend approval still accepts `{}` until D10. Approval never starts work. On Evidence entry/manual refresh the comparison shows actual outcomes, versions and evidence references; source/retest evidence buttons navigate to their own D7 views. No raw body/export is automatically fetched or polled. Dashboard retains the source link for recovery. Failed reads leave an explicitly stale comparison; obsolete reads are cancelled on navigation/selection/Stop/disconnect, and Stop does not wait for them. Lost draft responses require read-only history recovery, not automatic mutation retries.
+In the UI, Evidence offers an explicit destination selector and new authorization reference. Saving opens Scope Review with changed bindings shown and a fresh unchecked approval checkbox. Linked approval waits for a valid current-scope comparison in this client; backend approval requires the reviewed `scope_digest`. Approval never starts work. On Evidence entry/manual refresh the comparison shows actual outcomes, versions and evidence references; source/retest evidence buttons navigate to their own D7 views. No raw body/export is automatically fetched or polled. Dashboard retains the source link for recovery. Failed reads leave an explicitly stale comparison; obsolete reads are cancelled on navigation/selection/Stop/disconnect, and Stop does not wait for them. Lost draft responses require read-only history recovery, not automatic mutation retries.
 
 Checks: `go test -race ./internal/platform -run TestRetest`, `make verify-ui-retest` (36 frontend tests including D3–D7 regressions) and optional `make verify-ui-retest-browser`. The latter uses two owned loopback origins and real native Mecatl, with fourteen target reads/two probes, a separate unexecuted incompatible draft, and original artifact/candidate preservation. It does not qualify Kubernetes isolation or a selected deployment.
 

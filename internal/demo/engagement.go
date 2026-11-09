@@ -74,7 +74,7 @@ func EngagementVerify(ctx context.Context, o Operator, out string, fixture bool,
 			return report, errors.New("draft dispatched a run")
 		}
 		report.DraftDispatchDenied = true
-		if err := o.Call(ctx, "POST", base+"/approve", struct{}{}, nil); err != nil {
+		if err := o.Call(ctx, "POST", base+"/approve", platform.ApprovalInput{ScopeDigest: e.ScopeDigest}, nil); err != nil {
 			return report, err
 		}
 		for _, id := range ids {

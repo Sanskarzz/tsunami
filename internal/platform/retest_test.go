@@ -226,7 +226,7 @@ func TestRetestTenantBoundariesTamperingAndLegacyDigest(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	if err := store.ApproveEngagement("a", e.ID); err == nil {
+	if err := store.ApproveEngagement("a", e.ID, e.ScopeDigest); err == nil {
 		t.Fatal("changed source link approved")
 	}
 	if w := request(s, "GET", "/v1/engagements/"+e.ID+"/retest", "operator-a", ""); w.Code != 404 {

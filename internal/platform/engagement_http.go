@@ -145,11 +145,11 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 200, review)
 			return
 		case "approve":
-			var in struct{}
+			var in ApprovalInput
 			if !decode(w, r, &in) {
 				return
 			}
-			if err := s.Store.ApproveEngagement(tenant, id); err != nil {
+			if err := s.Store.ApproveEngagement(tenant, id, in.ScopeDigest); err != nil {
 				problem(w, 409, err)
 				return
 			}

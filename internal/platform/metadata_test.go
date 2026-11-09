@@ -108,7 +108,7 @@ func TestMetadataSeparatesApprovalAttemptsAndDurableGates(t *testing.T) {
 	if view.Metadata.Permission != "unapproved" || view.Metadata.LatestAttempt != nil || p.MaxRequests != d.MaxRequests || p.PlannedReads != len(d.Reads()) || p.Version != "v1" || p.Digest != d.Digest() {
 		t.Fatalf("draft/catalog metadata differs: %+v", view.Metadata)
 	}
-	w := request(s, "POST", "/v1/engagements/"+e.ID+"/approve", "operator-a", `{}`)
+	w := request(s, "POST", "/v1/engagements/"+e.ID+"/approve", "operator-a", `{"scope_digest":"`+e.ScopeDigest+`"}`)
 	var approved EngagementView
 	if w.Code != 200 || json.Unmarshal(w.Body.Bytes(), &approved) != nil || approved.Metadata.Permission != "active" {
 		t.Fatal("approval response lacks current metadata")

@@ -129,7 +129,7 @@ def main():
                 parent = "/v1/engagements/" + engagement["id"]
                 cleanup.callback(stop_parent, parent, entry)
                 entry["engagement_id"] = engagement["id"]
-                api(control, parent + "/approve", "POST", {}, True)
+                api(control, parent + "/approve", "POST", {"scope_digest": engagement["scope_digest"]}, True)
                 run = api(control, parent + "/runs", "POST", {"assessment": plan["id"] + "/object-access/v2", "execution": "scripted"}, True, 201)
                 entry["run_id"] = run["id"]
                 run_path = "/v1/runs/" + run["id"]

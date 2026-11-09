@@ -10,10 +10,10 @@ The stabilization work separates documentation cleanup from the tenant/global St
 
 ## Optional hardening
 
-### D10 — Bind approval to the reviewed digest (P1)
+### D10 — Bind approval to the reviewed digest (P1, implemented)
 
 - **User-visible outcome:** backend approval identifies the exact displayed scope the operator reviewed.
-- **Backend:** require expected scope digest in approval; coordinate the API compatibility change across CLI, UI, drivers and documentation. Current `{}` contract remains actual behavior until this lands.
+- **Backend:** require expected scope digest in approval; coordinate the API compatibility change across CLI, UI, drivers and documentation. Implemented source contract: approval requires `scope_digest`; missing or mismatched values fail without granting permission.
 - **Frontend:** submit the digest bound to D6's displayed-scope review checkbox; retain clear review and explicit approval without manual retyping.
 - **Tests:** missing/wrong/stale digest, cross-tenant approval, unapproved Start rejection, updated clients.
 - **Security invariants:** approval cannot modify or widen scope; agent/run credentials cannot approve.

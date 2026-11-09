@@ -89,7 +89,7 @@ func ApplicationVerify(ctx context.Context, o Operator, out string, cases map[st
 			return report, err
 		}
 		base := "/v1/engagements/" + e.ID
-		if err := o.Call(ctx, "POST", base+"/approve", struct{}{}, nil); err != nil {
+		if err := o.Call(ctx, "POST", base+"/approve", platform.ApprovalInput{ScopeDigest: e.ScopeDigest}, nil); err != nil {
 			return report, err
 		}
 		var r platform.Run

@@ -41,6 +41,18 @@ test('unsupported procedures keep approval and Start disabled while scope remain
   assert.match(p.rows('scope-summary').Limits,/not available/);
 });
 
+test('approval submits the digest bound to explicit review and does not launch work',async()=>{
+  const p=ui(), calls=[];
+  p.run("state.token='local-test-operator-token';state.view.engagement.state='draft';state.view.metadata.permission='unapproved';renderPlan()");
+  const approved=structuredClone(p.view);approved.engagement.state='active';approved.metadata.permission='active';
+  p.setFetch(async(path,options)=>{calls.push({path,body:JSON.parse(options.body)});return response(approved);});
+  p.run("$('scope-reviewed').checked=true");await p.click('scope-reviewed','input');
+  await p.click('approval-form','submit');await flush();await flush();
+  assert.equal(calls.length,1);assert.match(calls[0].path,/\/approve$/);
+  assert.deepEqual(calls[0].body,{scope_digest:'c'.repeat(64)});
+  assert.equal(p.run('state.view.engagement.state'),'active');
+});
+
 function setup(){return {id:'e'.repeat(32),revision:1,state:'ready_for_validation',expires_at:new Date(Date.now()+3600000).toISOString(),created_at:'2030-01-01T00:00:00Z',access_ready:true,validation_attempts:0,validation_requests:0,preflight_digest:'a'.repeat(64),messages:[],
   details:{name:'Owned setup',environment:'dev',frontend_url:'https://front.example.test',api_origin:'https://owned.example.test',approved_addresses:['192.0.2.1'],auth_method:'bearer',identity_path:'/me',owner_path:'/records/a',peer_path:'/records/b',expected_access:'deny'}};}
 async function loadedSetup(){

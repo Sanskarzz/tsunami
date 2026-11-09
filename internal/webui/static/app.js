@@ -12,7 +12,7 @@ const idPattern = /^[a-f0-9]{32}$/;
 const pages = {
   setup: 'POST /v1/onboarding saves a setup. Its answers, protected access, DNS permission and four-read validation are separate bounded actions. Prepare creates only an unapproved assessment draft.',
   applications: 'GET /v1/applications and GET /v1/engagements list configured plans and saved assessments. Selecting an application makes no target request.',
-  plan: 'POST /v1/engagements saves a draft. GET retrieves its immutable scope. POST …/approve records approval; no agent runs yet. Digest entry is a client review guard.',
+  plan: 'POST /v1/engagements saves a draft. GET retrieves its immutable scope. POST …/approve requires the reviewed scope digest; no agent runs yet.',
   run: 'GET …/status and cursor-based GET …/events show actual stored observations. POST …/stop independently revokes the engagement. Admission, send, response, validation and cleanup are separate facts.',
   evidence: 'GET …/findings reads body-free candidate/check metadata. Individual raw evidence and full exports require separate explicit reads. Validation and recorded review provenance stay separate.'
 };
@@ -815,7 +815,7 @@ $('approval-form').addEventListener('submit', event => { event.preventDefault();
   const e = state.view.engagement;
   if (e.state !== 'draft' || !$('scope-reviewed').checked || state.reviewedScope !== e.scope_digest || $('reviewed-digest').value.trim() !== e.scope_digest) throw new Error('Review the displayed saved scope and explicitly approve its exact version.');
   if (e.source_engagement_id && (!state.retest || state.retestStale || state.retest.retest.engagement.scope_digest !== e.scope_digest)) throw new Error('Load and review the retest scope comparison before approving.');
-  state.view = await api('POST', '/v1/engagements/' + e.id + '/approve', {});
+  state.view = await api('POST', '/v1/engagements/' + e.id + '/approve', {scope_digest: state.reviewedScope});
   renderPlan(); message('Approval recorded. Start is a separate action; no agent was launched by approval.');
 }); });
 $('go-run').addEventListener('click', () => page('run'));

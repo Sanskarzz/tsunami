@@ -54,7 +54,7 @@ All operator routes require tenant operator authentication. Worker credentials a
 | Register and prepare | Setup `/prepare` atomically saves supported application plus unapproved engagement. It does not Start. |
 | List | `GET /v1/applications`, `GET /v1/engagements`; tenant-bound plans/history. D3 adds application metadata; D6 adds stored latest-attempt metadata to engagement-list rows. No plan digests change. |
 | Draft | `POST /v1/engagements`; select an existing supported application. |
-| Approve | `POST /v1/engagements/{id}/approve` currently accepts `{}`. D6 binds the UI checkbox to the displayed digest without typing; CLI still requires reviewed digest. These are client guards; D10 changes the backend contract. |
+| Approve | `POST /v1/engagements/{id}/approve` requires `scope_digest`, atomically compared with the saved canonical scope. The UI binds its checkbox to the displayed digest without typing; the CLI submits the explicitly reviewed digest. Approval starts no agent. |
 | Start | `POST /v1/engagements/{id}/runs`; atomically reserve child/credential. No server Start idempotency until D11. |
 | Observe | `GET /v1/engagements/{id}`, `GET /v1/runs/{id}/status`; D3 adds authoritative policy/access/snapshot metadata, separately from lifecycle observations and assessment result. See [contract](engagements.md#read-only-assessment-metadata-d3). |
 | Stop | Run `/stop`, engagement `/stop`, tenant `/v1/stop-tenant`, separate global `/v1/stop-all`. Durable revocation precedes acknowledgement. |

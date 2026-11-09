@@ -55,7 +55,7 @@ TSUNAMI_RUN_ID='copy-id-from-start'
 tsunami_assess watch --run "$TSUNAMI_RUN_ID"
 ```
 
-The digest check is a CLI review guard on an immutable saved draft. The server still owns authorization and scope enforcement; bypassing this client must not bypass those checks. There is no blanket `--yes` flag. Matching the digest is not proof that a person understood the plan.
+The CLI submits the explicitly reviewed digest to the approval API. The server compares it with the saved canonical scope inside the same transaction that records approval; a missing or mismatched digest is refused even when bypassing the CLI. There is no blanket `--yes` flag. Matching the digest is not proof that a person understood the plan.
 
 Start creates **one attempt** of the saved built-in procedure. Execution is explicitly **scripted Mecatl**, not a live LLM or autonomous discovery. There is no model selection/fallback flag. `native` is the default executor; `curl-http/v1` selects the already reviewed fixed shell/curl adapter and requires its configured gVisor path. It does not enable arbitrary curl or shell commands. The start response includes the run deadline; dispatch intent is separate from observed worker execution.
 

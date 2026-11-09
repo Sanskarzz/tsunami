@@ -69,6 +69,12 @@ type EngagementInput struct {
 	Assessments        []string `json:"assessments"`
 }
 
+// ApprovalInput identifies the immutable scope actually reviewed by the operator.
+// Reading the current digest on the server is not evidence of client review.
+type ApprovalInput struct {
+	ScopeDigest string `json:"scope_digest"`
+}
+
 type ChecklistItem struct {
 	Procedure  string `json:"procedure"`
 	Status     string `json:"status"`
@@ -236,13 +242,13 @@ func putEngagementLimited(tx *bolt.Tx, e Engagement) error {
 	return putEngagement(tx, e)
 }
 
-func (s *Store) ApproveEngagement(tenant, id string) error {
+func (s *Store) ApproveEngagement(tenant, id, reviewedDigest string) error {
 	return s.db.Update(func(tx *bolt.Tx) error {
 		e, err := getEngagement(tx, tenant, id)
 		if err != nil {
 			return err
 		}
-		if e.State != EngagementDraft || time.Now().After(e.ExpiresAt) || e.digest() != e.ScopeDigest {
+		if reviewedDigest == "" || reviewedDigest != e.ScopeDigest || e.State != EngagementDraft || time.Now().After(e.ExpiresAt) || e.digest() != e.ScopeDigest {
 			return errors.New("engagement cannot be approved")
 		}
 		g := tx.Bucket([]byte("gates"))

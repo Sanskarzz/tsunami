@@ -41,7 +41,7 @@ func engagementFixture(t *testing.T, s *Server, ids ...string) Engagement {
 
 func approveEngagement(t *testing.T, s *Server, e Engagement) {
 	t.Helper()
-	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/approve", "operator-a", `{}`); w.Code != 200 {
+	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/approve", "operator-a", `{"scope_digest":"`+e.ScopeDigest+`"}`); w.Code != 200 {
 		t.Fatalf("approve: %d %s", w.Code, w.Body)
 	}
 }
@@ -178,7 +178,7 @@ func TestEngagementStopRacesCreationAndSurvivesRestart(t *testing.T) {
 	if _, err := reopened.CreateEngagementRun("a", e.ID, "opaque-ownership/v1", nil); err == nil {
 		t.Fatal("restart reopened stopped engagement")
 	}
-	if err := reopened.ApproveEngagement("a", e.ID); err == nil {
+	if err := reopened.ApproveEngagement("a", e.ID, e.ScopeDigest); err == nil {
 		t.Fatal("stopped engagement reapproved")
 	}
 }
@@ -343,7 +343,12 @@ func TestEngagementRunDeadlineAndTenantGate(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	approveEngagement(t, s, e)
+	// Review the shortened window's new digest before approving it.
+	reviewed, err := store.GetEngagement("a", e.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	approveEngagement(t, s, reviewed)
 	r, err := store.CreateEngagementRun("a", e.ID, "opaque-ownership/v1", nil)
 	if err != nil || !r.Deadline.Equal(expiry) {
 		t.Fatal("child outlived approved window")

@@ -65,7 +65,7 @@ func TestOperatorCollectsLegalEngagementAboveFourMiB(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if err = store.ApproveEngagement("a", e.ID); err != nil {
+	if err = store.ApproveEngagement("a", e.ID, e.ScopeDigest); err != nil {
 		t.Fatal(err)
 	}
 	for range 12 {
