@@ -4,7 +4,7 @@ import {createOnboardingUI} from './onboarding.js';
 const $ = id => document.getElementById(id);
 const state = {token: '', epoch: 0, generation: 0, apps: [], view: null, app: null, run: '', status: null, statusStale: false,
   bundle: null, busy: false, stopping: false, polling: false, timer: null, polls: 0, trace: [], selectedTrace: null,
-  uncertainStarts: new Set(), uncertainDraft: false, currentPage: 'applications', actionID: 0, pollVersion: 0,
+  uncertainStarts: new Set(), startRequests: new Map(), uncertainDraft: false, currentPage: 'applications', actionID: 0, pollVersion: 0,
   refreshJob: null, readControllers: new Set(), activity: null, stopReceipt: null, statusStaleReason: '',
   engagements: [], listsAt: null, reviewedScope: '', findings: null, findingsStale: false, findingsJob: null, rawJob: null, rawEvidence: null,
   retest: null, retestJob: null, retestStale: false};
@@ -178,7 +178,9 @@ function controls() {
   $('approve').disabled = !connected || locked || !current || !supported || e.state !== 'draft' || permission !== 'unapproved' || state.stopReceipt?.id === e.id || !$('scope-reviewed').checked || state.reviewedScope !== e.scope_digest || $('reviewed-digest').value.trim() !== e.scope_digest;
   if (e?.source_engagement_id && (!state.retest || state.retestStale || state.retest.retest.engagement.scope_digest !== e.scope_digest)) $('approve').disabled = true;
   $('go-run').disabled = !e;
-  $('start').disabled = !connected || locked || !current || !supported || e.state !== 'active' || permission !== 'active' || state.view?.metadata?.access?.availability !== 'configured' || e.approved_digest !== e.scope_digest || !!state.run || !!e.run_ids?.length || state.uncertainStarts.has(e.id) || state.stopReceipt?.id === e.id;
+  const recovery = e && state.uncertainStarts.has(e.id) && state.startRequests.get(e.id)?.scope === e.scope_digest;
+  $('start').textContent = recovery ? 'Recover Start' : 'Start';
+  $('start').disabled = !connected || locked || !current || !supported || e.state !== 'active' || permission !== 'active' || (!recovery && state.view?.metadata?.access?.availability !== 'configured') || e.approved_digest !== e.scope_digest || !!state.run || !!e.run_ids?.length || (state.uncertainStarts.has(e.id) && !recovery) || state.stopReceipt?.id === e.id;
   // Stop stays independent of observation/export/start requests.
   $('stop').disabled = !connected || !e || state.stopping;
   $('refresh-run').disabled = !connected || !e || locked;
@@ -789,6 +791,7 @@ function disconnect() {
   for (const controller of state.readControllers) controller.abort();
   state.token = ''; state.view = null; state.app = null; state.run = ''; state.status = null; state.statusStale = false; state.stopReceipt = null; resetActivity();
   state.apps = []; state.engagements = []; state.listsAt = null; state.reviewedScope = ''; state.trace = []; state.selectedTrace = null; state.busy = false; state.stopping = false;
+  state.startRequests.clear(); state.uncertainStarts.clear();
   setupUI.reset();
   $('application-list').replaceChildren(element('div', 'Disconnected. Reconnect to read saved state.', 'card empty'));
   $('engagement-list').textContent = 'Not connected.'; $('api-log').replaceChildren(); $('api-detail').textContent = 'Disconnected.';
@@ -822,18 +825,25 @@ $('go-run').addEventListener('click', () => page('run'));
 $('start').addEventListener('click', () => void act(async () => {
   const e = state.view.engagement;
   const generation = state.generation;
-  if (e.state !== 'active' || e.approved_digest !== e.scope_digest || state.run || e.run_ids?.length || state.uncertainStarts.has(e.id) || state.stopReceipt?.id === e.id) throw new Error('Start requires an approved plan without an existing or uncertain attempt in this viewer.');
+  let action = state.startRequests.get(e.id);
+  if (e.state !== 'active' || e.approved_digest !== e.scope_digest || state.run || e.run_ids?.length || (state.uncertainStarts.has(e.id) && action?.scope !== e.scope_digest) || state.stopReceipt?.id === e.id) throw new Error('Start requires an approved plan; recover uncertain work with its original action identity.');
+  if (!action) {
+    action = {scope: e.scope_digest, request: {idempotency_key: crypto.randomUUID().replaceAll('-', ''), assessment: e.items[0].procedure, execution: 'scripted'}};
+    state.startRequests.set(e.id, action);
+  }
+  if (action.scope !== e.scope_digest) throw new Error('Scope changed after Start; recover saved work before another action.');
+  const recovering = state.uncertainStarts.has(e.id);
   state.uncertainStarts.add(e.id);
   let run;
-  try { run = await api('POST', '/v1/engagements/' + e.id + '/runs', {assessment: e.items[0].procedure, execution: 'scripted'}); }
-  catch (error) { throw new Error('Start not confirmed; no retry was made. Refresh the assessment to recover child IDs. ' + error.message); }
+  try { run = await api('POST', '/v1/engagements/' + e.id + '/runs', action.request); }
+  catch (error) { throw new Error('Start not confirmed; no automatic retry was made. Refresh to read child IDs, or explicitly Recover Start using the same action key. ' + error.message); }
   if (generation !== state.generation || state.view?.engagement.id !== e.id) return;
   if (!idPattern.test(run.id)) throw new Error('Start response has no valid run ID; inspect saved assessment state before retrying.');
   state.uncertainStarts.delete(e.id);
   if (state.run !== run.id) { cancelRefresh(); state.run = run.id; state.status = null; resetActivity(); }
   resetEvidence(); renderPlan(); renderStatus();
   if (state.currentPage === 'run') observe(); else void refresh().catch(() => {});
-  if (!state.stopReceipt) message('Run recorded. Reconciliation creates/observes its Kubernetes Job. The browser does not send target requests.');
+  if (!state.stopReceipt) message(recovering ? 'Start action recovered. Inspect the current permission/execution status; recovery never renews permission or launches replacement work.' : 'Run recorded. Reconciliation creates/observes its Kubernetes Job. The browser does not send target requests.');
 }));
 async function stopAssessment() {
   const id = state.view?.engagement.id;

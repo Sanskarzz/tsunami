@@ -28,7 +28,7 @@ func OpenStore(path string) (*Store, error) {
 		return nil, err
 	}
 	err = db.Update(func(tx *bolt.Tx) error {
-		for _, name := range []string{"runs", "credentials", "gates", "engagements", "finding_reviews", "review_history", "onboarding", "onboarding_secrets", "onboarding_evidence", "onboarded_apps"} {
+		for _, name := range []string{"runs", "credentials", "gates", "engagements", "engagement_starts", "finding_reviews", "review_history", "onboarding", "onboarding_secrets", "onboarding_evidence", "onboarded_apps"} {
 			if _, e := tx.CreateBucketIfNotExists([]byte(name)); e != nil {
 				return e
 			}
@@ -93,6 +93,7 @@ type createOptions struct {
 	Definition   *assessment.Definition
 	EngagementID string
 	Application  *application.Plan
+	Start        *StartInput
 }
 
 func (s *Store) create(tenant, scenario, target, mode string, model *ModelUsage, connectivity string, options createOptions) (Run, error) {
@@ -126,6 +127,16 @@ func (s *Store) create(tenant, scenario, target, mode string, model *ModelUsage,
 		r.MaxRequests = p.MaxRequests()
 	}
 	err := s.db.Update(func(tx *bolt.Tx) error {
+		if options.Start != nil {
+			previous, found, err := lookupStart(tx, tenant, options.EngagementID, *options.Start)
+			if err != nil {
+				return err
+			}
+			if found {
+				r = previous
+				return nil
+			}
+		}
 		g := tx.Bucket([]byte("gates"))
 		if g.Get([]byte("global")) != nil || g.Get([]byte("tenant:"+tenant)) != nil {
 			return errors.New("new runs are disabled")
@@ -143,7 +154,21 @@ func (s *Store) create(tenant, scenario, target, mode string, model *ModelUsage,
 		if e = tx.Bucket([]byte("runs")).Put([]byte(r.ID), data); e != nil {
 			return e
 		}
-		return tx.Bucket([]byte("credentials")).Put([]byte(r.ID), []byte(randomID()+randomID()))
+		if err := tx.Bucket([]byte("credentials")).Put([]byte(r.ID), []byte(randomID()+randomID())); err != nil {
+			return err
+		}
+		if options.Start != nil {
+			e, err := getEngagement(tx, tenant, options.EngagementID)
+			if err != nil {
+				return err
+			}
+			data, err := json.Marshal(startRecord{RequestDigest: startDigest(e, *options.Start), RunID: r.ID})
+			if err != nil {
+				return err
+			}
+			return tx.Bucket([]byte("engagement_starts")).Put(startKey(tenant, options.EngagementID, options.Start.IdempotencyKey), data)
+		}
+		return nil
 	})
 	return r, err
 }

@@ -32,7 +32,7 @@ func TestExecutorSelectionIsApprovedAndInherited(t *testing.T) {
 	if w := request(s, "POST", path, "operator-a", `{"assessment":"`+e.Application.ProcedureID()+`","executor":"native"}`); w.Code != 400 {
 		t.Fatal("child selected its executor")
 	}
-	w = request(s, "POST", path, "operator-a", `{"assessment":"`+e.Application.ProcedureID()+`"}`)
+	w = request(s, "POST", path, "operator-a", `{"idempotency_key":"`+NewStartKey()+`","assessment":"`+e.Application.ProcedureID()+`"}`)
 	if w.Code != 201 {
 		t.Fatal(w.Body)
 	}

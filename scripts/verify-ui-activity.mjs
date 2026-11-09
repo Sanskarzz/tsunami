@@ -185,7 +185,7 @@ async function retestJourney(){
   check(initial.compatibility==='comparable'&&initial.source.latest_attempt.result.verdict==='confirmed'&&!initial.retest.latest_attempt,'draft invented outcome');
   check(initial.differences.some(d=>d.field==='Origin')&&(await text('retest-plan')).includes('Origin'),'changed target not displayed');
   check((await operator('/test/observations')).requests===7,'draft/comparison sent target traffic');
-  const denied=await fetch(origin+'/v1/engagements/'+id+'/runs',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({assessment:draftView.engagement.items[0].procedure,execution:'scripted'})});
+  const denied=await fetch(origin+'/v1/engagements/'+id+'/runs',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({idempotency_key:crypto.randomUUID().replaceAll('-',''),assessment:draftView.engagement.items[0].procedure,execution:'scripted'})});
   check(denied.status===409,'source approval authorized changed target');
   await evaluate(`document.getElementById('retest-plan').scrollIntoView()`);
   const scopeShot=await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(out,'retest-scope.png'),Buffer.from(scopeShot.data,'base64'),{mode:0o600});
@@ -238,18 +238,20 @@ try{
   if(onboarding)await onboardingJourney();else if(findings)await findingsJourney();else if(retest)await retestJourney();else {
   for(const [application,verdict] of [['browser-vulnerable','confirmed'],['browser-fixed','no_issue_observed']]){
     const id=await prepare(application),before=startCount();
-    if(application==='browser-fixed')await evaluate(`window.realFetch=window.fetch;window.fetch=async(...args)=>{const r=await window.realFetch(...args);if(args[0]==='/v1/engagements/${id}/runs'&&r.ok)throw new TypeError('lost committed Start response');return r;}`);
+    if(application==='browser-fixed')await evaluate(`window.realFetch=window.fetch;window.startRecovery={body:null,run:null,matched:false};window.fetch=async(...args)=>{const r=await window.realFetch(...args);if(args[0]==='/v1/engagements/${id}/runs'&&r.ok){const run=(await r.clone().json()).id;if(window.startRecovery.body===null){window.startRecovery.body=args[1].body;window.startRecovery.run=run;throw new TypeError('lost committed Start response');}if(args[1].body!==window.startRecovery.body||run!==window.startRecovery.run)throw new Error('Same-action recovery changed request or run');window.startRecovery.matched=true;}return r;}`);
     await click('start');
     if(application==='browser-fixed'){
       await wait(async()=> (await text('message')).startsWith('Start not confirmed'),'lost Start');
-      await evaluate(`window.fetch=window.realFetch;delete window.realFetch`);await click('refresh-run');
-      await wait(()=>evaluate(`!document.getElementById('refresh-run').disabled`),'read-only Start recovery');await click('pause');
+      check(startCount()===before+1,'Lost response automatically retried Start');
+      check((await text('start'))==='Recover Start','Missing explicit Start recovery');await click('start');
+      await wait(()=>evaluate(`window.startRecovery.matched`),'same-key same-run recovery');
+      await evaluate(`window.fetch=window.realFetch;delete window.realFetch;delete window.startRecovery`);
     }
     await wait(async()=>await text('verdict')===verdict,'trusted result');
     await wait(()=>evaluate(`!!document.querySelector('#activity-events [data-kind="validation.completed"]')`),'persisted validator event');
     check(await evaluate(`document.querySelectorAll('#activity-events [data-kind="request.rejected"]').length===1`),'missing real scope rejection');
     check((await text('activity-events')).includes('scope_not_approved'),'scope rejection not explained');
-    check(startCount()===before+1,'Start was retried');
+    check(startCount()===before+(application==='browser-fixed'?2:1),'Unexpected Start requests outside explicit same-key recovery');
     const raw=await operator('/v1/runs/'+await runID(id)+'/events?after=0&limit=100');
     check(await evaluate(`JSON.stringify([...document.querySelectorAll('#activity-events [data-sequence]')].map(n=>Number(n.dataset.sequence)))`)===JSON.stringify(raw.items.map(e=>e.sequence)),'UI event sequence differs from stored journal');
     summary.cases.push({application,engagement_id:id,run_id:await runID(id),verdict,event_sequences:raw.items.map(e=>e.sequence)});
@@ -297,7 +299,7 @@ try{
   await click('disconnect');check((await text('message')).includes('did not Stop'),'disconnect implication incorrect');
   check(network.filter(r=>r.method==='POST').length===postsBefore,'disconnect sent mutation');
   check(exceptions.length===0,'browser runtime exception');check(network.every(r=>r.same_origin),'browser made target/external request');
-  if(!onboarding&&!findings&&!retest)summary.checks=['real persisted rejection/validation sequence matches UI','lost Start recovered without retry','Stop during real held target request and pending export/Start','lost Stop response distinguished from observed durable revocation','no invented worker exit or completed validation on Stop','narrow layout','ordinary UI excludes raw proofs/credentials','same-origin browser requests','disconnect sends no Stop'];
+  if(!onboarding&&!findings&&!retest)summary.checks=['real persisted rejection/validation sequence matches UI','lost Start recovered by explicit same-key request; no automatic retry','Stop during real held target request and pending export/Start','lost Stop response distinguished from observed durable revocation','no invented worker exit or completed validation on Stop','narrow layout','ordinary UI excludes raw proofs/credentials','same-origin browser requests','disconnect sends no Stop'];
   summary.passed=true;
   const source=await readFile('internal/webui/static/app.js');summary.app_js_sha256=createHash('sha256').update(source).digest('hex');
 }catch(error){summary.error=error.message;if(socket?.readyState===WebSocket.OPEN){try{summary.failure_snapshot=await evaluate(`({message:document.getElementById('message')?.textContent,receipt:document.getElementById('stop-receipt')?.textContent,permission:document.getElementById('status-permission')?.textContent})`);}catch{}}console.error('FAIL local activity browser: '+error.message);process.exitCode=1;}

@@ -19,7 +19,7 @@ The stabilization work separates documentation cleanup from the tenant/global St
 - **Security invariants:** approval cannot modify or widen scope; agent/run credentials cannot approve.
 - **Definition of done:** direct API clients receive the same reviewed-scope protection and all supported clients use the new contract.
 
-### D11 — Make Start idempotent (P1)
+### D11 — Make Start idempotent (P1, implemented)
 
 - **User-visible outcome:** a lost Start response can recover the same attempt safely.
 - **Backend:** persist an engagement-bound idempotency key and request fingerprint in the same transaction as child creation. A mismatched request cannot reuse the key.
@@ -31,7 +31,7 @@ The stabilization work separates documentation cleanup from the tenant/global St
 ## Work order and stop rule
 
 1. Keep the selected build, credentials, capacity and evidence checks reproducible. Preserve failed records and acknowledge unavailable observations.
-2. Present the bounded journey to reviewers. Choose D10, then D11 if the review justifies API hardening; they are not required permission to begin more platform work.
+2. D10/D11 are implemented and source/local-browser verified. Deploy matching clients/server and qualify the selected build before presenting. No automatic next feature sprint follows; collect reviewer feedback.
 3. Treat suggested [Mecatl harness reuse](mecatl-harness.md) as evaluated options, not an implementation queue. Keep scope, Stop, credentials and verdict authority outside the agent.
 
 ## Deferred scope (P2)

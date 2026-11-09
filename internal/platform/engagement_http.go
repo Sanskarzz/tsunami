@@ -187,17 +187,26 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 			writeJSON(w, 200, map[string]bool{"recorded": true})
 			return
 		case "runs":
-			if err := s.CheckAdmission(routeFor(Run{Application: engagement.Application, Connectivity: engagement.Connectivity}), false, engagement.Executor != ""); err != nil {
-				problem(w, 503, err)
+			var in StartInput
+			if !decode(w, r, &in) {
 				return
 			}
-			var in struct {
-				Assessment          string `json:"assessment"`
-				Execution           string `json:"execution"`
-				RequiredProvider    string `json:"required_provider"`
-				RequiredPricePolicy string `json:"required_price_policy"`
+			in, err = in.normalized()
+			if err != nil {
+				problem(w, 400, err)
+				return
 			}
-			if !decode(w, r, &in) {
+			previous, found, err := s.Store.LookupEngagementStart(tenant, id, in)
+			if err != nil {
+				problem(w, 409, err)
+				return
+			}
+			if found {
+				writeJSON(w, 201, startView(previous))
+				return
+			}
+			if err := s.CheckAdmission(routeFor(Run{Application: engagement.Application, Connectivity: engagement.Connectivity}), false, engagement.Executor != ""); err != nil {
+				problem(w, 503, err)
 				return
 			}
 			if in.Execution != "" && in.Execution != "scripted" && in.Execution != "live" {
@@ -209,7 +218,6 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			var current Target
-			var err error
 			if engagement.Application != nil {
 				configured, ok := s.application(tenant, engagement.Application.ID)
 				if !ok || configured.Plan.Digest() != engagement.Application.Digest() {
@@ -243,12 +251,12 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 				problem(w, 400, errors.New("model policy supplied for scripted run"))
 				return
 			}
-			run, err := s.Store.CreateEngagementRun(tenant, id, in.Assessment, model)
+			run, err := s.Store.StartEngagementRun(tenant, id, in, model)
 			if err != nil {
 				problem(w, 409, err)
 				return
 			}
-			writeJSON(w, 201, run)
+			writeJSON(w, 201, startView(run))
 			return
 		}
 	}

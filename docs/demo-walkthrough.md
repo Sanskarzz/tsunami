@@ -95,7 +95,7 @@ VAmPI setup issues one-hour credentials. Preflight requires at least 900 seconds
 
 Keep the preflight timestamp and build identities with every qualification record. A source/image mismatch, changed Service address, invalid identity, failed positive network control or unavailable observation invalidates the corresponding claim. Investigate and record the failure; do not replace it with a simulated success.
 
-A failed/lost Start response requires reading saved child IDs before another attempt. An unacknowledged Stop remains uncertain. If the control API is unavailable, use trusted platform inspection and acknowledge that normal Stop is unavailable; there is no independent external egress cutoff in this package. Preserve/export history before separately planned capacity maintenance; never wipe the lab database to free engagement slots.
+A failed/lost Start response is recovered by reading saved child IDs or explicit **Recover Start** with the original action key. Never generate a replacement key automatically. An unacknowledged Stop remains uncertain. If the control API is unavailable, use trusted platform inspection and acknowledge that normal Stop is unavailable; there is no independent external egress cutoff in this package. Preserve/export history before separately planned capacity maintenance; never wipe the lab database to free engagement slots.
 
 Local artifacts may contain raw synthetic evidence and private setup material. Share only a reviewed selected subset. General redaction, production identity/isolation, hostile-process containment, broader partitions/load, capacity and a production Stop guarantee remain outside this qualification.
 
@@ -176,11 +176,11 @@ Show that an unapproved draft cannot start. Approval itself still launches no ag
 
 ## 4. Start one run and show its Job
 
-Copy the procedure from `engagement.items[0].procedure`:
+Copy the procedure from `engagement.items[0].procedure`. Generate one action ID (for example `python3 -c 'import secrets; print(secrets.token_hex(16))'`) and retain it for same-action recovery. Replace the placeholder below; it is not a valid key:
 
 ```bash
 tsunami_api POST "/v1/engagements/$TSUNAMI_ENGAGEMENT_ID/runs" --data-raw \
-  '{"assessment":"vampi-vulnerable/object-access/v2","execution":"scripted"}'
+  '{"idempotency_key":"paste-one-new-32-lowercase-hex-action-id","assessment":"vampi-vulnerable/object-access/v2","execution":"scripted"}'
 
 TSUNAMI_RUN_ID='paste-the-returned-run-id'
 tsunami_api GET "/v1/runs/$TSUNAMI_RUN_ID/status"

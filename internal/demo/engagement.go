@@ -70,7 +70,7 @@ func EngagementVerify(ctx context.Context, o Operator, out string, fixture bool,
 			return report, err
 		}
 		base := "/v1/engagements/" + e.ID
-		if o.Call(ctx, "POST", base+"/runs", map[string]string{"assessment": ids[0]}, nil) == nil {
+		if o.Call(ctx, "POST", base+"/runs", map[string]string{"idempotency_key": platform.NewStartKey(), "assessment": ids[0]}, nil) == nil {
 			return report, errors.New("draft dispatched a run")
 		}
 		report.DraftDispatchDenied = true
@@ -78,7 +78,7 @@ func EngagementVerify(ctx context.Context, o Operator, out string, fixture bool,
 			return report, err
 		}
 		for _, id := range ids {
-			body := map[string]string{"assessment": id}
+			body := map[string]string{"idempotency_key": platform.NewStartKey(), "assessment": id}
 			if fixture {
 				body["execution"] = "live"
 				body["required_provider"] = "fixture"
@@ -120,7 +120,7 @@ func EngagementVerify(ctx context.Context, o Operator, out string, fixture bool,
 		if err := o.Call(ctx, "POST", base+"/stop", struct{}{}, nil); err != nil {
 			return report, err
 		}
-		if o.Call(ctx, "POST", base+"/runs", map[string]string{"assessment": ids[0]}, nil) == nil {
+		if o.Call(ctx, "POST", base+"/runs", map[string]string{"idempotency_key": platform.NewStartKey(), "assessment": ids[0]}, nil) == nil {
 			return report, errors.New("stopped engagement dispatched a run")
 		}
 		report.StoppedDispatchDenied = true

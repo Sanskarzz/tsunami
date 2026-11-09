@@ -39,7 +39,7 @@ func retestRead(t *testing.T, s *Server, id string) RetestComparison {
 
 func startRetest(t *testing.T, s *Server, e Engagement) Run {
 	t.Helper()
-	w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"assessment":"`+e.Application.ProcedureID()+`","execution":"scripted"}`)
+	w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"idempotency_key":"`+NewStartKey()+`","assessment":"`+e.Application.ProcedureID()+`","execution":"scripted"}`)
 	var r Run
 	if w.Code != 201 || json.Unmarshal(w.Body.Bytes(), &r) != nil {
 		t.Fatalf("start retest: %d %s", w.Code, w.Body)
@@ -100,7 +100,7 @@ func TestRetestFreshOriginUsesOwnCredentialsApprovalAndPreservesOriginal(t *test
 	if e.State != EngagementDraft || e.ApprovedAt != nil || e.ApprovedDigest != "" || len(e.RunIDs) != 0 || e.SourceEngagementID != source.ID || e.ScopeDigest == source.ScopeDigest || e.Target == source.Target {
 		t.Fatal("retest inherited authority or scope")
 	}
-	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"assessment":"`+e.Application.ProcedureID()+`"}`); w.Code != 409 {
+	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"idempotency_key":"`+NewStartKey()+`","assessment":"`+e.Application.ProcedureID()+`"}`); w.Code != 409 {
 		t.Fatalf("unapproved retest started: %d", w.Code)
 	}
 	c := retestRead(t, s, e.ID)

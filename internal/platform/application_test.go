@@ -234,7 +234,7 @@ func applicationEngagement(t *testing.T, s *Server, c ApplicationConfig) (Engage
 	var e Engagement
 	_ = json.Unmarshal(w.Body.Bytes(), &e)
 	approveEngagement(t, s, e)
-	w = request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"assessment":"`+e.Application.ProcedureID()+`"}`)
+	w = request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"idempotency_key":"`+NewStartKey()+`","assessment":"`+e.Application.ProcedureID()+`"}`)
 	if w.Code != 201 {
 		t.Fatalf("run: %s", w.Body)
 	}
@@ -309,7 +309,7 @@ func TestApplicationScopeCredentialsAndConfigurationDrift(t *testing.T) {
 			t.Fatal("credential in worker policy")
 		}
 	}
-	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"assessment":"`+r.Application.ProcedureID()+`","execution":"live"}`); w.Code != 409 {
+	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"idempotency_key":"`+NewStartKey()+`","assessment":"`+r.Application.ProcedureID()+`","execution":"live"}`); w.Code != 409 {
 		t.Fatal("unqualified model path enabled")
 	}
 	// Model a process restart with a changed credential. The old durable run

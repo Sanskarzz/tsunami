@@ -31,7 +31,7 @@ const help = `Usage: tsunami assess COMMAND [flags]
   engagements   Recover engagement IDs after an interrupted command
   show          Show a saved plan, approval, progress and child run IDs
   approve       Approve a draft using the scope digest you reviewed
-  start         Start its built-in procedure once, using scripted Mecatl
+  start         Start/recover one scripted attempt with --request-id
   status        Inspect one run without printing response bodies
   watch         Watch permission, execution, activity and cleanup (read-only)
   stop          Revoke an engagement or one run; no execution dependency needed
@@ -79,7 +79,7 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 	origin := fs.String("url", "http://127.0.0.1:8080", "control API origin; HTTP only on loopback")
 	tokenFile := fs.String("token-file", "", "private operator credential file (mode 0600)")
 	asJSON := fs.Bool("json", false, "structured output; target response bodies remain in exports")
-	var engagement, run, app, name, authorization, executor, reviewed, out string
+	var engagement, run, app, name, authorization, executor, reviewed, out, requestID string
 	var timeout time.Duration
 	if command == "plan" {
 		fs.StringVar(&app, "application", "", "configured application ID; no arbitrary target URLs")
@@ -95,6 +95,9 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 	}
 	if command == "approve" {
 		fs.StringVar(&reviewed, "scope-digest", "", "exact scope digest from the plan you reviewed")
+	}
+	if command == "start" {
+		fs.StringVar(&requestID, "request-id", "", "32 lowercase hex characters; reuse only to recover the same Start action")
 	}
 	if command == "export" {
 		fs.StringVar(&out, "out", "", "new output directory; existing directories are never overwritten")
@@ -129,6 +132,9 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 	}
 	if command == "approve" && !digest.MatchString(reviewed) {
 		return errors.New("--scope-digest from the reviewed draft is required")
+	}
+	if command == "start" && !runID.MatchString(requestID) {
+		return errors.New("provide --request-id with 32 lowercase hex characters; retain it to recover the same Start action")
 	}
 	if command == "export" && out == "" {
 		return errors.New("--out must name a new directory")
@@ -252,12 +258,12 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 			}
 			return printPlan(printer, view)
 		}
-		if e.State != platform.EngagementActive || e.ApprovedDigest != e.ScopeDigest || time.Now().After(e.ExpiresAt) {
-			return errors.New("start requires an active, unexpired engagement with the reviewed scope approved")
+		if e.ApprovedDigest != e.ScopeDigest {
+			return errors.New("start requires the reviewed scope to have been approved")
 		}
 		var r platform.Run
-		if err := o.Call(ctx, "POST", base+"/runs", map[string]string{"assessment": e.Items[0].Procedure, "execution": "scripted"}, &r); err != nil {
-			return fmt.Errorf("start not confirmed; no retry made; inspect show --engagement %s for child IDs before another attempt: %w", engagement, err)
+		if err := o.Call(ctx, "POST", base+"/runs", platform.StartInput{IdempotencyKey: requestID, Assessment: e.Items[0].Procedure, Execution: "scripted"}, &r); err != nil {
+			return fmt.Errorf("start not confirmed; no retry made; inspect show --engagement %s or explicitly recover with the same --request-id %s: %w", engagement, requestID, err)
 		}
 		type started struct {
 			EngagementID string    `json:"engagement_id"`
@@ -265,10 +271,11 @@ func Run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 			Execution    string    `json:"execution"`
 			Executor     string    `json:"executor"`
 			Deadline     time.Time `json:"deadline"`
+			State        string    `json:"state"`
 		}
-		return printer.write(started{engagement, r.ID, r.Execution, executorName(r.Executor), r.Deadline}, func() {
+		return printer.write(started{engagement, r.ID, r.Execution, executorName(r.Executor), r.Deadline, r.State}, func() {
 			fmt.Fprintf(stdout, "Engagement: %s\nRun: %s\nExecution: %s; executor: %s\nDeadline: %s\n", engagement, r.ID, r.Execution, executorName(r.Executor), r.Deadline.Format(time.RFC3339))
-			fmt.Fprintf(stdout, "Start is recorded; this does not mean the worker is running.\nNext: watch --run %s\nStop: stop --engagement %s\n", r.ID, engagement)
+			fmt.Fprintf(stdout, "Run identified (new or recovered), state: %s. This does not grant new permission or prove worker execution.\nNext: watch --run %s\nStop: stop --engagement %s\n", r.State, r.ID, engagement)
 		})
 	case "status", "watch":
 		return inspect(ctx, o, printer, run, command == "watch", timeout)

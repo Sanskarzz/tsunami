@@ -265,6 +265,10 @@ func (s *Store) ApproveEngagement(tenant, id, reviewedDigest string) error {
 }
 
 func (s *Store) CreateEngagementRun(tenant, id, procedure string, model *ModelUsage) (Run, error) {
+	return s.createEngagementRun(tenant, id, procedure, model, nil)
+}
+
+func (s *Store) createEngagementRun(tenant, id, procedure string, model *ModelUsage, start *StartInput) (Run, error) {
 	var e Engagement
 	err := s.db.View(func(tx *bolt.Tx) error { var err error; e, err = getEngagement(tx, tenant, id); return err })
 	if err != nil {
@@ -274,7 +278,7 @@ func (s *Store) CreateEngagementRun(tenant, id, procedure string, model *ModelUs
 		if procedure != e.Application.ProcedureID() || model != nil {
 			return Run{}, errors.New("application procedure or model execution unavailable")
 		}
-		return s.create(tenant, e.Scenario, e.Target, "scripted Mecatl / owned application", nil, "", createOptions{Application: e.Application, EngagementID: id})
+		return s.create(tenant, e.Scenario, e.Target, "scripted Mecatl / owned application", nil, "", createOptions{Application: e.Application, EngagementID: id, Start: start})
 	}
 	d, err := assessment.Get(procedure)
 	if err != nil {
@@ -287,7 +291,7 @@ func (s *Store) CreateEngagementRun(tenant, id, procedure string, model *ModelUs
 			mode = "Responses wire fixture / no live model"
 		}
 	}
-	return s.create(tenant, e.Scenario, e.Target, mode, model, e.Connectivity, createOptions{Definition: &d, EngagementID: id})
+	return s.create(tenant, e.Scenario, e.Target, mode, model, e.Connectivity, createOptions{Definition: &d, EngagementID: id, Start: start})
 }
 
 // This executes in the SAME transaction as run/credential creation. A concurrent

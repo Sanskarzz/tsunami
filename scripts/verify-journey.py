@@ -6,6 +6,7 @@ from contextlib import contextmanager
 from datetime import datetime, timezone
 import hashlib
 import json
+import uuid
 import os
 from pathlib import Path
 import socket
@@ -123,12 +124,12 @@ def main():
                         parent = view["engagement"]["id"]; pending.append(parent)
                         entry["engagement_id"] = parent
                         cli("show", "--engagement", parent, structured=False)
-                        cli("start", "--engagement", parent, expected=1)
+                        cli("start", "--engagement", parent, "--request-id", uuid.uuid4().hex, expected=1)
                         cli("approve", "--engagement", parent, "--scope-digest", "0" * 64, expected=1)
                         if target and read(target, stats_path)["requests"] != before["requests"]:
                             raise RuntimeError("planning or rejected approval caused target requests")
                         cli("approve", "--engagement", parent, "--scope-digest", view["engagement"]["scope_digest"])
-                        run = cli("start", "--engagement", parent)["run_id"]
+                        run = cli("start", "--engagement", parent, "--request-id", uuid.uuid4().hex)["run_id"]
                         entry["run_id"] = run
                         if held_case:
                             def held():
@@ -180,7 +181,7 @@ def main():
                                 raise RuntimeError("CLI Stop did not revoke permission")
                         elif not status.get("assessment") or status["assessment"]["verdict"] != want or status["target_requests_reserved"] != 7:
                             raise RuntimeError("application result did not match its owned control")
-                        cli("start", "--engagement", parent, expected=1)
+                        cli("start", "--engagement", parent, "--request-id", uuid.uuid4().hex, expected=1)
                         cli("export", "--engagement", parent, "--out", str(out / application), structured=False)
                         bundle = json.loads((out / application / "bundle.json").read_text())
                         if bundle["toolkit_findings"] or len(bundle["finding_candidates"]) != (1 if want == "confirmed" else 0):

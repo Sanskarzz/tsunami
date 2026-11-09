@@ -6,6 +6,7 @@ import base64
 from contextlib import contextmanager, ExitStack
 from datetime import datetime, timezone
 import json
+import uuid
 from pathlib import Path
 import socket
 import subprocess
@@ -130,7 +131,7 @@ def main():
                 cleanup.callback(stop_parent, parent, entry)
                 entry["engagement_id"] = engagement["id"]
                 api(control, parent + "/approve", "POST", {"scope_digest": engagement["scope_digest"]}, True)
-                run = api(control, parent + "/runs", "POST", {"assessment": plan["id"] + "/object-access/v2", "execution": "scripted"}, True, 201)
+                run = api(control, parent + "/runs", "POST", {"idempotency_key": uuid.uuid4().hex, "assessment": plan["id"] + "/object-access/v2", "execution": "scripted"}, True, 201)
                 entry["run_id"] = run["id"]
                 run_path = "/v1/runs/" + run["id"]
                 def held():
@@ -204,7 +205,7 @@ def main():
                     if stable["requests"] != entry["target_cancelled"]["requests"] or stable["probe_completed"] != before["probe_completed"]:
                         raise RuntimeError("target activity continued after the drain observation")
                     api(control, parent + "/stop", "POST", {}, True)
-                    api(control, parent + "/runs", "POST", {"assessment": plan["id"] + "/object-access/v2"}, True, 409)
+                    api(control, parent + "/runs", "POST", {"idempotency_key": uuid.uuid4().hex, "assessment": plan["id"] + "/object-access/v2"}, True, 409)
                     if case == "restart":
                         kube("-n", "tsunami", "rollout", "restart", "deployment/tsunami-control")
                         kube("-n", "tsunami", "rollout", "status", "deployment/tsunami-control", "--timeout=60s")
@@ -214,7 +215,7 @@ def main():
                             entry["after_restart"] = api(restarted, run_path + "/status", authenticated=True)
                             if entry["after_restart"]["permission"] != "revoked":
                                 raise RuntimeError("restart restored permission")
-                            api(restarted, parent + "/runs", "POST", {"assessment": plan["id"] + "/object-access/v2"}, True, 409)
+                            api(restarted, parent + "/runs", "POST", {"idempotency_key": uuid.uuid4().hex, "assessment": plan["id"] + "/object-access/v2"}, True, 409)
                 finally:
                     if fault_installed:
                         kube("-n", "tsunami", "delete", "ciliumnetworkpolicy", policy_name, "--ignore-not-found")

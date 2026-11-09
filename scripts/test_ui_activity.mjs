@@ -177,11 +177,31 @@ test('lost committed Start is recovered by reads without a second Start',async()
   p.setFetch(async(path,o)=>{if(path.endsWith('/runs')&&o.method==='POST'){starts++;throw new TypeError('lost response');}return p.route(path,o);});
   await p.click('start');await flush();
   assert.match(p.text('message'),/Start not confirmed/);
-  assert.equal(p.run("$('start').disabled"),true);
+  assert.equal(p.run("$('start').disabled"),false);assert.equal(p.text('start'),'Recover Start');
   await p.run('refresh()');
   assert.equal(p.run('state.run'),runID);
   await p.click('start');await flush();
   assert.equal(starts,1);
+});
+
+test('explicit Recover Start reuses the exact original action and never retries automatically',async()=>{
+  const p=client(), requests=[];
+  p.run("state.run='';state.view.engagement.run_ids=[];controls()");
+  p.setFetch(async(path,o)=>{
+    if(path.endsWith('/runs')&&o.method==='POST'){
+      requests.push(JSON.parse(o.body));
+      if(requests.length===1)throw new TypeError('lost committed response');
+      return response({id:runID});
+    }
+    return p.route(path,o);
+  });
+  await p.click('start');await flush();await flush();
+  assert.equal(requests.length,1);assert.match(requests[0].idempotency_key,/^[a-f0-9]{32}$/);
+  assert.equal(p.text('start'),'Recover Start');assert.equal(p.run("$('start').disabled"),false);
+  await p.click('start');await flush();await flush();
+  assert.equal(requests.length,2);assert.deepEqual(requests[1],requests[0]);
+  assert.equal(p.run('state.run'),runID);assert.equal(p.run("$('start').disabled"),true);
+  p.run('stopObservation()');
 });
 
 test('navigation, Pause and disconnect cancel viewer reads without sending Stop or leaking late data',async()=>{

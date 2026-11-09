@@ -177,7 +177,7 @@ func (l *lab) approved(t *testing.T) platform.Engagement {
 	if l.requests.Load() != 0 {
 		t.Fatal("draft creation contacted the target")
 	}
-	if _, err := l.invoke(context.Background(), "start", "--engagement", e.ID); err == nil {
+	if _, err := l.invoke(context.Background(), "start", "--engagement", e.ID, "--request-id", strings.Repeat("1", 32)); err == nil {
 		t.Fatal("draft started without approval")
 	}
 	if _, err := l.invoke(context.Background(), "approve", "--engagement", e.ID, "--scope-digest", strings.Repeat("0", 64)); err == nil {
@@ -202,7 +202,7 @@ func TestConfiguredJourneyThroughMecatl(t *testing.T) {
 			var started struct {
 				RunID string `json:"run_id"`
 			}
-			l.call(t, &started, "start", "--engagement", e.ID)
+			l.call(t, &started, "start", "--engagement", e.ID, "--request-id", strings.Repeat("1", 32))
 			l.call(t, nil, "watch", "--run", started.RunID, "--timeout", "10s")
 			var status platform.RunStatus
 			l.call(t, &status, "status", "--run", started.RunID)
@@ -242,11 +242,15 @@ func TestConfiguredJourneyThroughMecatl(t *testing.T) {
 				t.Fatal("existing evidence changed")
 			}
 			l.call(t, nil, "stop", "--engagement", e.ID)
-			if _, err := l.invoke(context.Background(), "start", "--engagement", e.ID); err == nil {
+			if _, err := l.invoke(context.Background(), "start", "--engagement", e.ID, "--request-id", strings.Repeat("2", 32)); err == nil {
 				t.Fatal("stopped engagement launched work")
 			}
-			if l.startPosts.Load() != 1 {
-				t.Fatal("CLI retried or launched extra work")
+			if l.startPosts.Load() != 2 {
+				t.Fatal("expected one Start and one explicit refused new action after Stop")
+			}
+			stored, err := l.store.GetEngagement("owned-a", e.ID)
+			if err != nil || len(stored.RunIDs) != 1 {
+				t.Fatal("refused new action created extra work")
 			}
 		})
 	}
@@ -258,7 +262,7 @@ func TestInterruptedWatchIsReadOnlyAndStopIgnoresFailedExecutionRoute(t *testing
 	var started struct {
 		RunID string `json:"run_id"`
 	}
-	l.call(t, &started, "start", "--engagement", e.ID)
+	l.call(t, &started, "start", "--engagement", e.ID, "--request-id", strings.Repeat("1", 32))
 	select {
 	case <-l.held:
 	case <-time.After(5 * time.Second):
@@ -289,7 +293,7 @@ func TestUncertainStartIsNotRetriedAndChildCanBeRecovered(t *testing.T) {
 	l := ownedLab(t, "held")
 	e := l.approved(t)
 	l.loseStart.Store(true)
-	_, err := l.invoke(context.Background(), "start", "--engagement", e.ID)
+	_, err := l.invoke(context.Background(), "start", "--engagement", e.ID, "--request-id", strings.Repeat("1", 32))
 	if err == nil || !strings.Contains(err.Error(), "no retry made") || !strings.Contains(err.Error(), e.ID) {
 		t.Fatal("missing uncertain-start recovery instructions")
 	}
@@ -300,6 +304,20 @@ func TestUncertainStartIsNotRetriedAndChildCanBeRecovered(t *testing.T) {
 	}
 	l.call(t, nil, "engagements")
 	l.call(t, nil, "stop", "--engagement", e.ID)
+	l.loseStart.Store(false)
+	l.server.Quiesce()
+	var recovered struct {
+		RunID string `json:"run_id"`
+	}
+	l.call(t, &recovered, "start", "--engagement", e.ID, "--request-id", strings.Repeat("1", 32))
+	stored, err := l.store.GetEngagement("owned-a", e.ID)
+	if err != nil || recovered.RunID != view.Engagement.RunIDs[0] || len(stored.RunIDs) != 1 || l.startPosts.Load() != 2 {
+		t.Fatal("explicit same-key recovery after Stop/admission failure did not identify the original child")
+	}
+	r, err := l.store.Get(recovered.RunID)
+	if err != nil || r.State != platform.Stopped {
+		t.Fatal("recovery reopened revoked execution")
+	}
 }
 
 func TestCredentialTransportAndInputsFailBeforeNetwork(t *testing.T) {
@@ -341,7 +359,11 @@ func TestOtherTenantCannotInspectOrLaunchTheSavedPlan(t *testing.T) {
 		t.Fatal("other tenant received application metadata")
 	}
 	for _, command := range []string{"show", "start", "stop"} {
-		if _, err := l.invoke(context.Background(), command, "--engagement", e.ID); err == nil {
+		args := []string{command, "--engagement", e.ID}
+		if command == "start" {
+			args = append(args, "--request-id", strings.Repeat("1", 32))
+		}
+		if _, err := l.invoke(context.Background(), args...); err == nil {
 			t.Fatal("other tenant accessed the engagement", command)
 		}
 	}

@@ -72,7 +72,7 @@ func TestEngagementAuthorizationAndTenantBoundaries(t *testing.T) {
 	if _, err := store.CreateEngagementRun("a", e.ID, "role-boundary/v1", nil); err == nil {
 		t.Fatal("unapproved procedure dispatched")
 	}
-	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"assessment":"opaque-ownership/v1","execution":"live"}`); w.Code != 409 {
+	if w := request(s, "POST", "/v1/engagements/"+e.ID+"/runs", "operator-a", `{"idempotency_key":"`+NewStartKey()+`","assessment":"opaque-ownership/v1","execution":"live"}`); w.Code != 409 {
 		t.Fatal("unconfigured model dispatched")
 	}
 	child, err := store.CreateEngagementRun("a", e.ID, "opaque-ownership/v1", nil)
@@ -376,9 +376,9 @@ func TestEngagementModelPolicyAndPrivateRouteCannotBeBypassed(t *testing.T) {
 	approveEngagement(t, s, e)
 	base := "/v1/engagements/" + e.ID + "/runs"
 	for _, body := range []string{
-		`{"assessment":"opaque-ownership/v1","execution":"live"}`,
-		`{"assessment":"opaque-ownership/v1","execution":"live","required_provider":"fixture"}`,
-		`{"assessment":"opaque-ownership/v1","execution":"live","required_provider":"openrouter-free"}`,
+		`{"idempotency_key":"` + NewStartKey() + `","assessment":"opaque-ownership/v1","execution":"live"}`,
+		`{"idempotency_key":"` + NewStartKey() + `","assessment":"opaque-ownership/v1","execution":"live","required_provider":"fixture"}`,
+		`{"idempotency_key":"` + NewStartKey() + `","assessment":"opaque-ownership/v1","execution":"live","required_provider":"openrouter-free"}`,
 	} {
 		if w := request(s, "POST", base, "operator-a", body); w.Code != 409 {
 			t.Fatal("free-only policy bypassed")
@@ -388,7 +388,7 @@ func TestEngagementModelPolicyAndPrivateRouteCannotBeBypassed(t *testing.T) {
 	if len(runs) != 0 {
 		t.Fatal("denied model attempt created an orphan")
 	}
-	body, _ := json.Marshal(map[string]string{"assessment": "opaque-ownership/v1", "execution": "live", "required_provider": "openrouter-free", "required_price_policy": inference.FreePolicyID})
+	body, _ := json.Marshal(map[string]string{"idempotency_key": NewStartKey(), "assessment": "opaque-ownership/v1", "execution": "live", "required_provider": "openrouter-free", "required_price_policy": inference.FreePolicyID})
 	if w := request(s, "POST", base, "operator-a", string(body)); w.Code != 201 {
 		t.Fatalf("explicit free policy refused: %s", w.Body)
 	}

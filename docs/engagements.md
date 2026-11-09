@@ -42,7 +42,7 @@ All routes require the authenticated tenant operator, never a worker token.
 | `GET /v1/engagements` | List this tenant's engagements |
 | `GET /v1/engagements/{id}` | Scope, run links and derived progress |
 | `POST /v1/engagements/{id}/approve` | Approve the reviewed pinned scope; body `{"scope_digest":"<reviewed digest>"}`; missing/mismatched digests are rejected |
-| `POST /v1/engagements/{id}/runs` | Reserve/create an approved procedure run |
+| `POST /v1/engagements/{id}/runs` | Reserve/recover one approved action; requires `idempotency_key` (32 lowercase hex characters) and `assessment` |
 | `POST /v1/engagements/{id}/skip` | Record a reason for an unattempted procedure |
 | `POST /v1/engagements/{id}/stop` | Revoke the engagement and active children; body `{}` |
 | `GET /v1/engagements/{id}/findings` | Body-free finding, validator-check and capture metadata |
@@ -153,3 +153,15 @@ Local execution uses real Mecatl/Responses code with loopback fixtures; it does 
 Each campaign preserves a fresh output directory. The local demo exports before Stop; the Kubernetes collector retrieves the later stopped snapshot. Their authorization/status fields reflect those different snapshot times. The verifier checks draft/after-Stop dispatch refusal, all five procedures on vulnerable/fixed apps, progress, and three versus zero candidates. Active-request Stop, racing creation, tenant isolation and restart behavior are covered by native tests. Neither campaign measures production scale or independent discovery.
 
 See [the expanded product plan](product-roadmap.md) for the remaining work and required evidence.
+
+## Start recovery (D11)
+
+`POST /v1/engagements/{id}/runs` requires a client-generated `idempotency_key` of 32 lowercase hexadecimal characters. Generate a new key only for a new explicit attempt; retain and reuse the same key and request fields to recover an uncertain Start. An omitted execution mode normalizes to `scripted`. Assessment, execution, required provider/price policy and the saved scope digest form the request fingerprint. A conflicting reuse returns 409. Missing/invalid keys return 400; failed admission does not consume the key.
+
+A successful response is HTTP 201 for both reservation and same-action recovery, identifying the original run with its current stored state and deadline. It is launch metadata/public scope only: captures, events, model traces, results and lifecycle data require their existing explicit read APIs. A 201 response does not imply a new worker or renewed permission.
+
+The private `engagement_starts` bbolt bucket binds tenant, engagement and key to a request digest/run ID. Its write shares the transaction with child reservation, run state and worker credential creation. Successful records are bounded by the engagement run allowance and are retained with history; no retry refunds budgets or creates another credential. Existing databases get an empty bucket without rewriting old runs or granting old attempts new keys. Pre-D11 attempts without keys are recovered by reading their saved IDs.
+
+Known-action lookup precedes current route/admission checks. It can identify the same stopped/expired/completed/failed run after restart or route failure, without reactivating it or replaying target operations. Unknown keys still require all normal approval, current configuration, expiry, concurrency, budgets and Stop checks. The transaction rechecks the key to coalesce concurrent submissions. Corrupt/conflicting records fail closed. This deduplicates engagement Start actions; it is not a claim of exactly-once remote effects or global idempotency for every mutation.
+
+The UI generates the action key in page memory. After an uncertain response it offers explicit **Recover Start** with the exact original request, while read-only Refresh can still recover saved child IDs. Neither path retries automatically. Stop remains independent and blocks new UI launches. Disconnect/reload loses the in-memory key; inspect saved history before any new action. The CLI requires `--request-id` so the operator can retain and reuse the same action identity, including after Stop. Worker credentials cannot use these operator APIs.

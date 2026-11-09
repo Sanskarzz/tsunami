@@ -93,7 +93,7 @@ func ApplicationVerify(ctx context.Context, o Operator, out string, cases map[st
 			return report, err
 		}
 		var r platform.Run
-		if err := o.Call(ctx, "POST", base+"/runs", map[string]string{"assessment": plans[id].ProcedureID()}, &r); err != nil {
+		if err := o.Call(ctx, "POST", base+"/runs", map[string]string{"idempotency_key": platform.NewStartKey(), "assessment": plans[id].ProcedureID()}, &r); err != nil {
 			return report, err
 		}
 		if log != nil {

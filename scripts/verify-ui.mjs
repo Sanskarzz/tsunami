@@ -138,7 +138,7 @@ async function journey(application, expected, held = false) {
   await evaluate(`document.getElementById('start').click();document.getElementById('start').click()`);
   if (lostStart) {
     await wait(() => evaluate(`document.getElementById('message').textContent.startsWith('Start not confirmed')`), 'lost Start acknowledgement');
-    check(await evaluate(`document.getElementById('start').disabled`), 'Uncertain Start could be retried.');
+    check(await evaluate(`document.getElementById('start').textContent==='Recover Start'`), 'Uncertain Start lacks explicit same-key recovery.');
     await evaluate(`window.fetch=window.beforeLostStart;delete window.beforeLostStart`);
     await click('refresh-run');
     await wait(() => evaluate(`!document.getElementById('refresh-run').disabled`), 'lost Start recovery read');
@@ -367,7 +367,7 @@ async function linkedRetest(source){
   check(network.filter(r=>r.method==='POST'&&r.path.endsWith('/runs')).length===before,'Approval started retest.');await click('go-run');
   await evaluate(`window.beforeLostStart=window.fetch;window.fetch=async(...args)=>{const r=await window.beforeLostStart(...args);if(args[0]==='/v1/engagements/${id}/runs'&&r.ok)throw new TypeError('Simulated lost Start response after commit');return r}`);
   await click('start');await wait(()=>evaluate(`document.getElementById('message').textContent.startsWith('Start not confirmed')`),'lost committed retest Start');
-  check(await evaluate(`document.getElementById('start').disabled`),'Uncertain Start allowed replay.');await evaluate(`window.fetch=window.beforeLostStart;delete window.beforeLostStart`);
+  check(await evaluate(`document.getElementById('start').textContent==='Recover Start'`),'Uncertain Start lacks same-key recovery.');await evaluate(`window.fetch=window.beforeLostStart;delete window.beforeLostStart`);
   await click('refresh-run');await wait(()=>evaluate(`!document.getElementById('refresh-run').disabled`),'retained run recovery');await click('pause');
   await wait(async()=>await value('verdict')==='no_issue_observed','actual fixed retest outcome',35000);await wait(async()=>await value('status-cleanup')==='api_resources_absent','retest cleanup',20000);
   record.run_id=await evaluate(`document.querySelector('#run-context dd:nth-of-type(3)').textContent`);record.verdict='no_issue_observed';record.status=await operator('GET','/v1/runs/'+record.run_id+'/status');record.lost_start_response_recovered=true;

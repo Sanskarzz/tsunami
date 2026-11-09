@@ -49,7 +49,9 @@ Review that preview. Set these variables to the actual values from it, then appr
 TSUNAMI_ENGAGEMENT_ID='copy-id-from-plan'
 TSUNAMI_SCOPE_DIGEST='copy-scope-digest-from-plan'
 tsunami_assess approve --engagement "$TSUNAMI_ENGAGEMENT_ID" --scope-digest "$TSUNAMI_SCOPE_DIGEST"
-tsunami_assess start --engagement "$TSUNAMI_ENGAGEMENT_ID"
+TSUNAMI_START_REQUEST_ID="$(python3 -c 'import secrets; print(secrets.token_hex(16))')"
+# Keep this action identifier; reuse it only to recover the same Start.
+tsunami_assess start --engagement "$TSUNAMI_ENGAGEMENT_ID" --request-id "$TSUNAMI_START_REQUEST_ID"
 
 TSUNAMI_RUN_ID='copy-id-from-start'
 tsunami_assess watch --run "$TSUNAMI_RUN_ID"
@@ -81,13 +83,13 @@ The export goes to a new directory with mode 0700 and files with mode 0600. Exis
 | Situation | Action |
 |---|---|
 | Draft response lost | Use `engagements`, then `show --engagement ID`; inspect the saved draft before creating another. |
-| Start response lost | Use `show --engagement ID` to recover child IDs, then `status`. The client does not retry start automatically. |
+| Start response lost | Use `show --engagement ID` to read child IDs, or explicitly repeat `start` with the same `--request-id`. The client never retries automatically. |
 | Watch disconnected or timed out | Reconnect with `status`/`watch`, or explicitly Stop. Disconnection is not revocation. |
 | Optional connector/model configuration failed | The state/revocation API can remain available; use explicit Stop and inspect its acknowledgement. |
 | Kubernetes cleanup delayed | Read permission, local activity and cleanup separately. Missing API objects alone do not prove remote process exit. |
 | Account expired/configuration changed | Retain the inconclusive/failed attempt. A trusted operator must fix prerequisites and create a new approved attempt. |
 
-There is no server idempotency key for start yet. Avoiding automatic retries reduces accidental duplication; it does not make a manual repeated start exactly once. Existing engagement limits and durable reservations still apply. Mutations and evidence remain on the server if the local process dies or its output is lost.
+Start requires `--request-id` (32 lowercase hexadecimal characters), sent as `idempotency_key`. The same key/request identifies the original run across response loss/restart and after Stop; a different request cannot reuse it. A new explicit attempt needs a new key and normal permission/budgets. Returned state can be stopped, failed or completed; recovery does not launch replacement work. Retain the identifier with the assessment ID; it is an action ID, not a credential. Existing engagement limits and durable reservations still apply. This is not exactly-once remote execution.
 
 ## API mapping and output
 
