@@ -1,3 +1,7 @@
+> Historical reference, indexed 2026-11-09. Statements below describe their recorded milestone/build. Use [current status](track.md) and the [demo guide](demo-walkthrough.md) for the delivered journey and current readiness. Original findings and failures are preserved.
+
+> D9 subsequently delivered activity, evidence navigation and linked retest; the earlier unfinished-work statement below is historical.
+
 # Earlier CLI showcase milestones
 
 Updated: 2026-11-07. Historical delivery summary; current work order: [five-minute product demo](roadmap.md).

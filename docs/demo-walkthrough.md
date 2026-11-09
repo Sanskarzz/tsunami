@@ -1,8 +1,103 @@
-# Explain Tsunami by walking through its APIs
+# Controlled demo: prepare, qualify and present
 
-The demo should answer: who approves actions, what the worker can actually do, where enforcement happens, what supports the result and what Stop means. Use the running [local UI](local-ui.md) beside a terminal. The current supported application path is scripted Mecatl and synthetic read-only tests.
+This is the single operating guide for the five-minute owned-lab presentation. The demo uses real backend state, scripted Mecatl and synthetic read-only tests. Never substitute a simulated outcome when readiness or evidence is missing.
 
-An external application is a separate qualification step. `app.dev.accuknox.com` is not integrated or assessed by this UI milestone. Written testing scope, disposable identities/records, intended access rules, supported authentication and a reviewed external network path are prerequisites. Two usernames/passwords alone do not provide those facts or permission. Do not promise a finding before testing.
+## Prerequisites
+
+Run commands from the repository root. A clone does not create the prepared environment. Bootstrap the dedicated Kind/gVisor/Cilium lab using [sandbox-lab.md](sandbox-lab.md), then provision the owned targets using [showcase.md](showcase.md). Confirm the exact environment and seven registered application plans in [demo-configuration.md](demo-configuration.md). Do not use arbitrary external targets or real customer records.
+
+Source checks require the Go toolchain pinned in `go.mod`, Python 3 and Node 22. Browser checks require Google Chrome. Lab preparation also requires Docker, Kind, kubectl, Helm and the documented runtime/network installation. This is a prepared-environment demonstration, not a one-command fresh-cluster install or a five-minute provisioning claim.
+
+## Prepare without discarding history
+
+Choose the campaign before reserving history capacity: the core presentation needs three free engagement slots; the full campaign needs seven for six assessments plus headroom. From the repository root, inspect readiness first:
+
+```sh
+make showcase-check
+# Full campaign only: include property controls and reserve seven free slots:
+python3 scripts/showcase.py check --include-property
+```
+
+These checks make no assessment-target requests. They inspect owned infrastructure, registration, startup route status, history capacity and unsigned VAmPI JWT expiry hints. They do not prove that a session is valid; assessments recheck identities. Opaque property/Stop credentials have no local expiry hint.
+
+If disposable credentials need refreshing, choose one preparation matching the campaign. Full selection (requires seven free slots):
+
+```sh
+make showcase-prepare
+python3 scripts/showcase.py check --include-property
+```
+
+Core-only selection (requires three free slots; preserves existing property fixture data):
+
+```sh
+python3 scripts/showcase.py prepare
+make showcase-check
+```
+
+Preparation builds matching uniquely tagged native/tools images from the current source, deploys them, resets only disposable VAmPI/Stop/property data and rotates their credentials/proofs. The UI setting and existing onboarding key/configuration are preserved. It does not renew optional private certificates, call a model, delete run/evidence history or clear tenant/global Stop gates. Old approved bindings are not silently updated: create fresh drafts/approvals after rotation.
+
+Preparation requires idle owned work. If active work or nonterminal permissions are found, inspect exact IDs and explicitly resolve them before maintenance; do not kill unrelated work or remove state automatically. This is a single-operator lab, not a distributed maintenance lock. Preserve the database/key together for any separately planned backup/restore.
+
+If the UI is absent/disabled, use `make ui-deploy` after confirming idle work. It preserves target data and the existing onboarding key but selects a new build, so subsequent qualification must refer to that new build. Do not rebuild between qualification and presentation without qualifying the replacement.
+
+## Qualify the selected build
+
+Use explicit kubeconfig/context for commands that do not set them internally:
+
+```sh
+export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+make verify
+make verify-ui-retest
+make isolation-check CONTEXT=kind-tsunami-lab
+CONTEXT=kind-tsunami-lab python3 scripts/tool-network-check.py
+# Six fresh assessments: full connected journey, then separate property controls:
+make demo-rehearse
+# Or just the three-assessment timed core, with property checks qualified separately:
+# make demo-rehearse-core
+```
+
+After a campaign, inspect its recorded capacity before scheduling another: the preflight reserves slots for a future campaign and may correctly refuse another full run. Preparation does not consume engagement slots, but its guards require seven free slots for the full selection, or three without `--include-property`. Never change those limits or discard history implicitly.
+
+Run infrastructure/assessment/browser qualification sequentially so guards and target counters do not interfere. `make demo-rehearse` checks matching deployed asset bytes, then runs the real Add -> four-read preflight -> exact approval -> actual activity -> finding/evidence/remediation -> active Stop -> linked fixed-app retest path. It records six scheduled presentation stages and fails late stages; property leak/filter/ambiguity run afterward outside presentation time. `make verify-ui-demo` performs the same checks without pacing and does not establish a five-minute rehearsal. Approvals are automated owned-lab actions, never customer authorization or human finding review. The existing seven-case `make showcase-extended` remains an optional separate CLI campaign that consumes seven additional engagement slots; it was not repeated in D9. Plan capacity before every campaign and never silently discard history. Full qualification reserves at least seven free slots for six new assessments; `make demo-rehearse-core` reserves three and runs only the timed onboarding/finding, Stop and linked retest journey. Its summary explicitly excludes the property campaign. Run the disposable local property/browser checks separately; do not label the reduced campaign a full six-case D9 qualification.
+
+Retain actual source/binary and image identities, CRI observations, target cancellation/counters, exact run/engagement IDs, result exports and prerequisite timestamps. A dirty working-tree build must be labeled and fingerprinted rather than described as a clean-commit reproduction. Historical exports remain untouched. Keep failed attempts with their failure status.
+
+## Open the running UI
+
+In a separate terminal:
+
+```sh
+export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+kubectl --context kind-tsunami-lab -n tsunami port-forward \
+  --address=127.0.0.1 service/tsunami-control 8080:8080
+```
+
+Open `http://127.0.0.1:8080/ui/`. The UI refuses non-loopback Host values; this exposure guard does not replace operator authentication. Connect privately before sharing your screen.
+
+Under **Add application**, select the existing reviewed `vampi-vulnerable` integration, confirm disposable synthetic data, approve the four legitimate reads, prepare the new draft, then review/approve its exact scope and explicitly Start. The backend reuses trusted lab access without revealing stored tokens to the page. From Evidence, explicitly select `vampi-fixed` in linked retest, enter a fresh authorization reference, review changed bindings, approve its own scope and Start separately. Property and Stop controls use their own registered plans and approvals. Follow [the exact five-minute script](demo-walkthrough.md#five-minute-presentation). The historical D2 build predates this presentation and remains labeled separately.
+
+Connect with the tenant operator token from a private local file. This is not a target account credential. To create that file without putting its value into shell arguments/history:
+
+```sh
+mkdir -p .local
+umask 077
+kubectl --context kind-tsunami-lab -n tsunami get secret tsunami-operator \
+  -o jsonpath='{.data.admin-a}' | base64 --decode > .local/operator-token
+chmod 600 .local/operator-token
+```
+
+Paste it privately into the masked field, then Connect before sharing your screen. Keep the private file out of Git and recordings. There is no implemented desktop keychain/clipboard cleanup integration. Use your local editor/clipboard tools deliberately; do not paste the value into chats, screenshots or frontend configuration.
+
+
+## Readiness window and recovery
+
+VAmPI setup issues one-hour credentials. Preflight requires at least 900 seconds of hinted remaining lifetime by default. This is a readiness threshold, not permanent certification or verified session lifetime. Recheck immediately before D9/presentation; if it fails, explicitly refresh between assessments, create new bindings/drafts and repeat the relevant qualification. Do not lower the threshold to hide expired access.
+
+Keep the preflight timestamp and build identities with every qualification record. A source/image mismatch, changed Service address, invalid identity, failed positive network control or unavailable observation invalidates the corresponding claim. Investigate and record the failure; do not replace it with a simulated success.
+
+A failed/lost Start response requires reading saved child IDs before another attempt. An unacknowledged Stop remains uncertain. If the control API is unavailable, use trusted platform inspection and acknowledge that normal Stop is unavailable; there is no independent external egress cutoff in this package. Preserve/export history before separately planned capacity maintenance; never wipe the lab database to free engagement slots.
+
+Local artifacts may contain raw synthetic evidence and private setup material. Share only a reviewed selected subset. General redaction, production identity/isolation, hostile-process containment, broader partitions/load, capacity and a production Stop guarantee remain outside this qualification.
 
 ## Five-minute presentation
 
@@ -19,9 +114,14 @@ Prepare and qualify the selected owned lab before the clock starts: matching ima
 
 Do not fill a missed deadline with a simulated result. Leave the live state visible and identify a retained record as historical fallback. The dry run's deliberate lost-Start and delayed-viewer responses affect the client only; they are not production partition tests. Fixture preparation, builds, network diagnostics, downloads/materialization and the separate property campaign are qualification work, not a claim that every setup task fits in five minutes.
 
+
+## Optional API inspection
+
+The remaining sections explain the same saved state through the API; they are not a second presentation sequence.
+
 ## Set up your view
 
-Use a loopback control API port-forward and private operator-token file as described in the UI guide. Open `/ui/`, connect privately before screen sharing, and leave the Kubernetes terminal visible beside it.
+For API inspection, keep the Kubernetes terminal beside the connected UI. The commands below are optional reference; the timed presentation uses the UI.
 
 Choose one client to perform mutations: either the UI buttons or the API terminal. Do not press Start in both. When changing state through the terminal, use Refresh lists/open the saved assessment or Refresh status in the UI; its API explorer records only its own calls. A model, Pod or request moving independently is observed state, not a browser animation.
 
@@ -128,9 +228,3 @@ Use the IDs for the Stop engagement/run, not the earlier VAmPI run. Watch durabl
 “Stop closes permission before cleanup. The broker cancels its active operation and denies later calls; reconciliation removes the workload. A restart must not restore permission. A successful DELETE alone is not exit proof, and we cannot undo a remote effect already performed.”
 
 Broader failure/load qualification and an independent emergency cutoff remain unfinished. Do not claim a production sixty-second guarantee.
-
-## Finish with the useful result and boundaries
-
-Open the candidate/report from the vulnerable run and the fixed control beside it. Download the exact evidence bundle if useful. Briefly state what remains: general onboarding, supported customer authentication, secret/evidence lifecycle, independent procedure review, adaptive planning and broader failure/scale testing. A fresh external owned-app deployment would add useful DNS/TLS/network qualification; it would not by itself add autonomous discovery.
-
-Your ToolHive controller/configuration experience explains the lifecycle choice. Your Go external-authorization work explains enforcement outside the agent. Your MCP/runtime-observability experience explains why model statements and untrusted tool content are not evidence authority. Describe Tsunami as this project's implemented lab slice; do not turn proposals into past production experience.

@@ -39,8 +39,6 @@ A new application need not already exist in the startup file. The supported path
 
 The form accepts initial information, and the typed conversation asks for missing fields. It is not a free-text LLM interpreting arbitrary instructions. Documentation upload, approved frontend inspection, automatic backend discovery and a model-assisted planner remain future work. A discovered or supplied API host would still need approval; it is never implicit in the frontend URL.
 
-AccuKnox's frontend can be saved as metadata, but no AccuKnox endpoint/login is guessed or tested. Its actual API/authentication contract, allowed routes/actions/limits, disposable records and supported access integration are still needed. Permission for the dev environment does not make every available test applicable or promise a finding.
-
 ## Actual API contract
 
 All routes use the existing tenant operator bearer authentication. Workers cannot access them. IDs come from server state; request bodies cannot select another tenant.
@@ -75,6 +73,22 @@ Preflight raw bodies remain encrypted in local state, referenced by validation I
 Stop persists revocation before acknowledgement and cancels local preflight contexts. Responses arriving after revocation cannot promote readiness. Tenant/global Stop also closes setup work. A restarted process marks unfinished preflight uncertain and does not replay it. A lost validation response is recovered by reading state; another attempt needs a fresh explicit grant. A lost prepare response recovers its atomic saved engagement. The existing Start endpoint still lacks an idempotency key; inspect stored child IDs rather than retrying automatically.
 
 The frontend holds credentials only while submitting protected input, clears the fields, and stores no browser login. The local browser/workstation and control plane remain trusted. No external model call is made by this setup workflow and no supplied document/response is sent to a provider. Metadata such as names/URLs is not a safe place to paste secrets.
+
+## Readiness boundaries
+
+1. Saving details makes no target request. Unknown backend/API facts remain unknown; ask only for missing facts.
+2. A supplied/discovered host is a proposal, never implicit scope. Preserve approved origin/address/path validation; unsupported login or response contracts stay unavailable.
+3. Credentials use protected fields, not conversation, URLs, ordinary activity or reports. Changing access/scope invalidates relevant readiness observations.
+4. Baseline validation needs its own explicit revision/digest-bound grant: four legitimate reads, bounded attempts/time and no cross-user probe.
+5. Readiness requires observed distinct identities, legitimate objects and an explicit intended access rule. A generic HTTP 200 or model statement is insufficient.
+6. Registration prepares an unapproved engagement. Final assessment approval and Start are separate actions; do not collapse them into a readiness label.
+7. Lost responses recover stored state without automatic replay. Stop applies to preflight and linked assessment; restart uncertainty remains visible.
+
+The demo UI explains these facts with readable scope and progressive disclosure. Reusing an existing owned integration is explicit. A checkbox/reference records operator authorization context; it does not automatically verify legal ownership.
+
+## Deferred extensions
+
+Password/cookie/SSO adapters, documentation ingestion, frontend/API discovery, live-model planning, private customer onboarding and arbitrary application contracts are outside this delivery. They need separate permissions, data handling, enforcement and qualification if later selected. Do not collect real customer access or contact an external dev application to make the local demo appear complete.
 
 ## Verify
 

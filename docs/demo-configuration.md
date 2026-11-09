@@ -1,8 +1,10 @@
 # Selected owned-lab demo configuration
 
-Updated: 2026-11-09. This operating contract began in D2 and now selects the D9-qualified [five-minute product demo](project-goal.md). Status belongs in [the tracker](track.md). [D9's retained record](../examples/demo-journey/README.md) qualifies the connected D1–D8 journey; [D2](../examples/demo-configuration/README.md) remains a historical build record.
+Updated: 2026-11-09. This operating contract began in D2 and defines the [five-minute product demo](project-goal.md). Status belongs in [the tracker](track.md). [D9's retained record](../examples/demo-journey/README.md) qualifies the connected D1–D8 journey; [D2](../examples/demo-configuration/README.md) remains a historical build record.
 
-Selected D9 images are `tsunami:showcase-20261109t144510z` and `tsunami-tools:showcase-20261109t144510z`. The 2026-11-09 campaign passed actual runtime/native/curl network checks, six browser assessments and a paced 300.000-second dry run. It preserved all original history and ended with eight engagement slots. Readiness is time-limited; recheck before presenting. This was automated browser operation with a supplied script, not recorded human narration.
+The historical full D9 images are `tsunami:showcase-20261109t144510z` and `tsunami-tools:showcase-20261109t144510z`. The 2026-11-09 campaign passed actual runtime/native/curl network checks, six browser assessments and a paced 300.000-second dry run. It preserved all original history and ended with eight engagement slots. Readiness is time-limited; recheck before presenting. This was automated browser operation with a supplied script, not recorded human narration.
+
+The subsequent Stop-patch build uses `tsunami:showcase-20261109t182656z` and matching `tsunami-tools:showcase-20261109t182656z`. Its [dated verification](archive/stabilization-2026-11-09.md) records source/runtime/network/local browser checks and a separate three-assessment 300-second rehearsal, leaving five slots. It does not repeat the full six-case Kubernetes/property campaign. Use current source/build identities and readiness, rather than reusing historical image qualification.
 
 ## Fixed environment and entry point
 
@@ -32,63 +34,9 @@ The normal assessment makes seven approved GETs within an eight-request allowanc
 
 VAmPI is a pinned upstream owned lab deployment with its vulnerable/fixed switch. The property and Stop applications are separate synthetic fixtures. Do not present them as a combined unknown customer application. Existing catalog/private/model experiments are not part of this selection.
 
-## Prepare without discarding history
+## Operation and qualification
 
-From the repository root, inspect readiness first:
-
-```sh
-make showcase-check
-# Include all four property controls in the read-only prerequisite check:
-python3 scripts/showcase.py check --include-property
-```
-
-These checks make no assessment-target requests. They inspect owned infrastructure, registration, startup route status, history capacity and unsigned VAmPI JWT expiry hints. They do not prove that a session is valid; assessments recheck identities. Opaque property/Stop credentials have no local expiry hint.
-
-If the disposable credentials need refreshing, explicitly run:
-
-```sh
-make showcase-prepare
-python3 scripts/showcase.py check --include-property
-```
-
-Preparation builds matching uniquely tagged native/tools images from the current source, deploys them, resets only disposable VAmPI/Stop/property data and rotates their credentials/proofs. The UI setting and existing onboarding key/configuration are preserved. It does not renew optional private certificates, call a model, delete run/evidence history or clear tenant/global Stop gates. Old approved bindings are not silently updated: create fresh drafts/approvals after rotation.
-
-Preparation requires idle owned work. If active work or nonterminal permissions are found, inspect exact IDs and explicitly resolve them before maintenance; do not kill unrelated work or remove state automatically. This is a single-operator lab, not a distributed maintenance lock. Preserve the database/key together for any separately planned backup/restore.
-
-If the UI is absent/disabled, use `make ui-deploy` after confirming idle work. It preserves target data and the existing onboarding key but selects a new build, so subsequent qualification must refer to that new build. Do not rebuild between qualification and presentation without qualifying the replacement.
-
-## Qualify the selected build
-
-Use explicit kubeconfig/context for commands that do not set them internally:
-
-```sh
-export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
-make verify
-make verify-ui-retest
-make isolation-check CONTEXT=kind-tsunami-lab
-CONTEXT=kind-tsunami-lab python3 scripts/tool-network-check.py
-# Six fresh assessments: full connected journey, then separate property controls:
-make demo-rehearse
-python3 scripts/showcase.py check --include-property
-```
-
-Run infrastructure/assessment/browser qualification sequentially so guards and target counters do not interfere. `make demo-rehearse` checks matching deployed asset bytes, then runs the real Add -> four-read preflight -> exact approval -> actual activity -> finding/evidence/remediation -> active Stop -> linked fixed-app retest path. It records six scheduled presentation stages and fails late stages; property leak/filter/ambiguity run afterward outside presentation time. `make verify-ui-demo` performs the same checks without pacing and does not establish a five-minute rehearsal. Approvals are automated owned-lab actions, never customer authorization or human finding review. The existing seven-case `make showcase-extended` remains an optional separate CLI campaign that consumes seven additional engagement slots; it was not repeated in D9. Plan capacity before every campaign and never silently discard history.
-
-Retain actual source/binary and image identities, CRI observations, target cancellation/counters, exact run/engagement IDs, result exports and prerequisite timestamps. A dirty working-tree build must be labeled and fingerprinted rather than described as a clean-commit reproduction. Historical exports remain untouched. Keep failed attempts with their failure status.
-
-## Open the running UI
-
-In a separate terminal:
-
-```sh
-export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
-kubectl --context kind-tsunami-lab -n tsunami port-forward \
-  --address=127.0.0.1 service/tsunami-control 8080:8080
-```
-
-Open `http://127.0.0.1:8080/ui/` and connect privately as described in [the UI guide](local-ui.md). Do this before screen sharing; do not put tokens in commands, URLs, screenshots or chats.
-
-Under **Add application**, select the existing reviewed `vampi-vulnerable` integration, confirm disposable synthetic data, approve the four legitimate reads, prepare the new draft, then review/approve its exact scope and explicitly Start. The backend reuses trusted lab access without revealing stored tokens to the page. From Evidence, explicitly select `vampi-fixed` in linked retest, enter a fresh authorization reference, review changed bindings, approve its own scope and Start separately. Property and Stop controls use their own registered plans and approvals. Follow [the exact five-minute script](demo-walkthrough.md#five-minute-presentation). The historical D2 build predates this presentation and remains labeled separately.
+Use the [canonical demo guide](demo-walkthrough.md) for readiness, explicit credential refresh, matching build qualification, private UI connection and the timed presentation. [UI internals](local-ui.md) document authentication, API reads and local browser checks. This file records the selected environment and procedure contract, not a second setup sequence.
 
 ## Readiness window and recovery
 

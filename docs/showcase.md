@@ -2,7 +2,7 @@
 
 This is a short systems demo: a real owned VAmPI deployment, constrained agents, evidence-backed outcomes, scope rejection, direct-network checks and explicit Stop. Execution is scripted Mecatl. It is not blind discovery, customer authorization or a production readiness claim.
 
-For the current D2 selected origins/procedures, build/readiness rules and single running UI entry point, use [the demo configuration](demo-configuration.md). This CLI showcase remains qualification/support tooling; it does not implement the remaining product UI tasks.
+For the current presentation, use the [canonical demo guide](demo-walkthrough.md) and [selected configuration](demo-configuration.md). This CLI showcase is supporting qualification tooling. D1–D9 product delivery is recorded in [the tracker](track.md); older D2 results below retain their original build scope.
 
 [The fresh D2 record](../examples/demo-configuration/README.md) qualifies the D1 working-tree build with seven showcase cases and four browser runs. It preserves earlier records; its credential window and history capacity must be rechecked before presentation.
 

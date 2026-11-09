@@ -1,3 +1,5 @@
+> Historical reference, indexed 2026-11-09. Statements below describe their recorded milestone/build. Use [current status](track.md) and the [demo guide](demo-walkthrough.md) for the delivered journey and current readiness. Original findings and failures are preserved.
+
 # Observed local results
 
 The [onboarding browser qualification](../examples/onboarding/README.md), starting at 13:56 UTC on 2026-11-06, passed form/question/protected-access/four-read validation/registration/approval/execution/evidence on the owned lab. The onboarding-created worker had an actual CRI gVisor/image inspection; its assessment captured six successful baselines/rechecks and one supported unreviewed candidate. Original vulnerable/fixed/Stop controls also passed. Setup questions use checked rules, not a live model. The current integrity gate covers 32 bundles/240 artifacts, six prepared/runtime matches and 20 unchanged historical trial hashes. Exact records and limits are retained; no external customer or model was contacted.

@@ -1,3 +1,5 @@
+> Historical reference, indexed 2026-11-09. Statements below describe their recorded milestone/build. Use [current status](track.md) and the [demo guide](demo-walkthrough.md) for the delivered journey and current readiness. Original findings and failures are preserved.
+
 # Review follow-up
 
 Updated: 2026-11-05 (local time). This implements the first deliverable in [the review report](review-report.md): fix its five P2 defects and create a repeatable source-verification gate. The original review and historical lab records retain their meaning.

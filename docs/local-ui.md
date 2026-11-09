@@ -8,48 +8,9 @@ The interface supports registered synthetic object/property read plans, scope re
 
 ## Enable and open
 
-The dedicated `kind-tsunami-lab` cluster, gVisor/Cilium and configured applications must already exist. For the frozen demo selection, follow [configuration and qualification](demo-configuration.md). If the UI is already enabled on that qualified build, use the loopback port-forward below without rebuilding.
+Follow the [canonical demo guide](demo-walkthrough.md) for idle-work checks, explicit fixture refresh/build, loopback port-forwarding and private operator-token connection. The sole UI entry point is `/ui/`; it refuses non-loopback Host values and credentials/query parameters in UI URLs. This is an exposure guard, not authentication or protection from a compromised workstation.
 
-For initial enablement or an intentional rebuild, run from the repository root:
-
-```sh
-make ui-deploy
-```
-
-This checks for idle owned workloads and nonterminal permissions, builds/loads matching uniquely tagged native/tools images, provisions/preserves a control-only onboarding encryption key and enables `TSUNAMI_ENABLE_UI=true` on the existing control Deployment. The worker image setting is updated with the native image; the tools image is updated with the same source build. Other environment/Secret configuration and durable history are preserved. There is no new cluster, Ingress, NodePort, model call, target reset or automatic assessment. Use the lab exclusively during this maintenance; the check is not a distributed maintenance lock.
-
-A rebuild selects a new build and requires its own qualification; a previous image's results do not qualify the replacement. The frontend has one entry point, `/ui/`. The old fictional templates were removed. D9's matching deployed build and evidence are recorded in [the operating contract](demo-configuration.md); rebuilding after it selects a replacement requiring fresh qualification.
-
-If disposable lab credentials have expired, explicitly refresh them between assessments:
-
-```sh
-make showcase-prepare
-make showcase-check
-```
-
-Preparation resets only the documented owned fixture data and preserves the UI switch. See [the reset guide](showcase.md). Rebuild after source changes; the browser verifier checks deployed asset bytes against the local source.
-
-In one terminal:
-
-```sh
-export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
-kubectl --context kind-tsunami-lab -n tsunami port-forward \
-  --address=127.0.0.1 service/tsunami-control 8080:8080
-```
-
-Open **http://127.0.0.1:8080/ui/**. The handler refuses non-loopback Host values and credentials/query parameters in UI URLs. The API remains a ClusterIP service in this lab. This Host check is an exposure guard, not operator authentication or protection from a compromised workstation/local browser.
-
-Connect with the tenant operator token from a private local file. This is not a target account credential. To create that file without putting its value into shell arguments/history:
-
-```sh
-mkdir -p .local
-umask 077
-kubectl --context kind-tsunami-lab -n tsunami get secret tsunami-operator \
-  -o jsonpath='{.data.admin-a}' | base64 --decode > .local/operator-token
-chmod 600 .local/operator-token
-```
-
-Paste it privately into the masked field, then Connect before sharing your screen. Keep the private file out of Git and recordings. There is no implemented desktop keychain/clipboard cleanup integration. Use your local editor/clipboard tools deliberately; do not paste the value into chats, screenshots or frontend configuration.
+`make ui-deploy` opts the existing control deployment into `TSUNAMI_ENABLE_UI=true`, preserving its onboarding key/configuration/history and selecting matching native/tools images. It adds no public ingress or customer sign-in. A replacement build needs fresh qualification. The token remains in page memory only and must be entered privately before screen sharing.
 
 ## Screens and API calls
 
@@ -95,7 +56,7 @@ The [linked comparison](engagements.md#linked-fixed-app-retest-d8) shows source/
 
 D3–D8 require matching assets/server. D5–D8's disposable local checks below remain separate from [D9's selected Kubernetes/browser/runtime qualification](../examples/demo-journey/README.md). Neither campaign establishes general hostile-process containment or customer readiness.
 
-Use [the API-by-API presenter walkthrough](demo-walkthrough.md) for the interface. The disconnected fictional product templates have been removed. [The screen/state design](design.md) distinguishes implemented source from proposed improvements and the older deployed build.
+Use [the canonical demo guide](demo-walkthrough.md) for presentation and optional API inspection. The disconnected fictional product templates have been removed. [The screen/state design](design.md) distinguishes implemented source from proposed improvements and the older deployed build.
 
 ## Failures and browser boundary
 
@@ -108,9 +69,9 @@ Use [the API-by-API presenter walkthrough](demo-walkthrough.md) for the interfac
 
 ## Qualification
 
-The selected-deployment D9 driver is `make verify-ui-demo`; `make demo-rehearse` adds scheduled 0/30/90/150/200/255-second stages and a 300-second finish. The former does not prove a timed rehearsal. Both check deployed asset hashes and create six fresh owned assessments: real onboarding/finding, active held-request Stop during a pending viewer export, a linked fixed-app retest with lost Start recovery, and three separate property controls. The property controls run after the timed presentation. Actual journal sequences, validator-selected artifacts/download hashes, target cancellation/counters, fresh approval, preserved original evidence and same-origin behavior are checked. The onboarded worker is inspected through CRI for actual gVisor/runtime/image identity.
+The selected-deployment D9 driver is `make verify-ui-demo`; `make demo-rehearse` adds scheduled 0/30/90/150/200/255-second stages and a 300-second finish. The former does not prove a timed rehearsal. The full campaign checks deployed asset hashes and creates six fresh owned assessments: real onboarding/finding, active held-request Stop during a pending viewer export, a linked fixed-app retest with lost Start recovery, and three separate property controls. The property controls run after the timed presentation. Actual journal sequences, validator-selected artifacts/download hashes, target cancellation/counters, fresh approval, preserved original evidence and same-origin behavior are checked. The onboarded worker is inspected through CRI for actual gVisor/runtime/image identity.
 
-Builds, credential preparation and native/curl network checks are separate qualification steps; see [configuration](demo-configuration.md). The [retained D9 campaign](../examples/demo-journey/README.md) is an automated paced browser dry run with a presenter script, not recorded human narration or a guarantee for future response times. It ended with eight engagement slots. Recheck credentials/capacity and reserve six slots before repeating the full campaign; never discard history to make it fit. The three-assessment live presentation and the property campaign remain distinct owned scopes. Private full records live under `artifacts/ui/browser-.../`; only a reviewed selection is retained under `examples/demo-journey/`.
+Builds, credential preparation and native/curl network checks are separate qualification steps; see [configuration](demo-configuration.md). The [retained D9 campaign](../examples/demo-journey/README.md) is an automated paced browser dry run with a presenter script, not recorded human narration or a guarantee for future response times. It ended with eight engagement slots. Recheck credentials/capacity; the full campaign requires seven free slots for six assessments; never discard history to make it fit. The three-assessment live presentation and the property campaign remain distinct owned scopes. The canonical guide also documents a core-only rehearsal that explicitly excludes property qualification. Private full records live under `artifacts/ui/browser-.../`; only a reviewed selection is retained under `examples/demo-journey/`.
 
 `make verify-ui-retest` runs all **36 frontend tests**, adding fresh-review gating, real comparison presentation, incompatible/unfinished outcomes, explicit destination/source submission, lost draft recovery, stale/mismatched reads, safe text, Stop and disconnect independence. `make verify-ui-retest-browser` checks two real native Mecatl attempts across distinct owned origins: a confirmed source, source revocation, linked changed-target draft, separate approval/Start, no-issue retest and preserved original candidate/artifact bytes. It also checks an unexecuted incompatible draft, Dashboard recovery without replay, metadata-only navigation and narrow layout. Go asserts fourteen target reads/two probes and no unexpected paths. Requires Go, Node 22 and Chrome; private records live under `artifacts/ui-retest/local-.../`. This is disposable source integration, not Kubernetes/gVisor/Cilium qualification.
 
@@ -142,7 +103,6 @@ node scripts/verify-ui.mjs
 node scripts/verify-ui.mjs --onboarding
 # Current selected-deployment journey (six fresh engagements), optional pacing:
 make verify-ui-demo
-make demo-rehearse
 ```
 
 The Kubernetes browser driver requires local Node 22 with WebSocket support and Google Chrome. It uses a fresh temporary headless profile, the owned cluster and a loopback port-forward. It reads the lab token into process/page memory without printing it. It automatically approves **owned-lab** scopes, inspects real results, downloads/materializes evidence, checks hashes, and tests invalid tokens, wrong digests, duplicate clicks, display injection and narrow-screen layout. It simulates a lost response after committed Start and holds a real export response while Stop is used. These are client-side failure injections, not production partitions. The legacy no-flag/`--onboarding` modes retain their three/four-assessment campaigns; D9 uses `--demo --rehearse`. Each creates new history and attempts to Stop only its own engagements. No customer application or external model is contacted. A forced kill/platform failure can still leave uncertain work; inspect it before maintenance.

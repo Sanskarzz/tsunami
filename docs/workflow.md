@@ -1,3 +1,7 @@
+> Historical reference, indexed 2026-11-09. Statements below describe their recorded milestone/build. Use [current status](track.md) and the [demo guide](demo-walkthrough.md) for the delivered journey and current readiness. Original findings and failures are preserved.
+
+> This is the original three-read fixture procedure, retained for regression/evidence interpretation. Current configured assessments use the seven-read [selected procedures](demo-configuration.md#selected-applications-and-procedures).
+
 # First workflow: cross-user document reads
 
 This is an original, narrow test procedure informed by the reviewed VAPT methodology. It does not import the toolkit's scripts or grant its prompts authority.

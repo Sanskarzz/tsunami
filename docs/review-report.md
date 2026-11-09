@@ -1,3 +1,5 @@
+> Historical reference, indexed 2026-11-09. Statements below describe their recorded milestone/build. Use [current status](track.md) and the [demo guide](demo-walkthrough.md) for the delivered journey and current readiness. Original findings and failures are preserved.
+
 # Tsunami architecture and implementation review
 
 Reviewed: 2026-11-04. Target: the current working tree, including untracked implementation files. Reviewer used the requested `review-agent` workflow without delegating. Production code, deployments, original assignment answers, and the two reference repositories were left unchanged.
