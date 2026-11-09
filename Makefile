@@ -50,12 +50,16 @@ verify-ui-retest:
 verify-ui-retest-browser:
 	TSUNAMI_UI_RETEST_TEST=1 go test -race -count=1 ./internal/webui -run TestLocalBrowserRetest -v
 
-.PHONY: verify-ui-demo demo-rehearse
+.PHONY: verify-ui-demo demo-rehearse demo-rehearse-core
 verify-ui-demo:
 	node scripts/verify-ui.mjs --demo
 
 demo-rehearse:
 	node scripts/verify-ui.mjs --demo --rehearse
+
+# Three core assessments; property qualification is a separate campaign.
+demo-rehearse-core:
+	node scripts/verify-ui.mjs --demo --rehearse --core-only
 
 verify-ui-onboarding-browser:
 	python3 -B scripts/verify-ui-onboarding.py

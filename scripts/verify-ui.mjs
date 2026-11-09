@@ -18,9 +18,13 @@ const summary = {version: 'tsunami.ui-qualification/v1', checked_at: new Date().
   context: 'kind-tsunami-lab', execution: 'scripted_mecatl', approval: 'automated_owned_lab', external_model_calls: 0, cases: [], checks: []};
 const includeDemo=process.argv.includes('--demo'), rehearse=process.argv.includes('--rehearse');
 check(!rehearse || includeDemo, '--rehearse requires --demo');
+const coreOnly=process.argv.includes('--core-only');
+check(!coreOnly || includeDemo, '--core-only requires --demo');
+const includeProperties=includeDemo&&!coreOnly;
 const includeOnboarding=process.argv.includes('--onboarding') || includeDemo;
 summary.includes_onboarding=includeOnboarding;
 summary.includes_d9=includeDemo; summary.assets={}; summary.rehearsal={requested:rehearse,kind:'automated_paced_browser_dry_run; no recorded human narration',stages:[]};
+summary.includes_property_campaign=includeProperties;
 summary.driver_sha256=createHash('sha256').update(await readFile('scripts/verify-ui.mjs')).digest('hex');
 summary.binary_sha256=createHash('sha256').update(await readFile('bin/tsunami')).digest('hex');
 summary.onboarding=[];
@@ -380,7 +384,7 @@ async function linkedRetest(source){
 }
 
 async function demoJourney(){
-  summary.version='tsunami.ui-demo-qualification/v1';
+  summary.version=coreOnly?'tsunami.ui-demo-core-qualification/v1':'tsunami.ui-demo-qualification/v1';
   const start=performance.now();let source;
   async function stage(offset,deadline,name,fn){
     if(rehearse){while(performance.now()-start<offset*1000)await sleep(Math.min(1000,offset*1000-(performance.now()-start)));}
@@ -397,13 +401,13 @@ async function demoJourney(){
   if(rehearse){while(performance.now()-start<300000)await sleep(Math.min(1000,300000-(performance.now()-start)));}
   summary.rehearsal.elapsed_seconds=(performance.now()-start)/1000;summary.rehearsal.passed=rehearse&&summary.rehearsal.stages.every(s=>s.within_deadline)&&summary.rehearsal.elapsed_seconds>=300&&summary.rehearsal.elapsed_seconds<302;
   if(rehearse)check(summary.rehearsal.passed,'Timed rehearsal did not complete within the five-minute window.');
-  console.log('D9 core journey complete; separate property qualification follows outside presentation time.');
-  for(const [app,verdict] of [['property-vulnerable','confirmed'],['property-filtered','no_issue_observed'],['property-ambiguous','inconclusive']])await journey(app,verdict);
+  console.log(includeProperties?'D9 core journey complete; separate property qualification follows outside presentation time.':'Core-only rehearsal complete; property campaign explicitly excluded.');
+  if(includeProperties)for(const [app,verdict] of [['property-vulnerable','confirmed'],['property-filtered','no_issue_observed'],['property-ambiguous','inconclusive']])await journey(app,verdict);
 }
 
 try {
   // Read-only guard. Refuses other clusters, expired prerequisites and active work.
-  const prereq = command(['python3', 'scripts/showcase.py', 'check', ...(includeDemo?['--include-property']:[])]);
+  const prereq = command(['python3', 'scripts/showcase.py', 'check', ...(includeProperties?['--include-property']:[])]);
   await writeFile(path.join(out, 'prerequisites.txt'), prereq, {mode: 0o600});
   token = Buffer.from(command(['kubectl', '--context', 'kind-tsunami-lab', '-n', 'tsunami', 'get', 'secret', 'tsunami-operator', '-o', 'jsonpath={.data.admin-a}']).trim(), 'base64').toString();
   sensitiveValues.push(token);
@@ -483,7 +487,8 @@ try {
     'scope denial captured', 'pause does not Stop', 'held request revocation and local drain observed', 'downloaded artifact hashes match',
     'operator token absent from DOM/storage/export', 'lost committed Start response recovered without retry', 'Stop available during held viewer export',
     'hostile API text rendered as text', 'mobile layout within viewport', 'disconnect clears display', 'same-origin requests only', 'no browser runtime exceptions'];
-  if(includeDemo)summary.checks.push('D6 readable preflight and exact scope matrix','D4 events correspond to displayed records','D7 metadata-only navigation and explicit artifact byte verification','D8 fresh changed-origin approval and linked actual comparison','original candidate/artifact identity preserved','property leak/filter/ambiguity use independent real scopes','target-observed active Stop cancellation','six explicit assessment attempts; no automatic replay');
+  if(includeDemo)summary.checks.push('D6 readable preflight and exact scope matrix','D4 events correspond to displayed records','D7 metadata-only navigation and explicit artifact byte verification','D8 fresh changed-origin approval and linked actual comparison','original candidate/artifact identity preserved','target-observed active Stop cancellation',coreOnly?'three explicit core assessment attempts; property campaign excluded; no automatic replay':'six explicit assessment attempts; no automatic replay');
+  if(includeProperties)summary.checks.push('property leak/filter/ambiguity use independent real scopes');
   summary.passed = true;
   console.log('PASS browser qualification. Records: ' + path.relative(root, out));
 } catch (error) {
