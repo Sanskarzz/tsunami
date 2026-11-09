@@ -1,6 +1,6 @@
 # Remaining work and stop rule
 
-Updated: 2026-11-09. Scope: [project goal](project-goal.md). Delivery status: [tracker](track.md). Operating guide: [controlled demo](demo-walkthrough.md).
+Updated: 2026-11-10. Scope: [project goal](project-goal.md). Delivery status: [tracker](track.md). Operating guide: [controlled demo](demo-walkthrough.md).
 
 ## Ordered implementation tasks
 
@@ -31,7 +31,7 @@ The stabilization work separates documentation cleanup from the tenant/global St
 ## Work order and stop rule
 
 1. Keep the selected build, credentials, capacity and evidence checks reproducible. Preserve failed records and acknowledge unavailable observations.
-2. D10/D11 are implemented and source/local-browser verified. Deploy matching clients/server and qualify the selected build before presenting. No automatic next feature sprint follows; collect reviewer feedback.
+2. D10/D11 are implemented and source/local-browser verified. Matching clients/server are deployed with runtime/network/readiness checks; see [the tracker](track.md#d10d11-matching-deployment) for the exact qualification limit. A fresh Kubernetes assessment rehearsal remains separate. No automatic next feature sprint follows; collect reviewer feedback.
 3. Treat suggested [Mecatl harness reuse](mecatl-harness.md) as evaluated options, not an implementation queue. Keep scope, Stop, credentials and verdict authority outside the agent.
 
 ## Deferred scope (P2)

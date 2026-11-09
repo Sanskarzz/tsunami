@@ -1,10 +1,12 @@
 # Selected owned-lab demo configuration
 
-Updated: 2026-11-09. This operating contract began in D2 and defines the [five-minute product demo](project-goal.md). Status belongs in [the tracker](track.md). [D9's retained record](../examples/demo-journey/README.md) qualifies the connected D1–D8 journey; [D2](../examples/demo-configuration/README.md) remains a historical build record.
+Updated: 2026-11-10. This operating contract began in D2 and defines the [five-minute product demo](project-goal.md). Status belongs in [the tracker](track.md). [D9's retained record](../examples/demo-journey/README.md) qualifies the connected D1–D8 journey; [D2](../examples/demo-configuration/README.md) remains a historical build record.
 
 The historical full D9 images are `tsunami:showcase-20261109t144510z` and `tsunami-tools:showcase-20261109t144510z`. The 2026-11-09 campaign passed actual runtime/native/curl network checks, six browser assessments and a paced 300.000-second dry run. It preserved all original history and ended with eight engagement slots. Readiness is time-limited; recheck before presenting. This was automated browser operation with a supplied script, not recorded human narration.
 
 The subsequent Stop-patch build uses `tsunami:showcase-20261109t182656z` and matching `tsunami-tools:showcase-20261109t182656z`. Its [dated verification](archive/stabilization-2026-11-09.md) records source/runtime/network/local browser checks and a separate three-assessment 300-second rehearsal, leaving five slots. It does not repeat the full six-case Kubernetes/property campaign. Use current source/build identities and readiness, rather than reusing historical image qualification.
+
+Current D10/D11 deployment: `tsunami:showcase-20261109t191623z` and `tsunami-tools:showcase-20261109t191623z`, built from clean commit `8119802`. [Matching-build verification](track.md#d10d11-matching-deployment) records actual runtime/network and asset checks, source/local browser coverage, refreshed core credentials and five preserved slots. It makes no fresh Kubernetes assessment/rehearsal claim. Use matching clients: approval requires `scope_digest`; Start requires `idempotency_key`.
 
 ## Fixed environment and entry point
 

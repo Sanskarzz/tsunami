@@ -1,6 +1,6 @@
 # Tsunami implementation status
 
-Updated: 2026-11-09. Scope: [goal](project-goal.md). Work order: [roadmap](roadmap.md). Operation: [demo guide](demo-walkthrough.md).
+Updated: 2026-11-10. Scope: [goal](project-goal.md). Work order: [roadmap](roadmap.md). Operation: [demo guide](demo-walkthrough.md).
 
 ## Current product map
 
@@ -24,9 +24,17 @@ D9 satisfied the recorded-build gate: owned onboarding, separately approved pref
 
 For each later build, run source/local browser checks, inspect matching deployed source/runtime/network identities and rehearse the selected journey again. Keep actual results/build IDs in a dated qualification record. Do not reinterpret a core-only rehearsal as the full property campaign.
 
-D10 verification: `make verify` passed (Go race/vet, 23 Python tests and retained evidence integrity), all 37 frontend tests passed, and real local Chrome onboarding/retest campaigns passed. Missing/null/empty/wrong/other-scope approval, stale review, unapproved Start and unauthorized principals have permanent regression coverage. The selected Kubernetes deployment has not been upgraded by this source-only task; historical qualification remains tied to its recorded build.
+D10 verification: `make verify` passed (Go race/vet, 23 Python tests and retained evidence integrity), all 37 frontend tests passed, and real local Chrome onboarding/retest campaigns passed. Missing/null/empty/wrong/other-scope approval, stale review, unapproved Start and unauthorized principals have permanent regression coverage. At the D10 source-only checkpoint the selected deployment was unchanged; the later matching deployment is recorded below. Historical qualification remains tied to its recorded build.
 
 D11 verification: `make verify` passed (Go race/vet, 23 Python tests and retained evidence integrity), all 38 frontend tests passed, and all four real local Chrome campaigns passed. Permanent tests cover 24 concurrent submissions, conflicting intent, failed reservations, tenant/engagement binding, expiry, restart, Stop races, corrupt recovery records, metadata-only responses and unchanged stored evidence. Chrome exercised explicit same-key/same-run recovery without another assessment. No selected-cluster engagement slots were consumed.
+
+## D10–D11 matching deployment
+
+Observed 2026-11-09T19:26:32.844177+00:00 UTC. The owned lab now runs both API changes from clean source commit `8119802` (`vcs.modified=false`), with native image `tsunami:showcase-20261109t191623z` and tools image `tsunami-tools:showcase-20261109t191623z`. Both extracted binaries match SHA-256 `fba9a6660759cce42125da8fc4909b52b26aa06b68dc0a6fd1dfbc9f4f089533`; all four served UI assets match current source. Actual runsc inspection and selected native TCP/UDP-DNS plus curl network checks passed with reachable before/after controls. Core readiness passed after diagnostics completed; an earlier concurrent preflight correctly refused active diagnostic work.
+
+All 354 existing runs, 95 engagements and 14 setups remain present. Deployment/verification created **zero assessments** and preserved **five free engagement slots**, with no pending/running run. Disposable VAmPI/Stop credentials were refreshed; expiry checks remain hints, not authenticated account validation. Property fixture data was preserved; its new-code workflow passed locally, while the Kubernetes property campaign was not repeated.
+
+Private build/fingerprint, before/after, asset, runtime/network and readiness records live under `artifacts/hardening/d10-d11/`; preparation records are `artifacts/showcase/prepare-20261109T191623Z/`. D11 source/local checks passed as recorded above. A fresh Kubernetes assessment/browser five-minute rehearsal was **not run**, preserving capacity for the presentation. The older full D9 and three-assessment Stop-patch rehearsals retain their original build meaning. Recheck `make showcase-check` before presenting; use matching current clients/server and retain each Start action key for recovery.
 
 ## Stabilization verification
 
