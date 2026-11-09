@@ -1,0 +1,83 @@
+{
+  "checked_at": "2026-11-07T09:40:07.892502+00:00",
+  "passed": true,
+  "build": {
+    "checked_at": "2026-11-07T09:34:24.251697+00:00",
+    "base_commit": "b0ede2a9357aa58566a99ff502b2aa0d44cff71e",
+    "working_tree": "uncommitted D1 implementation plus documentation cleanup; not a clean-commit build",
+    "images": {
+      "native": {
+        "tag": "tsunami:showcase-20261107t093304z",
+        "image_id": "sha256:100c336063b39d928a65b9516e995e0712ef298e47f9a79d345d7c5c4407a51f",
+        "binary_sha256": "aad5d0b98d08cedc83334a71cbc85eece2348439e2da2d8bfa7e1825f48327bf"
+      },
+      "tools": {
+        "tag": "tsunami-tools:showcase-20261107t093304z",
+        "image_id": "sha256:42d715d0f828322f673ecb2bc08e893039cd515e0c380831d71b92d9c50430d0",
+        "binary_sha256": "aad5d0b98d08cedc83334a71cbc85eece2348439e2da2d8bfa7e1825f48327bf"
+      }
+    },
+    "binary_sha256": "aad5d0b98d08cedc83334a71cbc85eece2348439e2da2d8bfa7e1825f48327bf",
+    "observed_control_image_id": "sha256:100c336063b39d928a65b9516e995e0712ef298e47f9a79d345d7c5c4407a51f",
+    "runtime_class": "gvisor",
+    "external_model_calls": 0,
+    "ui_enabled": "true",
+    "ui_assets_observed_at": "2026-11-07T09:41:10.661885+00:00",
+    "ui_assets_sha256": {
+      "index.html": "7e2e276d4eb472b5c01fed2ad49dd789e6c255ebeb64b5a8ae6a65f1dd64dbe3",
+      "app.js": "f04961b384420dc4e20f00722bc58601d2a145cf9bab274b152bcaad5066c2cc",
+      "onboarding.js": "a51e169fae87e347a6c02317c6308e3528bffa03c9ed5f2996f3a823d91eeeb7",
+      "styles.css": "92df7ed42fd4f9ef61d13da60500ead9edb48746fe79b3cfc4666676a0d4c6fe"
+    }
+  },
+  "source_verification": "source-verification.log",
+  "preservation": "preservation.json",
+  "runtime": "isolation/runtime.json",
+  "native_network": "isolation/gvisor/network.json",
+  "showcase_record": "showcase/showcase.json",
+  "browser_record": "browser/summary.json",
+  "showcase_cases": 7,
+  "browser_runs": 4,
+  "expected_browser_outcomes": [
+    {
+      "application": "vampi-vulnerable",
+      "verdict": "confirmed"
+    },
+    {
+      "application": "vampi-fixed",
+      "verdict": "no_issue_observed"
+    },
+    {
+      "application": "stop-lab-run",
+      "verdict": "stopped"
+    },
+    {
+      "application": "onboard-7ee98da26f459aef6393d2dfe3de5bb4",
+      "verdict": "confirmed"
+    }
+  ],
+  "original_ids_retained": true,
+  "history_counts_after": {
+    "runs": 345,
+    "engagements": 86,
+    "setups": 12
+  },
+  "remaining_lab_engagement_slots": 14,
+  "minimum_credential_hint_seconds": 2916,
+  "external_model_calls": 0,
+  "limitations": [
+    "Uncommitted working-tree build; not clean-commit reproduction.",
+    "Selected single-node IPv4/TCP and DNS controls; no general hostile-process or production Stop guarantee.",
+    "D3-D9 UI improvements are not implemented by this qualification.",
+    "Credential hints expire; recheck before presentation.",
+    "Engagement history is retained; capacity maintenance must be explicit."
+  ],
+  "local_artifacts": {
+    "qualification": "artifacts/demo-configuration/d2-20261107T093251Z",
+    "preparation": "artifacts/showcase/prepare-20261107T093304Z",
+    "showcase": "artifacts/showcase/run-20261107T093554Z",
+    "browser": "artifacts/ui/browser-20261107T093818345Z"
+  },
+  "finalized_at": "2026-11-07T09:44:41.489844+00:00",
+  "final_prerequisite_checked_at": "2026-11-07T09:44:40.695803+00:00"
+}

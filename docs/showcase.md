@@ -2,6 +2,10 @@
 
 This is a short systems demo: a real owned VAmPI deployment, constrained agents, evidence-backed outcomes, scope rejection, direct-network checks and explicit Stop. Execution is scripted Mecatl. It is not blind discovery, customer authorization or a production readiness claim.
 
+For the current D2 selected origins/procedures, build/readiness rules and single running UI entry point, use [the demo configuration](demo-configuration.md). This CLI showcase remains qualification/support tooling; it does not implement the remaining product UI tasks.
+
+[The fresh D2 record](../examples/demo-configuration/README.md) qualifies the D1 working-tree build with seven showcase cases and four browser runs. It preserves earlier records; its credential window and history capacity must be rechecked before presentation.
+
 ## Before the call
 
 Use the repository root. The dedicated `kind-tsunami-lab` cluster must already be provisioned with gVisor/Cilium and the base Tsunami deployments. These commands select `.local/sandbox.kubeconfig` internally; they do not change the normal kubeconfig context, install a new CNI or create a cluster.

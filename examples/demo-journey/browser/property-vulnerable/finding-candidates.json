@@ -1,0 +1,24 @@
+[
+  {
+    "candidate_digest": "f2a0b814674bb5393552c2264954327e6c1966dd37c9e2ec3f076fb2a57dcab1",
+    "id": "F-cb12f214879fc8a0665cd6a869971bdb",
+    "title": "Owner-only note exposed through a shared record",
+    "procedure": "property-vulnerable/property-access/v1",
+    "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+    "status": "needs_human_review",
+    "reason": "The peer's permitted object read included a known owner-only property value; identities, legitimate private views and follow-up access were verified.",
+    "remediation": "Authorize each response property for the requesting principal. Use an explicit public response projection and omit the protected fields from the peer's view.",
+    "run_ids": [
+      "e950815f8abdffdf65535af82ec9d105"
+    ],
+    "evidence_ids": [
+      "E-f296200e27ad56fb5d4d3333f552ccc6bc32e3a659f2fdfb4e26da78742647a3",
+      "E-d482eed43530eb721a0e07c43024e87102604f534a3d5666c31f659d074c5adb",
+      "E-8a8cd0c10cd14306db69be07346d0fa1d940e455dd4258221bbc047543605a23",
+      "E-5e8a3c2727fb0e34bec3af838bde474abcb13b8c2b329772737b41d2b8c28b04",
+      "E-eda10b3ede512da367e901cee3936dbdc1c46fba976cfe1b72b1694f04710299",
+      "E-806056d9c0f47582262a8b29b3474cbb0c4e5dc1b6bf8e2c64bca6228e58d072",
+      "E-88fcfc379e192917956ca2a726ea63050b0bd227b47cdc062c7125f6d8e796c1"
+    ]
+  }
+]

@@ -1,115 +1,134 @@
-# Next steps
+# Five-minute demo implementation roadmap
 
-The product goal now includes the toolkit's additional execution profiles and workflows. The customer-readiness stages and gates are in [the product roadmap](product-roadmap.md). Milestones below record completed lab work; they do not establish customer readiness.
+Updated: 2026-11-09. Scope authority: [project goal](project-goal.md). Live completion status: [tracker](track.md). Architecture, screens, and activity contract: [design](design.md).
 
-## Milestone 1: reproducible workflow
+**Finish the existing HTTP authorization journey before building more platform capabilities.** This roadmap replaces the earlier stage 8-15 expansion plan. D1–D9 now have the scoped evidence recorded in [the tracker](track.md) and [D9 qualification](../examples/demo-journey/README.md). Present this slice and collect feedback; D10/D11 remain optional hardening, with platform expansion deferred.
 
-- Real Mecatl engine with a scripted provider.
-- Synthetic vulnerable/fixed API and known-owner validation.
-- Trusted HTTP broker, evidence, durable stops, request quotas.
-- Local and Kubernetes Job verification.
-- Independent network-boundary check and an explicit failure for the missing sandbox runtime.
+## Delivery scope
 
-## Milestone 2: qualify the execution boundary
+Dashboard -> Add Application -> Scope Review -> Approve -> Assessment -> Finding -> Evidence -> Remediation -> fresh approved Retest. Stop remains independently available throughout active work and gets a separate held-request demonstration.
 
-Implemented in a separate development cluster: pinned gVisor, Cilium default deny, actual CRI runtime inspection, raw-socket/filesystem/token smoke checks, and positive-control network tests at startup and after settling. The original cluster's failed result is retained. See [the experiment](sandbox-lab.md).
+Use owned VAmPI for BOLA, the existing separate property fixture for field authorization, the worker's fixed invalid intent for scope rejection, and the owned held-request fixture for Stop. Keep scripted execution explicit and external model calls disabled. Do not build a general multi-procedure planner to join these targets.
 
-The listed IPv4 target, API, and TCP/UDP DNS paths are tested. IPv6, metadata, alternate protocols/interfaces, runtime failure, and network/controller failure testing remain. Test deliberate shell/client bypasses before enabling untrusted shell code; the current runtime smoke test is not a complete qualification.
+P0 is required for this delivery; P1 significantly improves it; P2 is deferred. Each task is one independently committable unit with focused checks. Dependencies describe useful delivery order, not permission to leave commits unverified.
 
-Separate customer execution namespaces and keep trusted services off runner nodes. Add platform-service authorization and network tests so an allowed service cannot become a relay.
+## Ordered implementation tasks
 
-## Milestone 3: live agent evaluation
+### D1 — Preserve earlier object exposure (P0)
 
-Implemented: an opt-in Responses model gateway, provider keys kept outside workers, a versioned known-owner workflow, durable call/wire-attempt reservations, bounded turns, usage records, and cancellation of inference. Both the offline fixture and one actual free-model paired trial passed with gVisor workers. A separate live inference stop check passed. See [the model path](model-path.md) and [recorded free trial](../examples/free-model/README.md).
+- **User-visible outcome:** a later denied read cannot erase an earlier established leak within the same run.
+- **Backend:** evaluate earlier matching object probes with ordered prerequisites/rechecks, following the existing property-exposure approach. Preserve evidence references; incomplete earlier exposure must not become a clean result merely because a later response is denied.
+- **Frontend:** no change required.
+- **Tests:** commit the reproduced leak -> denial regression; cover leak -> generic response, incomplete earlier prerequisites, missing rechecks, expired identity, and the normal fixed case. Preserve historical results rather than silently rewriting archived exports.
+- **Security invariants:** known protected proof and valid prerequisites are mandatory; no status-only or model-driven confirmation. Keep all three verdict meanings.
+- **Definition of done:** regression passes, earlier supported exposure survives, ambiguous evidence remains inconclusive, existing object/property controls and source gate pass.
 
-Next: evaluate repeatedly with less guided cases. Measure misses, false positives, inconclusive results, evidence completeness, actual usage, and time to result. The current guided fixture names and supplied ownership rules do not form a blind benchmark. The free-only profile is implemented; general customer monetary budgets are not.
+### D2 — Freeze and qualify the demo configuration (P0)
 
-Mecatl's loop is not the scope boundary. No model decision can override the broker or promote a finding without evidence. Aggregate monetary spend reservations, account budgets, and billing reconciliation remain future work. The current per-run call/attempt limits include adapter retries; delegation is disabled.
+- **User-visible outcome:** the owned demo starts reliably with valid disposable access and a known execution boundary.
+- **Backend:** reuse existing preparation/check/qualification tooling. Identify selected origins, procedures, images, runtime and credential-readiness window; explicitly refresh disposable fixtures when required. No new provisioning framework.
+- **Frontend:** document the single running UI entry point and supported integration selection.
+- **Tests:** after D1, run readiness and selected runtime/network/assessment checks on the selected build. Record observations separately from retained results.
+- **Security invariants:** preparation must be explicit, require idle owned work, preserve history and unrelated configuration, and never clear Stop gates or widen scope to get a pass.
+- **Definition of done:** selected build and owned credentials pass preflight and relevant qualification; setup/recovery instructions are reproducible. Recheck readiness immediately before D9/presentation.
 
-## Milestone 4: private connectivity and failure cases
+### D3 — Expose authoritative assessment metadata (P0)
 
-Implemented a synthetic customer connector in a separate Kubernetes namespace. The broker issues Ed25519-signed, single-use request grants; the connector rechecks target scope and actual dial addresses, consumes replay state durably, and enforces expiry locally. An emergency key latches the connector closed independently of the normal Stop API. The public lab path is unchanged.
+- **User-visible outcome:** scope/status screens show real allowances, procedure/execution settings, and honest access availability.
+- **Backend:** extend existing metadata projections with request allowance, deadline, procedure version/digest, execution mode, executor, and availability/expiry observations where actually known. An expiry hint or startup route configuration is not a live identity check.
+- **Frontend:** replace hardcoded limit text. Distinguish application registration, approved permission, latest attempt outcome, and stale observations.
+- **Tests:** projections match stored policy; wrong tenant/run credentials are refused; no secrets or response bodies appear; unknown credential health remains unknown.
+- **Security invariants:** metadata creates no permission or new network validation; tenant comes from authentication.
+- **Definition of done:** displayed allowances come from backend records, unavailable/unknown facts are explicit, and metadata reads cause no target traffic.
 
-Kubernetes checks cover all five scenarios, tenant binding, a disconnected connector with no direct fallback, and selected runner/connector network paths. Native tests cover active-request expiry without a control-plane callback, replay after restart, emergency cutoff persistence, and run/tenant/global cancellation. See [the private lab](private-connectivity.md).
+### D4 — Persist safe activity events (P0)
 
-The following milestone secures this connector link. Real customer-side connectivity and cross-node partition tests remain. The connector-local cutoff still trusts that connector and the Kubernetes management path; an external network cutoff is not implemented. No production stop guarantee is claimed.
+- **User-visible outcome:** actual requests, scope rejection, validation and revocation are observable without sensitive-body streaming.
+- **Backend:** extend the small existing event mechanism with typed bounded records, monotonic per-run sequence, and tenant-authorized cursor reads. Use the [event contract](design.md#activity-events-d4); avoid a message bus or separate tracing service.
+- **Frontend:** add only the API client support needed for the next task; do not invent a timeline before events exist.
+- **Tests:** ordering/cursor bounds, restart persistence, tenant isolation, denial before dial, credential/raw-body exclusion, incomplete operations and Stop races.
+- **Security invariants:** trusted components assign facts. Worker telemetry cannot claim enforcement/validation; arbitrary URLs, errors, prompts and tool results are not event text. Persist durable-transition events atomically where applicable.
+- **Definition of done:** a real run yields a bounded metadata timeline; missing historical events stay missing; request admission is not mislabeled target receipt.
 
-## Milestone 5: connector transport and certificate lifecycle
+### D5 — Connect actual activity and independent Stop (P0)
 
-Implemented TLS 1.3 with required client certificates on the connector, exact tenant/role URI identities, broker verification of the server hostname/identity, and a separate emergency operator certificate. Request grants remain required. Plaintext and direct-target fallback are refused.
+- **User-visible outcome:** assessment detail shows observed activity/scope rejection and can revoke active work without waiting for a viewer request.
+- **Backend:** reuse D4 events and existing lifecycle status; preserve uncertainty and observation timestamps.
+- **Frontend:** poll with cursors and no overlapping loops. Keep Stop independent of Start/export/observation, show stale/error states, and separate permission, activity, execution and cleanup.
+- **Tests:** real active held-request Stop, Stop during pending export/Start, unacknowledged Stop, lost response recovery, navigation/disconnect and restart uncertainty.
+- **Security invariants:** pause/close never means Stop; deletion acceptance/object absence never means process exit. Local drain is not target-observed cancellation.
+- **Definition of done:** actual broker rejection and active revocation appear in the UI; missing acknowledgements remain uncertain and Stop is usable while reads are pending.
 
-Offline lab provisioning keeps the CA and operator private key outside Kubernetes. Normal setup preserves certificates; explicit leaf renewal updates Secrets and restarts the affected components without resetting run/replay/cutoff state. Tests cover wrong/missing/expired identities, role separation, expiry during a response and on an existing connection, and credential renewal. See [transport and lifecycle boundaries](connector-tls.md).
+### D6 — Simplify Dashboard, Add Application and Scope Review (P0)
 
-Next: the other internal TLS links, production identity/key management and revocation, real customer-side connectivity, and multi-node failure tests. Leaf renewal does not revoke a still-valid old certificate. The fixture workflow still supports synthetic data only; measured general vulnerability discovery remains separate work.
+- **User-visible outcome:** an operator adds the owned integration and approves understandable permissions without JSON editing or Kubernetes knowledge.
+- **Backend:** reuse onboarding/preflight/engagement APIs and D3 metadata; avoid a second onboarding or orchestration model.
+- **Frontend:** show real application/history rows, readiness, exact account/action matrix, targets/addresses, access rule, limits, expiry and unsupported actions. Use progressive disclosure; collapse API/raw-scope details. Label reused lab integration and checked-rule setup honestly.
+- **Tests:** connected browser journey, unsupported authentication, changed/stale setup, invalid token, scope rendering/injection, no target traffic before permission, narrow layout.
+- **Security invariants:** preflight and assessment permissions remain separate; protected tokens never enter conversation/explorer/storage; registration alone is not authorization.
+- **Definition of done:** Add -> approved four-read validation -> saved draft -> reviewed approval -> Start works against the owned application; every visible state maps to stored or explicitly derived facts.
 
-## Milestone 6: authorization procedures and repeatable evaluation
+### D7 — Connect findings, evidence and remediation (P0)
 
-Implemented five embedded, versioned procedures: opaque object ownership, approved shared access, administrator role checks, unauthenticated access, and a nonexistent-object control. Runs snapshot each definition/digest; the broker and private connector enforce its exact account/path pairs. Procedures are original engineering definitions informed by the VAPT toolkit; external security review is still pending.
+- **User-visible outcome:** a finding explains who accessed what, expected versus observed behavior, supporting evidence, and correction.
+- **Backend:** provide a metadata-only candidate projection without requiring full inline-export transfer for normal listing. Reuse validator/evidence/export semantics and deterministic remediation.
+- **Frontend:** use a failure-specific finding title; link candidate evidence to owner/probe/recheck captures; show comparison and remediation. Load raw evidence explicitly; keep hashes/raw scope in optional inspection.
+- **Tests:** wrong owner/proof, expired identity, missing evidence/rechecks, malicious display text, candidate-to-artifact correspondence and both supported profiles.
+- **Security invariants:** no raw-body polling, invented impact/severity, automatic human review, or model confirmation. Hashes identify bytes, not independent authenticity.
+- **Definition of done:** reviewer can follow each conclusion to exact captured support; unknown/missing data remains visible and downloads preserve artifact integrity.
 
-Repeated scripted and offline-provider evaluations cover evidence completeness and expected findings, missed cases, false positives, and inconclusive outcomes. Real-model trials are separate, explicit, free-only, and bounded. A premature model finish is retained as inconclusive rather than treated as success. Missing-evidence feedback is capped and leaves scope, request/model budgets, and Stop unchanged. See [the catalog](assessment-catalog.md) and [recorded outcomes](../examples/assessment-catalog/README.md).
+### D8 — Link a fresh fixed-app retest (P0)
 
-Next: have the security engineer review prerequisites and access rules, add a separate less guided dataset, measure repeated live behavior across additional procedures, and support reviewed application-specific configuration. The initial/follow-up free trials matched 3/4 and 2/4 respectively; failures are retained. This is not a blind model benchmark or a general customer assessment engine. Private catalog inference remains disabled; its scripted path is tested through the connector.
+- **User-visible outcome:** retest compares a fresh fixed-app result while preserving the original finding and evidence.
+- **Backend:** add a minimal tenant-checked source-assessment reference and create new scope/runs through existing APIs. No new workflow engine or credential inheritance.
+- **Frontend:** select the fixed registered application, show scope differences, approve/Start, and compare procedure version, actual outcomes and evidence. Label incompatible comparisons.
+- **Tests:** cross-tenant link rejection, changed-target approval, stopped/expired source handling, incompatible procedures, original-history preservation and fixed result.
+- **Security invariants:** never copy credentials to another origin, reuse old approval for a changed target, overwrite evidence, or call the application secure. Different bindings have different digests even when procedure semantics match.
+- **Definition of done:** vulnerable `confirmed` and fresh fixed `no_issue_observed` are linked with separate approvals/runs/evidence; incomplete retests remain inconclusive or unfinished.
 
-## Milestone 7: inference failure diagnostics
+### D9 — Qualify and rehearse the complete product journey (P0)
 
-Implemented durable per-call metadata, closed error codes, a 14-case local Responses failure harness, and separate catalog categories for operational failures versus incomplete or incorrect assessments. Partial failed turns release no tools. Missing provider usage stays uncertain even when the adapter emits zero counts. Timeouts, scope, budgets, and retry behavior are unchanged.
+- **User-visible outcome:** one five-minute presentation proves the implemented journey on an identified build.
+- **Backend:** extend existing browser/showcase tooling only for new behavior; retain exact build/asset/run IDs and target observations.
+- **Frontend:** exercise Dashboard/onboarding, approval, actual activity, finding/evidence/remediation, independent Stop and linked retest. Update the presenter guide to describe only landed behavior.
+- **Tests:** fresh source gate, browser journey, BOLA vulnerable/fixed, property leak/filter/ambiguity, actual scope rejection, active Stop, pending viewer read, lost Start response, and relevant runtime/network checks. Check readiness again after any fixture refresh.
+- **Security invariants:** owned synthetic targets only, no external model calls, no fabricated display/outcome, no automatic uncertain replay, failed records retained. Preparation is outside the presentation and explicitly described.
+- **Definition of done:** [tracker acceptance checklist](track.md#demo-acceptance-checklist) is satisfied with fresh evidence and a timed rehearsal. Retained fallback evidence is labeled; late results stay pending. Demo completion is separate from customer readiness.
 
-The archived live trials keep their original 3/4 and 2/4 scores. Offline analysis identifies one initial incomplete assessment and two follow-up model failures without assigning those old failures a cause. No external model calls were made for this milestone. See [diagnostic boundaries and reproduction](inference-diagnostics.md).
+## Optional hardening
 
-Next: independent procedure review, a held-out fixture dataset, then explicitly bounded live evaluation. The new traces support investigation; they do not establish provider reliability or solve discovery quality. Shell/scanner integration and real customer connectivity remain separate work.
+### D10 — Bind approval to the reviewed digest (P1)
 
-## Milestone 8: engagement foundation
+- **User-visible outcome:** backend approval identifies the exact displayed scope the operator reviewed.
+- **Backend:** require expected scope digest in approval; coordinate the API compatibility change across CLI, UI, drivers and documentation. Current `{}` contract remains actual behavior until this lands.
+- **Frontend:** submit the digest bound to D6's displayed-scope review checkbox; retain clear review and explicit approval without manual retyping.
+- **Tests:** missing/wrong/stale digest, cross-tenant approval, unapproved Start rejection, updated clients.
+- **Security invariants:** approval cannot modify or widen scope; agent/run credentials cannot approve.
+- **Definition of done:** direct API clients receive the same reviewed-scope protection and all supported clients use the new contract.
 
-Implemented [engagements](engagements.md): pinned operator-approved scope, bounded child creation, engagement-wide Stop, derived checklist progress, evidence-linked candidates and an optional local toolkit inventory/schema check. Local Responses and Kubernetes public/private workflows exercise all five procedures on both fixture variants. Native tests cover racing creation/Stop, restart, active cancellation, tenant isolation and limits. Full toolkit execution and real customer assessments remain staged work in the product roadmap.
+### D11 — Make Start idempotent (P1)
 
-## Milestone 9: configured applications and data contracts
+- **User-visible outcome:** a lost Start response can recover the same attempt safely.
+- **Backend:** persist an engagement-bound idempotency key and request fingerprint in the same transaction as child creation. A mismatched request cannot reuse the key.
+- **Frontend:** reuse the key only to recover the same action; keep explicit new-attempt behavior and uncertain-state presentation.
+- **Tests:** duplicate/concurrent Start, lost response, conflicting body, tenant binding, Stop race, and restart.
+- **Security invariants:** recovery cannot create replacement work, refund budgets, replay target operations or restore revoked permission. After Stop it may identify the original run, never reactivate it.
+- **Definition of done:** identical repeated Start identifies the original run; conflicting requests fail and revoked execution stays closed.
 
-Implemented a versioned configured HTTP read plan, tenant-bound startup registry and broker-only bearer delivery. The v2 validator checks identities, legitimate objects, the cross-user probe, owner continuity and peer-session validity afterward. It has an explicit review API, CVSS 3.1 calculation, finding/evidence projections, materialized exports, CSV/Markdown guards and local partial checklist mappings. See [application implementation and qualification](application-adapters.md).
+## Work order and stop rule
 
-VAmPI is an existing open-source application deployed only in our lab; no external customer or model is involved in this campaign. The following milestone adds the first reviewed web/API executor. General authentication, private configured-app connectors, real customer data and full toolkit execution are still unfinished.
+Land **D1 -> D2 -> D3 -> D4 -> D5 -> D6 -> D7 -> D8 -> D9**. D10/D11 are separate improvements, not prerequisites for adding more features. Keep [track.md](track.md) updated with commits and actual validation; writing this plan does not complete a task.
 
-## Milestone 10: first reviewed web/API executor
+Once D9 meets the demo gate, present it and collect feedback. Do not automatically begin the old execution-profile stages. New work must improve a demonstrated problem and name its permissions, evidence and acceptance criteria.
 
-Implemented original `curl-http/v1` for configured HTTP read plans: an actual fixed shell/curl command, private Unix bridge, broker-owned credentials and target requests, gVisor-only tools Jobs, approval-bound executor selection, bounded process I/O and cancellation. General commands and unmodified toolkit scripts remain disabled. See [implementation and qualification boundaries](tool-execution.md). Broader web/API modes and security-engineer review remain open. The review prioritizes a useful HTTP journey before broader execution profiles.
+## Deferred scope (P2)
 
-### Stop and lifecycle follow-up
+Freeze expansion of VM/MCP, network/mobile/cloud/crypto, scanners/general shell, specialist agents, live-model application planning, generic discovery/login, private connectors, toolkit-wide coverage and transport adapters. Keep existing working paths/tests/guides; no runtime deletion is authorized by this document.
 
-Implemented operator status for separate permission, dispatch/execution, local activity, cleanup and assessment facts; durable unfinished-operation records; administrative availability when optional configuration fails; and graceful handler/controller/store shutdown. The [owned gVisor/curl campaign](stop-lifecycle.md) tests held-request Stop for runs/engagements, controller API denial and restart after committed revocation. Target counters and CRI exit observations are recorded separately. No external model calls are needed.
+Customer login/billing, multi-replica storage, distributed budgets, and capacity engineering are also outside the local demo. Before a customer pilot, independently qualify procedures, tenant isolation, identity/roles, secrets/evidence/redaction/retention, TLS/key lifecycle, data/model handling, backup/recovery, emergency controls, and relevant failure behavior. No production guarantee follows from this demo.
 
-This covers the first two deliverables in [the review plan](review-follow-up.md#next-implementation-order) within those lab boundaries. It does not qualify broker crashes, arbitrary node partitions, remote executors or production Stop under load.
+## Documentation and evidence policy
 
-### Guided operator CLI
+Use three planning sources: goal for scope, tracker for status, roadmap for tasks. [Design](design.md) supplies screen/state/event details; operating guides describe current commands. Historical implementation evidence lives in [validation results](validation-results.md) and the linked `examples/` records.
 
-Implemented `tsunami assess` over the existing APIs: configured application selection, draft scope preview, digest-based approval, one scripted attempt, metadata-only status/watch, explicit Stop, ID recovery and private evidence export. It does not accept arbitrary targets, run a live model, silently retry starts or create finding reviews. [The guide](operator-cli.md) describes the workflow and [the compiled CLI campaign](../examples/operator-journey/README.md) records the owned VAmPI pair and Stop after read-only watch timeout under gVisor/curl.
-
-Native tests cover expired-session inconclusive results, cross-tenant denial, wrong approval, lost start response, private exports and watch/Stop semantics. Lab credential refresh now preserves other tenant/application plans; multi-document kubectl rendering is fixed. This covers the CLI portion of the review's third deliverable. General customer onboarding and a connected UI are still unfinished. Next: a useful reviewed HTTP capability or independent application, then the customer controls and wider failure qualification required for a supervised pilot.
-
-### Read-only property authorization
-
-Implemented `http-property-access/v1` for an allowed shared-record read whose private fields must be omitted. It reuses the seven-read broker/curl path and immutable scope, with separate known-value leak, correct filtering and ambiguous results. The [owned campaign](../examples/property-access/README.md) records those three controls and active-request Stop through the compiled CLI. The original object-access profile and archived results keep their meaning.
-
-Setup generates the owned fixture's identities, opaque records and proof bindings while preserving other plans; it is not general customer discovery. Native tests cover strict JSON, copied private values, denied/expired sessions, missing follow-up evidence and property-specific reviewed-finding classification. The demo exports an unrated candidate, not a human review. See [the profile and limitations](property-access.md).
-
-This adds a distinct HTTP test beyond the transport wrapper. Independent procedure review, broader response shapes, customer prerequisite binding, identity/secret/evidence controls and production failure/scale qualification remain unfinished. Mass assignment, other state-changing requests and all original toolkit script adapters remain disabled/unimplemented.
-
-### Local binding preparation
-
-Implemented `prepare-plan` for operator-supplied synthetic identity/own-object responses. It derives literal paths, assertions and protected hashes, rejects unclear/unsupported prerequisites, and emits private packages with input/plan hashes and pending-registration/approval status. It has no network client or credential input. Trusted registration still assigns credentials, scope approval is separate, and runtime validation rechecks actual responses.
-
-VAmPI setup now captures four legitimate baseline GETs per variant and uses the compiler. Property setup uses documents from its generated seed, without claiming live validation. [Retained qualification](../examples/binding-preparation/README.md) links all six prepared plans to fresh approved runtime snapshots. Existing Stop controls and expected outcomes pass. See [the preparation guide](binding-preparation.md).
-
-The scoped Axel showcase is now complete: [the package](showcase.md) adds prerequisite checks, explicit lab refresh, a presenter guide, recovery and a [fresh seven-case rehearsal](../examples/showcase/README.md) with network controls. No further milestone is required for this controlled CLI demonstration. Customer readiness and the full toolkit-inspired product retain their separate release gates; a connected UI remains planned.
-
-### Local operator UI
-
-An opt-in embedded frontend now connects the existing configured-application APIs: select, draft/review, approve, start one scripted attempt, observe, Stop and inspect/export evidence. An API explorer records this tab's actual operator calls without Authorization headers. The [presenter guide](demo-walkthrough.md) explains where decisions occur; [browser qualification](../examples/local-ui/README.md) records real Kubernetes outcomes and controlled client failure injections. This adds no target username/password login, URL onboarding, live application inference or customer portal. The original product templates remain previews.
-
-### Checked application onboarding
-
-The [onboarding path](application-onboarding.md) implements form-first setup, durable typed questions, protected origin-bound bearer access, approved four-read preflight, inferred supported bindings and atomic application/assessment-draft registration. It reuses the existing final approval/run/Stop/evidence lifecycle. A [fresh browser campaign](../examples/onboarding/README.md) qualified this path on owned VAmPI, including actual gVisor inspection. A live-model setup planner, password/SSO adapters, documentation/frontend discovery, broader contracts and customer release controls remain unfinished.
-
-## Later
-
-Curated scanner adapters, shell integration, authenticated browser flows, human approvals for higher-risk actions, secret-manager delivery, retention/deletion, and richer reports. Mobile and raw network/AD are planned execution profiles in the expanded product scope. Higher-impact tests need separate explicit permissions and qualification; they are not enabled by the HTTP lab.
-
-The immediate value is a small, explainable test with real evidence and explicit safety limits. A large multi-agent catalog comes after those pieces are demonstrated.
+Remove fictional disconnected UI previews and duplicate future-stage plans from the development entry path. Preserve security contracts, failure records, build identities, evidence exports and reproducibility guides, including frozen capabilities. Update stale links and claims when scope changes; never rewrite historical failures into successes.

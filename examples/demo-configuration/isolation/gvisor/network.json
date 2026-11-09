@@ -1,0 +1,37 @@
+{
+  "checked_at": "2026-11-07T09:35:42.066456+00:00",
+  "context": "kind-tsunami-lab",
+  "destinations": {
+    "tripwire-service": "http://10.97.251.36:8080",
+    "tripwire-pod": "http://10.245.0.115:8080",
+    "api-service": "https://10.97.0.1:443",
+    "node-api": "https://172.18.0.3:6443",
+    "dns-tcp": "http://10.97.0.10:53",
+    "model-service": "http://10.97.192.132:8080"
+  },
+  "udp_dns": "10.97.0.10:53",
+  "openrouter_ipv4": null,
+  "checks": [
+    {
+      "role": "positive-before",
+      "job": "tsunami-network-positive-before-svdd9",
+      "runtime_class": "",
+      "image_id": "sha256:100c336063b39d928a65b9516e995e0712ef298e47f9a79d345d7c5c4407a51f",
+      "passed": true
+    },
+    {
+      "role": "runner",
+      "job": "tsunami-network-runner-nf6jk",
+      "runtime_class": "gvisor",
+      "image_id": "sha256:100c336063b39d928a65b9516e995e0712ef298e47f9a79d345d7c5c4407a51f",
+      "passed": true
+    },
+    {
+      "role": "positive-after",
+      "job": "tsunami-network-positive-after-8lkkz",
+      "runtime_class": "",
+      "image_id": "sha256:100c336063b39d928a65b9516e995e0712ef298e47f9a79d345d7c5c4407a51f",
+      "passed": true
+    }
+  ]
+}

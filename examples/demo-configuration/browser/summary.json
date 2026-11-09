@@ -1,0 +1,299 @@
+{
+  "version": "tsunami.ui-qualification/v1",
+  "checked_at": "2026-11-07T09:38:18.347Z",
+  "passed": true,
+  "context": "kind-tsunami-lab",
+  "execution": "scripted_mecatl",
+  "approval": "automated_owned_lab",
+  "external_model_calls": 0,
+  "cases": [
+    {
+      "application": "vampi-vulnerable",
+      "engagement_id": "bc1250e37e3407474abf9953c252b766",
+      "passed": true,
+      "run_id": "91acfe803d52e3b719114d82493797ee",
+      "verdict": "confirmed",
+      "status": {
+        "run_id": "91acfe803d52e3b719114d82493797ee",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:39:51.526865447Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:38:21.672167881Z",
+        "worker_observed_at": "2026-11-07T09:38:23.171717945Z",
+        "exit_observed_at": "2026-11-07T09:38:24.671682862Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:38:23.41823992Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:38:23.67942143Z",
+        "api_resources_absent_at": "2026-11-07T09:38:26.169619795Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Cross-user book secret access",
+          "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+          "evidence_ids": [
+            "437a4a2f88271a8e63da6b5583dd2483",
+            "6cf5f0b3b6977c5637335b7c015575ba",
+            "d97a2fbb42a2be8bb919415920a27940",
+            "6365d497de64a73b1ea62de9a69345f8",
+            "ccf64ec9e5f634660981276b8fa472a0",
+            "a5555c15ce33ba22a7d33c2c6ecf0ebb",
+            "5ceb4fa22db31df41afce1546cbdcd58"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "bundle": "vampi-vulnerable/bundle.json",
+      "candidates": 1,
+      "blocked_captures": 1
+    },
+    {
+      "application": "vampi-fixed",
+      "engagement_id": "c8796d7eb02d2c74375fd994ee5f661f",
+      "passed": true,
+      "lost_start_response_recovered": true,
+      "run_id": "4f6061e739e55635e66ce25fa34e9cdf",
+      "verdict": "no_issue_observed",
+      "status": {
+        "run_id": "4f6061e739e55635e66ce25fa34e9cdf",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:39:58.447440747Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:38:28.67340102Z",
+        "worker_observed_at": "2026-11-07T09:38:30.173495203Z",
+        "exit_observed_at": "2026-11-07T09:38:31.672906807Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:38:30.606555547Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:38:30.675411526Z",
+        "api_resources_absent_at": "2026-11-07T09:38:33.168086753Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "no_issue_observed",
+          "title": "Cross-user book secret access",
+          "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+          "evidence_ids": [
+            "1b4cda5f85d0ea0a3de59bb801147715",
+            "c1ca28b2d6bb39b4e4ce54b296caf60e",
+            "95c258896ef9c433e756f55b7977beac",
+            "5662cb059fc826cf279a6c6aebb23c0b",
+            "e2335dc9cfd1d4e0c43957291718cecd",
+            "d1177fcc4a7c6c05ce64d40a411195e9",
+            "a4d7bff4815ce91e72ec606404fcbe17"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "bundle": "vampi-fixed/bundle.json",
+      "candidates": 0,
+      "blocked_captures": 1
+    },
+    {
+      "application": "stop-lab-run",
+      "engagement_id": "61bf17a902b5f62b2b9a538ec47a3f2c",
+      "passed": true,
+      "run_id": "b09cebfeace6add2566ad21b9f0a3cb9",
+      "stop_during_pending_export": true,
+      "verdict": "stopped",
+      "status": {
+        "run_id": "b09cebfeace6add2566ad21b9f0a3cb9",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 5,
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-07T09:38:37.591291341Z",
+        "expires_at": "2026-11-07T09:40:04.030391237Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:38:34.175120534Z",
+        "worker_observed_at": "2026-11-07T09:38:35.671056851Z",
+        "exit_observed_at": "2026-11-07T09:38:38.167476157Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:38:35.725934271Z",
+        "local_drain_observed_at": "2026-11-07T09:38:37.598896236Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:38:37.67176839Z",
+        "api_resources_absent_at": "2026-11-07T09:38:39.178261204Z",
+        "observation_code": "observed"
+      },
+      "bundle": "stop-lab-run/bundle.json",
+      "candidates": 0,
+      "blocked_captures": 1
+    },
+    {
+      "setup_id": "7ee98da26f459aef6393d2dfe3de5bb4",
+      "case": "owned_onboarding",
+      "passed": true,
+      "validation_requests": 4,
+      "validation_id": "3894c0424749f1291580cd59a65d68b8",
+      "application": "onboard-7ee98da26f459aef6393d2dfe3de5bb4",
+      "engagement_id": "fe224107768b140280ae2215acd49fc8",
+      "run_id": "691a7c7514c0a36e0e86de2eb065c6dd",
+      "actual_runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:42d715d0f828322f673ecb2bc08e893039cd515e0c380831d71b92d9c50430d0",
+      "status": {
+        "run_id": "691a7c7514c0a36e0e86de2eb065c6dd",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:40:15.205092701Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:38:45.668489382Z",
+        "worker_observed_at": "2026-11-07T09:38:48.665073578Z",
+        "exit_observed_at": "2026-11-07T09:38:53.167883983Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:38:52.621440871Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:38:52.670282322Z",
+        "api_resources_absent_at": "2026-11-07T09:38:54.669140632Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Onboarded owned VAmPI",
+          "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+          "evidence_ids": [
+            "7e3be28a451bd05969df96957c1d44ca",
+            "3dbd217c704951cddd8d3731828a9a84",
+            "52dd7382b69ddef5de132212d175e868",
+            "0e889b27e56c8813301b26a1960badeb",
+            "4462153f6bbd83a83a18ec2fe5e24479",
+            "de231b7c5e04c5c46e06193b948717d5",
+            "38d42d3df207c14cdde0be595f00705e"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "bundle": "onboarded-vampi/bundle.json",
+      "verdict": "confirmed",
+      "candidates": 1,
+      "blocked_captures": 1
+    }
+  ],
+  "checks": [
+    "invalid operator refused",
+    "no automatic assessment on connect",
+    "wrong digest disables approval",
+    "one POST per Start despite double click",
+    "scope denial captured",
+    "pause does not Stop",
+    "held request revocation and local drain observed",
+    "downloaded artifact hashes match",
+    "operator token absent from DOM/storage/export",
+    "lost committed Start response recovered without retry",
+    "Stop available during held viewer export",
+    "hostile API text rendered as text",
+    "mobile layout within viewport",
+    "disconnect clears display",
+    "same-origin requests only",
+    "no browser runtime exceptions"
+  ],
+  "includes_onboarding": true,
+  "onboarding": [
+    {
+      "setup_id": "9509323eea0c394329b66257dd6038d1",
+      "case": "missing_backend",
+      "target_requests": 0
+    },
+    {
+      "setup_id": "ea3e5008be02e02d4e20d91ed891ee0c",
+      "case": "unsupported_login",
+      "target_requests": 0
+    },
+    {
+      "setup_id": "7ee98da26f459aef6393d2dfe3de5bb4",
+      "case": "owned_onboarding",
+      "passed": true,
+      "validation_requests": 4,
+      "validation_id": "3894c0424749f1291580cd59a65d68b8",
+      "application": "onboard-7ee98da26f459aef6393d2dfe3de5bb4",
+      "engagement_id": "fe224107768b140280ae2215acd49fc8",
+      "run_id": "691a7c7514c0a36e0e86de2eb065c6dd",
+      "actual_runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:42d715d0f828322f673ecb2bc08e893039cd515e0c380831d71b92d9c50430d0",
+      "status": {
+        "run_id": "691a7c7514c0a36e0e86de2eb065c6dd",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:40:15.205092701Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:38:45.668489382Z",
+        "worker_observed_at": "2026-11-07T09:38:48.665073578Z",
+        "exit_observed_at": "2026-11-07T09:38:53.167883983Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:38:52.621440871Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:38:52.670282322Z",
+        "api_resources_absent_at": "2026-11-07T09:38:54.669140632Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Onboarded owned VAmPI",
+          "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+          "evidence_ids": [
+            "7e3be28a451bd05969df96957c1d44ca",
+            "3dbd217c704951cddd8d3731828a9a84",
+            "52dd7382b69ddef5de132212d175e868",
+            "0e889b27e56c8813301b26a1960badeb",
+            "4462153f6bbd83a83a18ec2fe5e24479",
+            "de231b7c5e04c5c46e06193b948717d5",
+            "38d42d3df207c14cdde0be595f00705e"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "bundle": "onboarded-vampi/bundle.json",
+      "verdict": "confirmed",
+      "candidates": 1
+    }
+  ],
+  "navigation": {
+    "frameId": "5155B11462BCD3D9B85EEA496DDC2C7B",
+    "loaderId": "A36C8FFAEAFF8A4D77F387803F3C6B56",
+    "isDownload": false
+  }
+}

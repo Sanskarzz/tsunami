@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/operator-journey",
+  "authorized": false,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 1,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "d9664e83235f2fe3899307d1e9b8838b",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 0,
+    "scope_digest": "046f9a282ff00bc7d4301b6cbf94a160792bce0e2f7be5cc8d818062db3d4c40"
+  },
+  "name": "Web/API authorization assessment",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+  ],
+  "start_date": "2026-11-07",
+  "status": "On-Hold",
+  "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+  "target_type": "api"
+}

@@ -60,6 +60,49 @@ func (s *Store) ExportEngagement(tenant, id string) (EngagementBundle, error) {
 	return bundle, err
 }
 
+func evidenceArtifact(engagementID string, r Run, capture Capture) (EvidenceArtifact, error) {
+	data, err := json.Marshal(struct {
+		EngagementID string  `json:"engagement_id"`
+		RunID        string  `json:"run_id"`
+		Procedure    string  `json:"procedure"`
+		Capture      Capture `json:"capture"`
+	}{engagementID, r.ID, r.ProcedureID(), capture})
+	if err != nil {
+		return EvidenceArtifact{}, err
+	}
+	sum := sha256.Sum256(data)
+	digest := hex.EncodeToString(sum[:])
+	return EvidenceArtifact{ID: "E-" + digest, RunID: r.ID, CaptureID: capture.ID, Path: "evidence/" + digest + ".json", SHA256: digest, Data: data}, nil
+}
+
+func appendFindingCandidate(byProcedure map[string]*FindingCandidate, e Engagement, r Run, result Result, refs map[string]string) {
+	if r.State != Completed || result.Verdict != "confirmed" {
+		return
+	}
+	candidate := byProcedure[r.ProcedureID()]
+	if candidate == nil {
+		sum := sha256.Sum256([]byte(e.ID + "\n" + r.ProcedureDigest() + "\n" + e.Target))
+		candidate = &FindingCandidate{ID: "F-" + hex.EncodeToString(sum[:16]), Title: result.Title, Procedure: r.ProcedureID(), Target: e.Target, Status: "needs_human_review", Reason: result.Reason, Remediation: r.ProcedureRemediation(), RunIDs: []string{}, EvidenceIDs: []string{}}
+		byProcedure[r.ProcedureID()] = candidate
+	}
+	candidate.RunIDs = append(candidate.RunIDs, r.ID)
+	for _, captureID := range result.EvidenceIDs {
+		if artifactID, ok := refs[captureID]; ok {
+			candidate.EvidenceIDs = append(candidate.EvidenceIDs, artifactID)
+		}
+	}
+}
+
+func sortedCandidates(byProcedure map[string]*FindingCandidate) []FindingCandidate {
+	candidates := []FindingCandidate{}
+	for _, candidate := range byProcedure {
+		candidate.Digest = candidateDigest(*candidate)
+		candidates = append(candidates, *candidate)
+	}
+	sort.Slice(candidates, func(i, j int) bool { return candidates[i].ID < candidates[j].ID })
+	return candidates
+}
+
 func buildEngagementBundle(tx *bolt.Tx, tenant, id string, reviews bool) (EngagementBundle, error) {
 	bundle := EngagementBundle{Version: "tsunami.engagement-export/v2", SyntheticOnly: true, Candidates: []FindingCandidate{}, Artifacts: []EvidenceArtifact{}, Findings: []ToolkitFinding{}, Evidence: []ToolkitEvidence{}, Limitations: []string{"Owned synthetic lab data only; no general customer readiness claim.", "Checklist progress covers selected Tsunami procedures, not complete OWASP coverage.", "Only matching explicit reviews produce rated findings. Test-generated reviews are labeled.", "Hashes identify exported bytes; they are not an independently signed or immutable evidence store."}}
 	err := func() error {
@@ -76,46 +119,18 @@ func buildEngagementBundle(tx *bolt.Tx, tenant, id string, reviews bool) (Engage
 		for _, r := range runs {
 			refs := map[string]string{}
 			for _, capture := range r.Captures {
-				data, err := json.Marshal(struct {
-					EngagementID string  `json:"engagement_id"`
-					RunID        string  `json:"run_id"`
-					Procedure    string  `json:"procedure"`
-					Capture      Capture `json:"capture"`
-				}{e.ID, r.ID, r.ProcedureID(), capture})
+				artifact, err := evidenceArtifact(e.ID, r, capture)
 				if err != nil {
 					return err
 				}
-				sum := sha256.Sum256(data)
-				digest := hex.EncodeToString(sum[:])
-				artifactID := "E-" + digest
-				refs[capture.ID] = artifactID
-				bundle.Artifacts = append(bundle.Artifacts, EvidenceArtifact{ID: artifactID, RunID: r.ID, CaptureID: capture.ID, Path: "evidence/" + digest + ".json", SHA256: digest, Data: data})
+				refs[capture.ID] = artifact.ID
+				bundle.Artifacts = append(bundle.Artifacts, artifact)
 			}
-			if r.State != Completed {
-				continue
-			}
-			result := Validate(r)
-			if result.Verdict != "confirmed" {
-				continue
-			}
-			candidate := byProcedure[r.ProcedureID()]
-			if candidate == nil {
-				sum := sha256.Sum256([]byte(e.ID + "\n" + r.ProcedureDigest() + "\n" + e.Target))
-				candidate = &FindingCandidate{ID: "F-" + hex.EncodeToString(sum[:16]), Title: result.Title, Procedure: r.ProcedureID(), Target: e.Target, Status: "needs_human_review", Reason: result.Reason, Remediation: r.ProcedureRemediation(), RunIDs: []string{}, EvidenceIDs: []string{}}
-				byProcedure[r.ProcedureID()] = candidate
-			}
-			candidate.RunIDs = append(candidate.RunIDs, r.ID)
-			for _, captureID := range result.EvidenceIDs {
-				if artifactID, ok := refs[captureID]; ok {
-					candidate.EvidenceIDs = append(candidate.EvidenceIDs, artifactID)
-				}
+			if r.State == Completed {
+				appendFindingCandidate(byProcedure, e, r, Validate(r), refs)
 			}
 		}
-		for _, candidate := range byProcedure {
-			candidate.Digest = candidateDigest(*candidate)
-			bundle.Candidates = append(bundle.Candidates, *candidate)
-		}
-		sort.Slice(bundle.Candidates, func(i, j int) bool { return bundle.Candidates[i].ID < bundle.Candidates[j].ID })
+		bundle.Candidates = sortedCandidates(byProcedure)
 		status := "On-Hold"
 		if e.State == EngagementDraft {
 			status = "Planning"

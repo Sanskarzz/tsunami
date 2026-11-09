@@ -1,0 +1,51 @@
+{
+  "checked_at": "2026-11-09T14:47:29.005629+00:00",
+  "context": "kind-tsunami-lab",
+  "destinations": {
+    "tripwire-service": "http://10.97.251.36:8080",
+    "tripwire-pod": "http://10.245.0.115:8080",
+    "api-service": "https://10.97.0.1:443",
+    "node-api": "https://172.18.0.3:6443",
+    "dns-tcp": "http://10.97.0.10:53",
+    "application-tripwire": "http://10.97.220.208:5000"
+  },
+  "checks": [
+    {
+      "role": "positive-before",
+      "job": "tsunami-curl-positive-before-9g6zt",
+      "passed": true,
+      "runtime_class": "gvisor",
+      "actual_runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "image_id": "sha256:b771f2c236fb42a4e68b8485b354db24714973cd00255c5892f927b90f9263ae"
+    },
+    {
+      "role": "runner",
+      "job": "tsunami-curl-runner-wcmfm",
+      "passed": true,
+      "runtime_class": "gvisor",
+      "actual_runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "image_id": "sha256:b771f2c236fb42a4e68b8485b354db24714973cd00255c5892f927b90f9263ae"
+    },
+    {
+      "role": "positive-after",
+      "job": "tsunami-curl-positive-after-dqmdd",
+      "passed": true,
+      "runtime_class": "gvisor",
+      "actual_runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "image_id": "sha256:b771f2c236fb42a4e68b8485b354db24714973cd00255c5892f927b90f9263ae"
+    }
+  ],
+  "limitations": [
+    "Selected IPv4/TCP paths only; UDP DNS is qualified by the separate Go diagnostic.",
+    "Not arbitrary shell containment, IPv6, metadata or production capacity qualification."
+  ]
+}

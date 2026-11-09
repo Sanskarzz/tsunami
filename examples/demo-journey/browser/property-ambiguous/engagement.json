@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/ui-qualification",
+  "authorized": true,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 1,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "a27560d689a695a1fdcea2461694fe4a",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 0,
+    "scope_digest": "c979e6c1d00c46ac24d8664a898b78160332dae1df5dd54e61ad80fd45d27ee9"
+  },
+  "name": "UI qualification: property-ambiguous",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080"
+  ],
+  "start_date": "2026-11-09",
+  "status": "Testing",
+  "target": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+  "target_type": "api"
+}

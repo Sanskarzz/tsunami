@@ -1,0 +1,24 @@
+[
+  {
+    "candidate_digest": "b56295b7779ab9492f83cbb4fdc711f84a766af52f48d0af53add495cce87366",
+    "id": "F-56a7cc1c666c06aebbf518cc9765e112",
+    "title": "Onboarded owned VAmPI",
+    "procedure": "onboard-7ee98da26f459aef6393d2dfe3de5bb4/object-access/v2",
+    "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "status": "needs_human_review",
+    "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+    "remediation": "Authorize every object read against the authenticated principal and intended sharing rules on the server.",
+    "run_ids": [
+      "691a7c7514c0a36e0e86de2eb065c6dd"
+    ],
+    "evidence_ids": [
+      "E-9c8a5a1a90f791aa0b54ba001c2c6b5abb1b802c71fc6c448878fae5b33877b6",
+      "E-7c5f5e3e41ee7f65ec11387a088db5f1b65752d8828ec9310038941cd97eb4bd",
+      "E-2180bd4cc248a533167b83b2e9bc244f2f9168608881de5df9e0f4437db357db",
+      "E-12b8383b1fb9ca3a8f7250a48e5d8914101f61495f8dbe1ca8319bc794fa8943",
+      "E-adb6fe7949daf266a68b6743ae38d91322f67385be26460c25039d74808cc2bf",
+      "E-886e115469b2c1f4ca82d9cfcc2afa78326cc37d3fe8e6c56cc5e2426312d05a",
+      "E-390c2820125d9641c1450e692e6b7d801a785c01b3d0730387318034d205f29e"
+    ]
+  }
+]

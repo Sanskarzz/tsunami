@@ -1,0 +1,10 @@
+{
+  "recorded_at": "2026-11-09T15:04:31.970441+00:00",
+  "files": {
+    "Makefile": "88cc7a458363c71f470b23a9ecbbf6e31aeeefac02785f1ba710abd3e9aefd13",
+    "scripts/verify-ui.mjs": "df7f0d636dd137941df7bdb113e9963f215d0aa20fa607f6c890dde5f67bceb3",
+    "scripts/check-examples.py": "f35826ddb74c37a1e09455aad710bebe6de2d8913eebe190b9bfc8837df9dfc5",
+    "scripts/test_demo_record.py": "8d178b27dc2003c697a28e9983c278499836e6fa1003d34e8d8b92c16a75ad88"
+  },
+  "note": "Qualification tooling fingerprint after the image build; served assets and compiled Go binary are separately bound in build.json."
+}

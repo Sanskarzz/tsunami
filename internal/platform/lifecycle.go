@@ -43,8 +43,15 @@ func tracked(r *Run) *Lifecycle {
 func revoke(r *Run, reason string, now time.Time) {
 	l := tracked(r)
 	l.RevocationReason = reason
+	code := "unspecified"
+	switch reason {
+	case "run_stop", "tenant_stop", "global_stop", "engagement_stop", "deadline":
+		code = reason
+	}
+	appendActivity(r, "permission.revoked", "", "", ActivityData{Code: code, ObservedAt: &now})
 	if len(l.Operations) == 0 && l.FromCreation {
 		l.LocalDrainObservedAt = &now
+		appendActivity(r, "activity.drained_locally", "", "", ActivityData{ObservedAt: &now})
 	}
 }
 
@@ -81,12 +88,15 @@ func (s *Server) observeExecution(ctx context.Context, r Run) {
 		}
 		if observation.Running && l.WorkerObservedAt == nil {
 			l.WorkerObservedAt = &now
+			appendActivity(current, "execution.worker_observed", "", "", ActivityData{ObservedAt: &now})
 		}
 		if observation.Exited && l.ExitObservedAt == nil {
 			l.ExitObservedAt = &now
+			appendActivity(current, "execution.exit_observed", "", "", ActivityData{ObservedAt: &now})
 		}
-		if observation.ResourcesAbsent && current.DeletionRequestedAt != nil {
+		if observation.ResourcesAbsent && current.DeletionRequestedAt != nil && l.ResourcesAbsentAt == nil {
 			l.ResourcesAbsentAt = &now
+			appendActivity(current, "cleanup.resources_absent", "", "", ActivityData{ObservedAt: &now})
 		}
 		return nil
 	})
@@ -164,37 +174,46 @@ func (s *Server) finishOperation(id, op string) {
 		if record, ok := l.Operations[op]; ok && record.Process == s.processID {
 			delete(l.Operations, op)
 		}
-		if len(l.Operations) == 0 && r.StopAcceptedAt != nil && l.FromCreation {
+		if len(l.Operations) == 0 && r.StopAcceptedAt != nil && l.FromCreation && l.LocalDrainObservedAt == nil {
 			now := time.Now().UTC()
 			l.LocalDrainObservedAt = &now
+			appendActivity(r, "activity.drained_locally", "", "", ActivityData{ObservedAt: &now})
 		}
 		return nil
 	})
 }
 
 type RunStatus struct {
-	RunID                  string     `json:"run_id"`
-	ExecutionMode          string     `json:"execution_mode"`
-	Executor               string     `json:"executor"`
-	TargetRequestsReserved int        `json:"target_requests_reserved"`
-	Permission             string     `json:"permission"`
-	RevocationReason       string     `json:"revocation_reason,omitempty"`
-	RevokedAt              *time.Time `json:"revoked_at,omitempty"`
-	ExpiresAt              time.Time  `json:"expires_at"`
-	Execution              string     `json:"execution"`
-	DispatchIntentAt       *time.Time `json:"dispatch_intent_at,omitempty"`
-	WorkerObservedAt       *time.Time `json:"worker_observed_at,omitempty"`
-	ExitObservedAt         *time.Time `json:"exit_observed_at,omitempty"`
-	Activity               string     `json:"activity"`
-	LocalOperations        int        `json:"local_operations"`
-	UncertainOperations    int        `json:"uncertain_operations"`
-	LastAdmittedAt         *time.Time `json:"last_admitted_at,omitempty"`
-	LocalDrainObservedAt   *time.Time `json:"local_drain_observed_at,omitempty"`
-	Cleanup                string     `json:"cleanup"`
-	DeleteAcceptedAt       *time.Time `json:"delete_accepted_at,omitempty"`
-	ResourcesAbsentAt      *time.Time `json:"api_resources_absent_at,omitempty"`
-	ObservationCode        string     `json:"observation_code,omitempty"`
-	Assessment             *Result    `json:"assessment,omitempty"`
+	ObservedAt                     time.Time  `json:"observed_at"`
+	State                          string     `json:"state"`
+	CreatedAt                      time.Time  `json:"created_at"`
+	TargetRequestLimit             int        `json:"target_request_limit"`
+	ProcedureID                    string     `json:"procedure_id"`
+	ProcedureVersion               string     `json:"procedure_version,omitempty"`
+	ProcedureDigest                string     `json:"procedure_digest,omitempty"`
+	ExecutorObservationAttemptedAt *time.Time `json:"executor_observation_attempted_at,omitempty"`
+	RunID                          string     `json:"run_id"`
+	ExecutionMode                  string     `json:"execution_mode"`
+	Executor                       string     `json:"executor"`
+	TargetRequestsReserved         int        `json:"target_requests_reserved"`
+	Permission                     string     `json:"permission"`
+	RevocationReason               string     `json:"revocation_reason,omitempty"`
+	RevokedAt                      *time.Time `json:"revoked_at,omitempty"`
+	ExpiresAt                      time.Time  `json:"expires_at"`
+	Execution                      string     `json:"execution"`
+	DispatchIntentAt               *time.Time `json:"dispatch_intent_at,omitempty"`
+	WorkerObservedAt               *time.Time `json:"worker_observed_at,omitempty"`
+	ExitObservedAt                 *time.Time `json:"exit_observed_at,omitempty"`
+	Activity                       string     `json:"activity"`
+	LocalOperations                int        `json:"local_operations"`
+	UncertainOperations            int        `json:"uncertain_operations"`
+	LastAdmittedAt                 *time.Time `json:"last_admitted_at,omitempty"`
+	LocalDrainObservedAt           *time.Time `json:"local_drain_observed_at,omitempty"`
+	Cleanup                        string     `json:"cleanup"`
+	DeleteAcceptedAt               *time.Time `json:"delete_accepted_at,omitempty"`
+	ResourcesAbsentAt              *time.Time `json:"api_resources_absent_at,omitempty"`
+	ObservationCode                string     `json:"observation_code,omitempty"`
+	Assessment                     *Result    `json:"assessment,omitempty"`
 }
 
 func (s *Server) Status(id string) (RunStatus, error) {
@@ -204,7 +223,10 @@ func (s *Server) Status(id string) (RunStatus, error) {
 	if err != nil {
 		return RunStatus{}, err
 	}
-	out := RunStatus{RunID: id, ExecutionMode: r.Execution, Executor: r.Executor, TargetRequestsReserved: r.RequestCount, Permission: "not_active", ExpiresAt: r.Deadline, Execution: "unknown", Activity: "unknown", Cleanup: "not_requested", Assessment: r.Result, LocalOperations: len(s.active[id])}
+	out := RunStatus{ObservedAt: time.Now().UTC(), State: r.State, CreatedAt: r.CreatedAt, TargetRequestLimit: r.MaxRequests, ProcedureID: r.ProcedureID(), ProcedureDigest: r.ProcedureDigest(), ProcedureVersion: procedureVersion(r.ProcedureID()), RunID: id, ExecutionMode: r.Execution, Executor: r.Executor, TargetRequestsReserved: r.RequestCount, Permission: "not_active", ExpiresAt: r.Deadline, Execution: "unknown", Activity: "unknown", Cleanup: "not_requested", Assessment: r.Result, LocalOperations: len(s.active[id])}
+	if r.Application != nil {
+		out.ProcedureVersion = r.Application.Version
+	}
 	if r.State == Running {
 		out.Permission = "active"
 	}
@@ -228,6 +250,7 @@ func (s *Server) Status(id string) (RunStatus, error) {
 		out.Cleanup = "pending"
 	}
 	if l := r.Lifecycle; l != nil {
+		out.ExecutorObservationAttemptedAt = l.ObservedAt
 		out.RevocationReason = l.RevocationReason
 		if l.RevocationReason == "deadline" {
 			out.Permission = "expired"

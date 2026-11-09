@@ -1,0 +1,75 @@
+{
+  "version": "tsunami.demo-qualification/v1",
+  "recorded_at": "2026-11-09T14:57:13.544210+00:00",
+  "passed": true,
+  "base_commit": "b0ede2a9357aa58566a99ff502b2aa0d44cff71e",
+  "dirty_working_tree": true,
+  "context": "kind-tsunami-lab",
+  "preparation": "explicit owned fixture credential/data refresh; no history deletion or Stop-gate reset",
+  "private_record": "artifacts/d9/20261109T143951Z",
+  "browser_record": "artifacts/ui/browser-20261109T144950912Z",
+  "preparation_record": "artifacts/showcase/prepare-20261109T144510Z",
+  "source_gate": "source-verification.log",
+  "model_observations": [
+    {
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "model_record_present": false,
+      "observed_execution_mode": "scripted"
+    },
+    {
+      "run_id": "b25726699171b3954d05f37d355af508",
+      "model_record_present": false,
+      "observed_execution_mode": "scripted"
+    },
+    {
+      "run_id": "91fb497a845395cddfbbd09e7dbec2de",
+      "model_record_present": false,
+      "observed_execution_mode": "scripted"
+    },
+    {
+      "run_id": "e950815f8abdffdf65535af82ec9d105",
+      "model_record_present": false,
+      "observed_execution_mode": "scripted"
+    },
+    {
+      "run_id": "9b3a1c8e3d2b1cd0a1d73ca1b1554324",
+      "model_record_present": false,
+      "observed_execution_mode": "scripted"
+    },
+    {
+      "run_id": "8e48832ab4a2a30aade6b98b9c81c292",
+      "model_record_present": false,
+      "observed_execution_mode": "scripted"
+    }
+  ],
+  "credential_comparison": {
+    "files_checked": 125,
+    "decoded_artifacts_checked": 46,
+    "assigned_credential_matches": 0,
+    "scope": "exact currently assigned operator/target/onboarding-key bytes and base64; not general redaction"
+  },
+  "limitations": [
+    "Automated paced browser dry run; no recorded human narration.",
+    "Scripted known-fact owned authorization checks, not autonomous discovery.",
+    "Selected single-node runtime/network and client failure injections, not general containment, partitions, capacity or production Stop latency.",
+    "Hashes identify bytes, not independent authenticity; general evidence redaction/lifecycle remains unfinished.",
+    "Readiness/credential expiry hints are timestamped and do not establish continuing credential health."
+  ],
+  "final_source_gate": {
+    "command": "make verify",
+    "passed": true,
+    "go_race": true,
+    "go_vet": true,
+    "python_tests": 23,
+    "materialized_bundles": 38,
+    "artifacts": 286,
+    "historical_trial_hashes": 20,
+    "toolkit_schemas": "not_requested"
+  },
+  "frontend_gate": {
+    "command": "make verify-ui-retest",
+    "passed": true,
+    "tests": 36,
+    "app_js_sha256": "f67fd146f7ecf0a00d3cf2631b81f9a30ccfbf4968438d22b57f688f3eab5373"
+  }
+}

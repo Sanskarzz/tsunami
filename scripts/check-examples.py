@@ -159,6 +159,116 @@ def check_onboarding(root):
     print("PASS onboarding readiness controls, four baseline reads, inferred plan and actual gVisor assessment evidence.")
 
 
+def check_demo(root):
+    """Check the retained D9 journey without replaying any target request."""
+    index = parse(read_local(root, "qualification.json"))
+    build = parse(read_local(root, "build.json"))
+    summary = parse(read_local(root, "browser/summary.json"))
+    if (index["version"] != "tsunami.demo-qualification/v1" or index["passed"] is not True
+            or summary["version"] != "tsunami.ui-demo-qualification/v1" or summary["passed"] is not True
+            or summary["execution"] != "scripted_mecatl" or summary["approval"] != "automated_owned_lab"
+            or summary["external_model_calls"] != 0 or not summary["includes_d9"]
+            or build["dirty_working_tree"] is not True or summary["assets"] != build["ui_assets"]
+            or summary["driver_sha256"] != build["driver_sha256"] or summary["binary_sha256"] != build["binary_sha256"]
+            or set(build["inspected_binary_hashes"].values()) != {build["binary_sha256"]}):
+        raise ValueError("D9 build/journey claim differs")
+    rehearsal = summary["rehearsal"]
+    if (not rehearsal["requested"] or not rehearsal["passed"] or not 300 <= rehearsal["elapsed_seconds"] < 302
+            or [(s["scheduled_start_seconds"], s["deadline_seconds"]) for s in rehearsal["stages"]] != [(0,30),(30,90),(90,150),(150,200),(200,255),(255,300)]
+            or any(not s["within_deadline"] or s["finished_seconds"] > s["deadline_seconds"] for s in rehearsal["stages"])):
+        raise ValueError("D9 timed rehearsal incomplete or late")
+    cases = summary["cases"]
+    owned = next(c for c in cases if c.get("case") == "owned_onboarding")
+    expected = {owned["application"]: "confirmed", "vampi-fixed": "no_issue_observed", "stop-lab-run": "stopped",
+                "property-vulnerable": "confirmed", "property-filtered": "no_issue_observed", "property-ambiguous": "inconclusive"}
+    if len(cases) != 6 or {c["application"] for c in cases} != set(expected) or len({c["run_id"] for c in cases}) != 6:
+        raise ValueError("D9 assessment selection incomplete or duplicated")
+    paths = []
+    bundles = {}
+    for case in cases:
+        directory = root / "browser"
+        bundle = parse(read_local(directory, case["bundle"]))
+        downloaded = parse(read_local(directory, "downloads/tsunami-" + case["engagement_id"] + "-bundle.json"))
+        e = bundle["view"]["engagement"]
+        events = parse(read_local(directory, case["activity"]))
+        if (not case["passed"] or case["verdict"] != expected[case["application"]] or bundle != downloaded
+                or e["id"] != case["engagement_id"] or e["run_ids"] != [case["run_id"]] or bundle["toolkit_findings"]
+                or len(bundle["finding_candidates"]) != (1 if case["verdict"] == "confirmed" else 0)
+                or len(blocked_capture_ids(bundle)) != 1 or case["status"]["cleanup"] != "api_resources_absent"
+                or case["status"]["execution_mode"] != "scripted"
+                or any(v["run_id"] != case["run_id"] or v["engagement_id"] != case["engagement_id"] for v in events["items"])
+                or not events["tracked_from_creation"] or events["history_truncated"]
+                or not any(v["kind"] == "request.rejected" for v in events["items"])):
+            raise ValueError("D9 case, artifact, journal or cleanup provenance differs")
+        if case["verdict"] == "stopped":
+            held, final = case["target_held"], case["target_final"]
+            if (not case["stop_during_pending_export"] or case["status"]["permission"] != "revoked"
+                    or case["status"]["local_operations"] != 0 or held["active"] != 1 or final["active"] != 0
+                    or final["requests"] != held["requests"] or final["probe_cancelled"] != held["probe_cancelled"] + 1
+                    or final["probe_completed"] != held["probe_completed"]
+                    or any(v["kind"] == "validation.completed" for v in events["items"])):
+                raise ValueError("D9 active Stop observations differ")
+        elif (case["status"]["assessment"]["verdict"] != case["verdict"] or case["status"]["target_requests_reserved"] != 7
+                or not any(v["kind"] == "validation.completed" and v["data"]["verdict"] == case["verdict"] for v in events["items"])):
+            raise ValueError("D9 completed result differs")
+        paths.append(directory / case["bundle"])
+        bundles[case["application"]] = bundle
+    fixed = next(c for c in cases if c["application"] == "vampi-fixed")
+    comparison = parse(read_local(root / "browser", fixed["comparison"]))
+    source, retest = comparison["source"], comparison["retest"]
+    if (not fixed["lost_start_response_recovered"] or comparison["compatibility"] != "comparable"
+            or retest["engagement"]["source_engagement_id"] != owned["engagement_id"] or source["engagement"]["id"] != owned["engagement_id"]
+            or source["engagement"]["target"] == retest["engagement"]["target"] or source["engagement"]["scope_digest"] == retest["engagement"]["scope_digest"]
+            or retest["engagement"]["approved_digest"] != retest["engagement"]["scope_digest"]
+            or source["latest_attempt"]["result"]["verdict"] != "confirmed" or retest["latest_attempt"]["result"]["verdict"] != "no_issue_observed"):
+        raise ValueError("D9 linked retest did not retain separate scope/results/approval")
+    for side, app in [(source, owned["application"]), (retest, "vampi-fixed")]:
+        ids = {a["id"] for a in bundles[app]["artifacts"]}
+        if len(side["latest_attempt"]["evidence_ids"]) != 7 or not set(side["latest_attempt"]["evidence_ids"]).issubset(ids):
+            raise ValueError("D9 comparison references different evidence")
+    if (owned["validation_requests"] != 4 or owned["actual_runtime"] != {"handler":"runsc","type":"io.containerd.runsc.v1"}
+            or owned["worker_image_id"] != build["tools_image_id"]):
+        raise ValueError("D9 onboarding or actual worker runtime/image differs")
+    before, after = [parse(read_local(root, name + ".json")) for name in ("before", "after")]
+    for key in ("run_ids", "engagement_ids", "setup_ids"):
+        if not set(before[key]).issubset(after[key]):
+            raise ValueError("D9 discarded original history")
+    for key in ("operator_data_sha256", "onboarding_key_data_sha256", "state_pvc_uid"):
+        if before[key] != after[key]:
+            raise ValueError("D9 replaced preserved authority/state")
+    requests = parse(read_local(root, "browser/operator-requests.json"))
+    if not all(r["same_origin"] for r in requests) or len([r for r in requests if r["method"] == "POST" and r["path"].endswith("/runs")]) != 6:
+        raise ValueError("D9 browser replayed execution or left its origin")
+    for name in ("prerequisites.json", "final-prerequisites.json"):
+        ready = parse(read_local(root, name))
+        if ready["native_image"] != build["native_image"] or ready["tools_image"] != build["tools_image"] or ready["remaining_lab_engagement_slots"] < 7:
+            raise ValueError("D9 readiness/build/capacity differs")
+    runtime = parse(read_local(root, "isolation/runtime.json"))
+    if runtime["runtime_handler"] != "runsc" or runtime["runtime_type"] != "io.containerd.runsc.v1" or not runtime["container_checks_passed"]:
+        raise ValueError("D9 actual runtime smoke check missing")
+    curl = parse(read_local(root, "curl-network/network.json"))
+    if len(curl["checks"]) != 3 or not all(c["passed"] and c["actual_runtime"] == {"handler":"runsc","type":"io.containerd.runsc.v1"} for c in curl["checks"]):
+        raise ValueError("D9 curl egress/positive control missing")
+    probes = {(d, mode, phase) for d in curl["destinations"] for mode in ("literal", "resolve", "connect-to") for phase in ("startup", "settled", "repeat")}
+    if len(probes) != 54:
+        raise ValueError("D9 curl network destination count differs")
+    for c in curl["checks"]:
+        lines = read_local(root, "curl-network/" + c["role"] + ".log").splitlines()
+        rows = [parse(line) for line in lines[:-2]]
+        attempts = [r for r in rows if r["destination"] != "broker"]
+        if (c["image_id"] != build["tools_image_id"] or len(attempts) != 54
+                or {(r["destination"], r["mode"], r["phase"]) for r in attempts} != probes
+                or any(not r["passed"] for r in attempts)
+                or {r["outcome"] for r in attempts} != ({"timeout"} if c["role"] == "runner" else {"reachable"})):
+            raise ValueError("D9 curl attempts/build/control differs")
+    native = parse(read_local(root, "isolation/gvisor/network.json"))
+    if ([c["role"] for c in native["checks"]] != ["positive-before", "runner", "positive-after"]
+            or not all(c["passed"] and c["image_id"] == build["native_image_id"] for c in native["checks"])):
+        raise ValueError("D9 native network controls/build differ")
+    print("PASS D9 six-assessment browser journey, linked retest, active Stop, preserved history and paced five-minute rehearsal.")
+    return paths
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--toolkit", type=Path, help="explicit local reference checkout; never downloaded or executed")
@@ -177,6 +287,9 @@ def main():
     onboarding = Path("examples/onboarding")
     paths.extend(onboarding / app / "bundle.json" for app in ["vampi-vulnerable", "vampi-fixed", "stop-lab-run", "onboarded-vampi"])
     check_onboarding(onboarding)
+    demo = Path("examples/demo-journey")
+    if demo.exists():
+        paths.extend(check_demo(demo))
     count = 0
     for path in paths:
         count += check_bundle(path)

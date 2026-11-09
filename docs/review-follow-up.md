@@ -2,6 +2,8 @@
 
 Updated: 2026-11-05 (local time). This implements the first deliverable in [the review report](review-report.md): fix its five P2 defects and create a repeatable source-verification gate. The original review and historical lab records retain their meaning.
 
+**Historical follow-up:** the active development scope and work order now live in [project-goal.md](project-goal.md), [track.md](track.md), and [roadmap.md](roadmap.md). The 2026-11-07 review also reproduced a repeated-object-probe validator defect. It is addressed separately by D1 with permanent regressions and fresh source verification, as recorded in the tracker; it was not one of the five earlier fixes below.
+
 ## Resolved findings
 
 | Finding | Change | Regression evidence |
@@ -66,7 +68,7 @@ During the original review-fix pass, the native gate and actual local toolkit-sc
 
 The subsequent [Stop lifecycle milestone](stop-lifecycle.md) implements explicit status, graceful shutdown, and administrative availability with failed optional configuration. It repeats the native gate and records actual gVisor/curl cancellation, controller API denial and restart after committed revocation on a newly deployed build. [Exact observations](../examples/stop-lifecycle/README.md) separate those results from broader production failure/scale qualification, which remains unfinished.
 
-The [operator CLI milestone](operator-cli.md) implements the CLI portion of deliverable 3 below. Its compiled Kubernetes campaign records the owned vulnerable/fixed pair and Stop after read-only watch timeout, with unreviewed evidence exports. Thirteen Python tests and the expanded integrity/schema gate pass; the UI remains a preview. The next product deliverable is useful additional HTTP testing or an independent application, with security-engineer review and the pilot's customer controls still required.
+At that milestone, the [operator CLI](operator-cli.md) connected configured applications to approval, Start, watch, Stop and export. Its compiled Kubernetes campaign records the owned vulnerable/fixed pair and Stop after read-only watch timeout, with unreviewed evidence exports. Thirteen Python tests and the then-current integrity/schema gate passed. Connected UI and checked onboarding were added afterward, as recorded below; use the current tracker for remaining work.
 
 The subsequent [property-access milestone](property-access.md) adds a distinct read-only field-authorization test with explicit prerequisites, leak/filtered/ambiguous controls, generated owned-fixture bindings and active-request Stop. Its [retained results](../examples/property-access/README.md) cover the compiled CLI and actual target counters. Fourteen Python tests and the expanded gate pass. Independent security-engineer review, customer binding/onboarding and the pilot controls remain required; this is not a claim that deliverable 4's human review is complete.
 
@@ -74,14 +76,7 @@ The subsequent [property-access milestone](property-access.md) adds a distinct r
 
 ## Next implementation order
 
-1. Make permission, dispatch/execution, active activity, cleanup and assessment outcomes explicit. Cover graceful shutdown/store lifetime and keep authenticated revocation available when an optional connector/model route is unhealthy.
-2. Hold an actual request behind a gVisor curl worker, revoke run/engagement permission and record target cancellation, last admitted work and cleanup separately. Repeat relevant outages/restart scenarios before making a production Stop claim.
-3. Connect a thin CLI/UI to the owned-application APIs. Preserve scripted/model labels, missing prerequisites and uncertainty. The static templates remain disconnected design artifacts.
-4. Add a useful reviewed HTTP procedure or another independent owned application, with positive/negative/ambiguous controls and less manual prerequisite binding.
-5. Complete the selected HTTP pilot's identity, isolation, secret/evidence lifecycle, TLS, historical-report compatibility and independent boundary checks.
-6. Add VM/MCP, mobile, network and specialists only when a useful capability justifies their separate enforcement and qualification work. Interface discovery can continue as design work.
-
-This changes development priority, not the long-term product goal. The repository remains an owned-lab prototype rather than a customer-ready service.
+The earlier sequence is superseded by the [five-minute demo implementation tasks](roadmap.md#ordered-implementation-tasks). D1's validator fix and D2's selected owned deployment qualification are recorded in [the tracker](track.md). Authoritative metadata, actual activity, readable evidence/remediation and linked fixed-app retest remain before expanding capabilities. Customer release gates remain separate. This heading is retained for existing historical links.
 
 The optional [local UI](local-ui.md) now connects the existing lab API journey and adds an API-by-API presenter path. Its [real browser qualification](../examples/local-ui/README.md) covers owned vulnerable/fixed/Stop controls, lost committed Start response recovery and Stop during a held viewer response. The expanded integrity gate checks 28 bundles/210 artifacts; customer onboarding/login, release controls and independent procedure review remain open.
 

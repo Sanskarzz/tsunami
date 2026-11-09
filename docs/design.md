@@ -1,342 +1,170 @@
-# Tsunami: product design and user journey
+# Tsunami: demo architecture and product journey
 
-Updated: 2026-11-06.
+Updated: 2026-11-09. Scope: [project goal](project-goal.md). Current implementation: [tracker](track.md). Ordered changes: [roadmap](roadmap.md).
 
-This document describes the intended product and connects it to the current prototype. **Implemented**, **partial** and **planned** describe different levels of readiness. Future screens, endpoints and workflows below are not existing features unless marked implemented.
+D3 metadata, D4 activity events, D5 activity/Stop, D6 Dashboard/onboarding/scope, D7 finding/evidence/remediation and D8 linked retest are implemented. [D9](../examples/demo-journey/README.md) deployed matching images and qualified the connected owned-lab journey, including a paced five-minute browser dry run. D2's older build remains historical. This qualification does not establish customer readiness or independent human review.
 
-The implementation status is in [track.md](track.md). Recorded experiments are in [validation-results.md](validation-results.md). This document does not replace those limits or make the project customer-ready.
-
-The [operator CLI](operator-cli.md) now connects the configured-application plan/approval/start/status/Stop/export journey. The [Stop lifecycle follow-up](stop-lifecycle.md) adds separate observations and selected failure tests. The opt-in [local operator UI](local-ui.md) now connects this existing lab journey, with an API explorer and actual evidence. Customer-facing onboarding, username/password/SSO integration and the broader product screens below remain planned.
-
-The new [property-access profile](property-access.md) tests owner-only fields in an allowed shared-record response, with separate leak, filtering and ambiguous rules. It reuses the same bounded GET path and does not add write operations or automatic customer discovery.
-
-## 1. What the product should do
-
-A customer should be able to register an application, provide approved access, choose a testing profile, approve the boundaries and start an assessment. Tsunami should select applicable built-in tests, run permitted operations, preserve evidence and explain the result.
-
-The onboarding direction is **form first, then questions only when the setup agent needs more information**. After the initial application/access details, the agent checks what is known, asks focused questions about missing API/authentication/scope facts, and proposes applicable tests. The backend validates readiness; the user confirms the exact plan before assessment work starts. This conversation is a setup assistant, not a requirement to write attack prompts. See [the agreed readiness flow and implementation boundaries](onboarding-readiness.md). The first checked-rule version is now connected to the local UI; [its supported scope](application-onboarding.md) excludes a live-model setup planner, general login and automatic frontend discovery.
-
-The customer should not have to type instructions such as “try reading Alice's book as Bob.” That is test logic supplied by Tsunami.
-
-For the first usable product slice, the target is HTTP/HTTPS web applications and APIs. It should offer a complete, bounded authorization-testing workflow. Broader web testing, network scanning, VM/MCP execution, mobile, cloud, crypto and specialist-agent coordination remain separate stages. A URL alone cannot promise complete coverage of an unknown application.
-
-An incoming assessment request creates background work. Tsunami is not currently a WAF or a service that inspects every normal visitor request to the target application.
-
-## 2. Scope, profiles and tests are different things
-
-| Term | Meaning | Example |
-|---|---|---|
-| Scope | Where Tsunami may act, which identities/actions it may use, and the limits | This application, approved routes and destinations, two test accounts, bounded reads, a test window and request budget |
-| Profile | A built-in group of testing capabilities | Web/API authorization testing |
-| Procedure | A built-in test with prerequisites, permitted actions and evidence rules | Check whether an ordinary user can read another user's private object |
-| Plan | Procedures selected and bound to this application's approved permissions and known facts | Use two accounts and their legitimate objects; run the applicable cross-user check |
-| Engagement | The approved assessment containing scope, plan references, runs and evidence | Today's authorization assessment of the books application |
-| Run | One execution of an approved procedure | One object-access test attempt |
-
-“Selected assessment scope through guided onboarding” means a short setup flow that turns the customer's choices into explicit backend permissions. It does not mean asking the customer to write attack prompts.
-
-The profile can have recommended defaults. Customers may exclude features, choose permitted impact levels and review the plan; advanced users may choose individual tests. Routine requests within the approved plan should not require a new approval for each packet.
-
-Selecting a profile does not grant permission to every operation it contains. Missing credentials, unsupported authentication, insufficient business context or an excluded action can make a procedure unavailable. Tsunami must explain why it cannot run that test rather than silently claiming coverage.
-
-Customer choices can narrow platform permissions and limits. They cannot enable an unsupported executor or raise allowances beyond platform ceilings. These checks belong on the server, including for direct API callers.
-
-## 3. What the customer supplies, and what Tsunami supplies
-
-| Customer supplies | Tsunami supplies |
-|---|---|
-| Approved application and evidence/reference of authorization | Target validation, permission records and an approval workflow |
-| Allowed and excluded hosts/routes/actions; operating window | Compiled scope rules and enforcement outside the agent |
-| Dedicated test identities and their roles, through a protected credential flow | Credential references/aliases and controlled delivery to the execution boundary |
-| Intended access rules where needed, such as private versus shared records | Built-in authorization tests and evidence validation |
-| Optional API specification, application notes and suitable test data | Bounded inventory/discovery and selection of supported tests |
-| Approved limits and data/model handling choices | Scheduling, quotas, Stop, evidence collection and reporting |
-
-For a cross-user test, Tsunami needs two suitable identities and legitimate objects. It should obtain those through approved discovery or guided setup where possible. The customer should not need to provide proof hashes or hand-write JSON selectors in the intended UI.
-
-Tsunami cannot reliably infer every business rule. Different owners do not automatically imply forbidden access: a shared record may be intentionally readable. When the intended rule or identity/object relationship is unclear, ask for clarification or report an inconclusive result.
-
-Creating accounts or records is a separate action. A read-oriented assessment must not silently create test data. Use customer-provided disposable records or an explicitly approved setup workflow. Our current VAmPI helper seeds only our owned disposable lab.
-
-## 4. Intended user journey
-
-### Step 1: Sign in and select a workspace — planned
-
-The user signs in and works inside a customer workspace. Backend identity determines the tenant; a tenant ID supplied in a request body cannot grant access.
-
-Roles should distinguish who can configure applications, approve assessments, run them, review findings and administer the platform. The current random demo tenant tokens do not implement this customer identity system.
-
-### Step 2: Add an application — planned onboarding; startup registration exists
-
-The user enters the application URL, public/private connectivity and permitted boundaries. For private applications, they select a connector belonging to their workspace.
-
-The backend checks syntax and configuration locally. A target connection, login check or discovery request must have an explicit bounded preflight permission first. Merely typing a URL must not cause unrestricted network requests.
-
-Ownership/authorization verification and its operational process still need a product decision. A checkbox or an LLM interpreting “I am authorized” cannot establish authority. Current engagements record an operator authorization reference; they do not verify legal documents automatically.
-
-Trusted startup-file registration remains available. The new `POST /v1/onboarding` path saves setup sessions and dynamically registers supported integrations only after validated prerequisites and an explicit prepare action. `POST /v1/applications` is not added. See [the actual contract](application-onboarding.md).
-
-### Step 3: Connect test accounts and describe access rules — planned guided flow
-
-For authorization testing, the user adds two test accounts, labels their roles and describes relevant sharing rules. A future protected setup flow should validate that they are distinct identities and can access their own test data.
-
-Credentials should go through the trusted credential service. They must not be pasted into agent prompts, ordinary logs or general report metadata. Show credential status and expiry without revealing stored values.
-
-Today the configured profile supports two broker-held bearer credentials and explicit identity/object assertions. The onboarding path now accepts protected bearer input and performs bounded own-account preflight. General browser login, cookie sessions, SSO and automatic credential refresh are not implemented.
-
-### Step 4: Choose a testing profile — planned product selection
-
-The user selects or accepts the recommendation of **Web/API authorization testing**, with a clear explanation of allowed actions and prerequisites. The setup agent selects applicable procedures from the built-in catalog using the form, supplied documents and focused clarification. It asks only for facts still needed; it cannot approve its own scope or turn an unsupported integration into a runnable test. The typed backend readiness check and final user confirmation gate execution.
-
-The initial catalog ideas include object ownership, intentional sharing, administrator boundaries, anonymous access and missing-object controls. Their current implementations are narrow engineering procedures, not complete coverage of those vulnerability classes or a security standard.
-
-The UI should explain exclusions and unavailable tests before launch. “Run every test” must not enable unsupported tools, state-changing actions or raw network access.
-
-An illustrative future form could look like this; it is not an existing screen:
-
-```text
-Application:       https://books.example.test
-Testing profile:   Web/API authorization
-Test accounts:     Owner account + peer account
-Sharing rule:      Selected records are private unless explicitly shared
-Excluded actions:  Delete records, reset accounts, trigger payments
-Next:              Review permissions and applicable built-in tests
-```
-
-The URL above is an example. The built-in catalog contains the cross-user test; the user does not write its request sequence.
-
-### Step 5: Build and approve a plan — partly implemented
-
-Tsunami combines the profile, application facts, credential aliases and limits into a versioned plan. The user reviews a short summary: targets, identities/roles, permitted operations, exclusions, expiry, limits and data handling.
-
-Optional discovery must stay inside an already approved discovery permission. Specifications, discovered links, redirects and tool output are untrusted inputs. They cannot approve another host or action. External references must not be fetched automatically outside the approved path.
-
-An agent may propose tests, but the backend checks eligibility and permission. A scope expansion needs explicit approval; the current immutable engagement design uses a new engagement for changed scope. Future product APIs must preserve this property or introduce a reviewed versioned equivalent.
-
-Today engagements pin registered application plans or selected embedded procedure versions. Automatic profile selection and discovery-based plan generation are not implemented.
-
-### Step 6: Start and monitor — core execution and operator CLI implemented; UI planned
-
-Starting an assessment returns an ID promptly. Durable state records the work and reserves its allowance. The controller creates the permitted Kubernetes workload; the worker runs the selected task through Mecatl.
-
-The user sees queued/running work, procedure outcomes, skipped/unavailable tests, request/model usage and failures. The UI must distinguish permission/state from actual process readiness; the current run `running` transition records dispatch intent before a worker necessarily starts.
-
-An unsupported task is refused. Interrupted or ambiguous operations are not automatically replayed just because a Job disappears. Retrying an assessment requires a new permitted attempt with its own reservation.
-
-### Step 7: Stop when needed — foundation implemented; wider qualification pending
-
-The user can stop a run or engagement. Customer administrators can stop their workspace; platform administrators can stop everything.
-
-The backend persists revocation, denies new actions, cancels tracked requests and asks Kubernetes/executors to clean up. The UI should show **permission revoked**, **active requests draining** and **cleanup pending/confirmed** separately. It must not report complete cleanup merely because Kubernetes accepted deletion.
-
-Target-side actions already performed cannot be undone. Some external work or provider billing may continue after the client disconnects. The under-one-minute objective needs measurements under stated failure and load conditions; it is not a verified production guarantee.
-
-### Step 8: Review evidence, export and retest — partial
-
-The user sees what was tested, the supporting request/response evidence, unavailable or inconclusive tests, and confirmed findings after review. A clean result means no issue observed by the completed tests, not that the application is secure.
-
-Raw candidates remain separate from review decisions. A reviewer supplies impact/rating judgment; the backend calculates the supported CVSS score from the explicit vector. Model prose is not proof. Current example confirmations are labeled `automated_lab_test`.
-
-Exports should respect customer access and data rules. A retest creates new evidence and preserves the previous observation/history. Full remediation/retest workflow, individual reviewer identity and customer evidence lifecycle remain planned.
-
-## 5. Concrete example: a built-in cross-user access test
-
-The following is the intended experience; the existing VAmPI lab implements a configured subset of it.
-
-1. The customer registers a books API and chooses authorization testing.
-2. They supply two test identities and state that the selected book records are private unless explicitly shared.
-3. Tsunami obtains appropriate legitimate objects through approved setup/discovery. If it cannot establish them, it asks for help or skips the test with a reason.
-4. The built-in procedure checks both identities and their legitimate reads.
-5. It requests the owner's private object using the peer identity, then rechecks the owner object and peer session.
-6. The validator compares actual evidence and the intended rule. A generic HTTP 200 or an expired session is insufficient.
-7. The user sees a supported finding candidate, no issue observed, or an inconclusive result with missing prerequisites explained.
-
-The customer never types “make Bob read Alice's record.” Tsunami supplies that test method. Customers provide permission and application facts; they do not have to know or identify the bug beforehand.
-
-The current `http-object-access/v2` profile is more manual: identity/object paths, assertions and proof hashes are configured in advance. Removing that setup burden while retaining trustworthy validation is work still to do. The latest configured-application campaign uses scripted Mecatl; it is not autonomous discovery.
-
-## 6. Architecture and trust boundaries
+## Current architecture and authority
 
 ```mermaid
-flowchart TB
-    User[Customer or operator] --> Clients[Operator CLI / API client / planned UI]
-    Clients --> Control[Trusted control API and durable state]
-    Control --> Catalog[Versioned profiles, procedures and plan validation]
-    Control --> Controller[Kubernetes workload reconciliation]
-    Controller --> Worker[Untrusted Mecatl worker in gVisor]
-    Worker -->|Request intents| Broker[Trusted HTTP broker]
-    Worker -->|Permitted model calls| Models[Trusted model gateway]
-    Models --> Provider[Configured model provider]
-    Broker -->|Approved public HTTP request| Public[Approved public application]
-    Broker -->|Signed expiring grant over mTLS| Connector[Customer-specific private connector]
-    Connector --> Private[Approved private application]
-    Broker --> Evidence[Evidence capture and validation]
-    Control --> Evidence
-    Evidence --> Reports[Review and exports]
-    Broker -->|Check permission and reserve work| Control
-    Models -->|Check permission and reserve work| Control
-    Secrets[Protected credential service / secret manager] --> Broker
+flowchart LR
+    UI[Local UI / CLI] --> CP[Go control API + bbolt]
+    CP --> JOB[Kubernetes Job]
+    JOB --> W[Mecatl worker]
+    W -->|Run-authenticated request intent| B[Trusted HTTP broker]
+    B --> T[Approved owned application]
+    B --> E[Captured responses]
+    E --> V[Deterministic validator]
+    V --> R[Result + candidate + evidence export]
+    CP -->|Durable revocation| B
 ```
 
-The boxes describe responsibilities, not a requirement to deploy a separate service for each box. Today the API, controller, broker, validator and model gateway share one trusted process with bbolt. The customer UI, profile planner, external secret service and customer-grade evidence storage are planned.
+The control API, broker, validator and optional model gateway share one trusted process. Workers, targets and optional private connectors run separately. Reuse these boundaries; the diagram is not a request for new microservices.
 
-The public configured-application path and private synthetic-catalog path exist separately. Private configurable applications and private live-model assessments are not currently supported. The diagram shows the intended common architecture, not current feature parity.
-
-The worker, target content, model output, uploaded artifacts and tool output are untrusted. The control plane, enforcement services, Kubernetes/runtime/network layer, credential/evidence services and private connectors are trusted components. A compromise of one of those trusted components can invalidate its protection.
-
-### Isolation and command execution
-
-Use isolated customer execution boundaries and a tested gVisor RuntimeClass for compatible HTTP tools. Keep trusted services separate from worker execution nodes where practical. Non-root workloads, dropped capabilities, read-only roots, bounded writable space and no Kubernetes API token reduce worker access.
-
-Enforced networking must allow only required trusted services. Namespace names, proxy environment variables and agent prompts do not provide this guarantee. Test startup as well as settled traffic, with reachable controls. Standard NetworkPolicy alone does not implement HTTP scope or give uniform node/metadata behavior across all Kubernetes setups.
-
-The existing native worker has a scratch image. The optional tools image runs only a fixed shell/curl adapter; no general shell tool is registered. Curl sends JSON over a private Unix socket to a Go bridge. The broker performs the actual target GET. Unmodified target-facing curl commands do not automatically work through it.
-
-A compromised worker can read its own run credential and try permitted services directly. Backend authorization must still restrict it to that run. Process groups help terminate ordinary command descendants; hostile session creation, PID/resource exhaustion and complete process cleanup need separate qualification.
-
-### Scope and private connectivity
-
-For HTTP, validate the request at the broker, independently of the agent. Check approved origin, method/path/account permissions, port and actual destination address. Use the validated address for dialing; verify upstream TLS for HTTPS. Validate redirect destinations before further requests and never treat a discovered link as authorization.
-
-Changing DNS answers require an explicit destination policy; a DNS response alone must not grant new permission. Shared hosting/CDN addresses do not authorize other hostnames or services on those addresses. Metadata, Kubernetes services, other tenants and infrastructure addresses require explicit exclusions and deployment tests.
-
-Private connectors belong to a customer and have no direct/public fallback. The existing connector checks signed single-use grants, local scope, expiry and replay state over an authenticated mTLS link. Customer-side routes, partitions and broader configured-app support still need work. A compromised connector can misuse its own access or forge returned evidence; TLS does not solve that.
-
-Remote MCP tools and other services that fetch URLs are also execution boundaries. They must enforce the same relevant permissions at their actual network connection. The agent's restricted pod network does not constrain a remote service acting on its behalf.
-
-### Secrets, evidence and models
-
-Keep target/provider credentials outside the worker where the tool interface permits it. Use short-lived, least-privilege test access. A future secret manager and possibly ESO can deliver component secrets; neither is implemented here. A compromised recipient can still misuse its own assigned credential.
-
-Returned data can echo credentials or contain personal information. Before customer use, restrict artifact access, redact appropriately, encrypt storage, define deletion/retention and backups, and approve any model disclosure. Avoid sensitive request/response bodies in normal logs and traces. General redaction is not implemented in the prototype.
-
-Provider keys stay at the model gateway. Model output and target text cannot change policy or enable hosted/remote tools outside the controlled path. Development model use remains explicitly free-only without paid fallback. Current configured applications do not permit live inference.
-
-Evidence hashes identify exact bytes. They do not prove authenticity against a compromised broker or connector. Validators need suitable typed assertions and known prerequisites; ambiguous results require review instead of stronger claims.
-
-### Stop, limits and failures
-
-Durable permission is separate from the existence of a Kubernetes pod. Reconciliation must never restore revoked permission. Existing local request tracking cancels active HTTP/model operations; remote executors need local expiry and revocation enforcement as well.
-
-If authorization/state cannot be checked, deny new work. If a model, Redis limiter or budget service is unavailable in a future distributed deployment, do not silently use an unlimited fallback. Keep Stop outside normal work queues. A Kubernetes outage may delay cleanup even when the broker can revoke and cancel locally.
-
-The existing private connector has a persisted emergency cutoff independent of the normal broker Stop request. It still trusts the connector and its management path. An external emergency egress cutoff and broader outage/partition qualification remain work.
-
-Cap requests, time, concurrency, process resources, tool output and model calls. Production spend needs durable reservations and unknown-cost reconciliation before/after model calls. Redis could coordinate distributed limits and OpenMeter could meter usage, but neither replaces budget authorization; neither is implemented in Tsunami. No 1,000-agent capacity result exists.
-
-## 7. How an assessment request becomes agent work
-
-The design combines a few simple patterns:
-
-| Pattern | How Tsunami uses it |
+| Component | Authority and current limits |
 |---|---|
-| Asynchronous job workflow | The API records approved work and returns an ID; execution happens in the background. |
-| Controller reconciliation | Compare durable run permission/state with Kubernetes workloads; create once or clean up without reopening stopped work. |
-| Built-in procedure catalog | Reuse versioned test definitions and evidence rules instead of asking customers to write attack instructions. |
-| Bounded agent loop | Observe approved facts, select a permitted tool call, inspect its result, continue within limits and finish. |
-| External policy enforcement | Trusted services authorize every operation even if the worker ignores its prompt. |
-| Tool/executor adapters | Give different clients a controlled interface; HTTP, VM, network and device work need appropriate separate boundaries. |
-| Evidence-based validation | Backend checks captured observations and prerequisites; review determines supported impact. |
+| Operator | Supplies application facts and intended access rules; approves scope and starts/stops work. Local tenant bearer authentication exists; customer sign-in/roles do not. |
+| Control plane | Stores immutable scope, approvals, run identity, reservations and Stop. Worker input cannot select another tenant or grant permission. |
+| Scheduler | Reconciles Jobs and credential Secrets. Dispatch intent is not proof of worker startup; uncertain dispatched work is not automatically replayed. |
+| Worker | Real Mecatl with `http_request` and `finish_assessment`; scripted for configured applications. No general shell or unrestricted target fetch. |
+| Broker | Holds target credentials, authorizes each account/path and actual destination, reserves work, captures responses and cancels contexts. |
+| Validator | Uses captured evidence plus approved facts; model output cannot confirm a result. D1 preserves earlier supported object exposure across repeated probes; source checks and D2's selected owned deployment qualification pass. |
+| UI | Reads operator-authorized metadata and explicitly requested evidence; it has no target networking authority. |
 
-The intended flow is:
+The scratch worker is the default native image. The existing fixed curl adapter uses a separate gVisor tools image and submits intents through a private Unix bridge. The broker performs target GETs. Preserve DNS/IP pinning, redirect validation, TLS verification, proxy exclusion, exact account/path permissions, deadlines and budgets.
+
+The dedicated gVisor/Cilium lab has selected recorded runtime/network tests. Ordinary container deployment or a RuntimeClass object alone is not equivalent qualification. Trusted services and workers still share lab infrastructure; full hostile-process containment and production tenant isolation are not established. See [security](security.md), [sandbox qualification](sandbox-lab.md), and [Stop lifecycle](stop-lifecycle.md).
+
+## Terms used by the interface
+
+- **Application:** registered target and supported account/object/access-rule bindings. Registration is not assessment authorization.
+- **Plan/procedure:** versioned bounded test and the application facts it uses. Different owners alone do not establish forbidden access.
+- **Engagement:** saved draft or approved scope containing child runs and limits. The UI may call it an assessment.
+- **Run:** one attempt; permission, execution observations, activity, cleanup and result are distinct facts.
+- **Finding candidate:** evidence-supported observation awaiting human impact/severity review. `confirmed` is a validator verdict, not human signoff.
+
+## Current API path
+
+All operator routes require tenant operator authentication. Worker credentials are bound to one run and cannot approve/review other work.
+
+| Action | Existing API and behavior |
+|---|---|
+| Setup | `POST /v1/onboarding`; saved typed facts/questions, no target requests. |
+| Access and prerequisites | Setup `/answers`, `/details`, `/resolve`, `/access`, `/validate`; current revision/digest and explicit permissions apply. See [full contract](application-onboarding.md). |
+| Register and prepare | Setup `/prepare` atomically saves supported application plus unapproved engagement. It does not Start. |
+| List | `GET /v1/applications`, `GET /v1/engagements`; tenant-bound plans/history. D3 adds application metadata; D6 adds stored latest-attempt metadata to engagement-list rows. No plan digests change. |
+| Draft | `POST /v1/engagements`; select an existing supported application. |
+| Approve | `POST /v1/engagements/{id}/approve` currently accepts `{}`. D6 binds the UI checkbox to the displayed digest without typing; CLI still requires reviewed digest. These are client guards; D10 changes the backend contract. |
+| Start | `POST /v1/engagements/{id}/runs`; atomically reserve child/credential. No server Start idempotency until D11. |
+| Observe | `GET /v1/engagements/{id}`, `GET /v1/runs/{id}/status`; D3 adds authoritative policy/access/snapshot metadata, separately from lifecycle observations and assessment result. See [contract](engagements.md#read-only-assessment-metadata-d3). |
+| Stop | Run `/stop`, engagement `/stop`, tenant `/v1/stop-tenant`, separate global `/v1/stop-all`. Durable revocation precedes acknowledgement. |
+| Findings/evidence/report | Engagement `/findings` returns body-free candidate/check/capture metadata. Explicit `/evidence/{E-sha256}` reads one exact artifact; `/export` and run `/report` retain full evidence/draft exports. See [D7 contract](engagements.md#finding-and-evidence-reads-d7). |
+| Review | Engagement `/reviews`; requires stopped engagement and matching evidence/revision. Current UI does not submit human reviews. |
+| Retest | Existing draft creation accepts tenant-checked `source_engagement_id` for a selected registered application. Engagement `/retest` reads scope differences and actual latest outcomes/evidence. Fresh approval/Start required; [D8 contract](engagements.md#linked-fixed-app-retest-d8). |
+
+There is no general `POST /v1/applications`, automatic discovery/profile-planner endpoint, customer portal or live-model configured-application mode. Dynamic registration uses validated onboarding. Preserve these boundaries rather than adding a second setup API.
+
+## Target screens and backend states
+
+D3-D8 improve the current embedded UI. Finding, Evidence and Remediation can be tabs/panels within assessment detail; no additional routing framework is required.
+
+| Screen/action | Required presentation | Backend source or transition |
+|---|---|---|
+| Dashboard | Registered owned applications, recent attempts, actual latest outcomes, access availability and observation times. No synthetic usage/coverage cards. | D3 application metadata plus D6's stored latest-attempt list projection and Dashboard; locally browser-tested. |
+| Add Application | Name/environment, frontend/API details, two test identities and intended rule. Offer the existing owned integration explicitly; ask only for missing facts. | Saved setup; current checked-rule advisor. Unsupported auth stays unavailable. |
+| Prerequisite validation | Exact four legitimate reads, addresses, identities and limits; separate explicit permission. | `ready_for_validation -> validating -> ready_for_approval`, or failure/uncertainty. No cross-user probe. |
+| Scope Review | Origin/addresses, account/GET/path matrix, expected rule, proof-field names, exclusions, budgets, expiry, scripted mode and data handling. Raw assertions/digest optional. | D6 tables/summary and bound review checkbox; atomic prepare creates `assessment_created` setup plus engagement `draft`. |
+| Approve | Explicitly approve displayed immutable scope; no automatic Start. | Engagement `draft -> active`, approval time/digest recorded. |
+| Assessment | Queued, dispatch intent, observed worker, actual request activity, rejection, validation and stale/error states. Stop always accessible during active work. | Run/lifecycle/status plus D4 events and D5 presentation; source/local checks plus selected D9 Kubernetes/browser qualification. |
+| Finding | Failure-specific title, affected account/object/field, expected versus observed rule, confirmed observation with human review pending. | D7 body-free metadata reuses trusted validation/candidates and matching existing reviews; no automatic review/rating. |
+| Evidence | Owner baseline and peer probe side by side; identities/rechecks and exact capture references. Raw bodies only on explicit inspection. | D7 maps actual validator-selected captures to existing export IDs/hashes; explicit single-artifact reads verify bytes before display/download. |
+| Remediation | Object authorization or property projection correction and explicit registered-application retest selection. No fabricated patch or severity. | D7 displays deterministic remediation; D8 saves only a fresh unapproved linked draft. |
+| Stop | Acknowledgement or uncertainty, then permission, local drain, worker observations and cleanup separately. | Durable engagement/run revocation and current lifecycle fields. |
+| Retest | Select fixed registered target; review changed bindings/scope; approve fresh work; compare version, outcome and evidence. | D8 tenant-checked immutable source link, body-free comparison and ordinary draft/approval/run transitions. Original history/evidence preserved; deployed and qualified in D9. |
+
+### Existing state meanings
+
+Setup commonly proceeds through `needs_input` / `unsupported`, `ready_for_validation`, `validating`, `ready_for_approval`, and `assessment_created`. Preserve `validation_failed`, `interrupted`, `expired`, and `stopped` observations. The complete implementation contract is in [onboarding](application-onboarding.md).
+
+Engagement authorization is `draft -> active -> stopped`, with expiry enforced separately. A completed child does not automatically complete/close the engagement. Derive “latest attempt completed” without inventing a stored engagement `completed` state.
+
+Runs are `pending -> running -> completed | failed | stopped`. At dispatch, `running` is not process proof. Keep separate observations from `/status`:
+
+- Permission: active, revoked, expired, closed or not active.
+- Execution: queued, dispatch intent, worker observed, exit observed, or unknown after resource removal.
+- Activity: active locally, no local work, drained locally, or uncertain prior/unpersisted completion.
+- Cleanup: not requested, pending, delete accepted, API resources absent.
+- Assessment: `confirmed`, `no_issue_observed`, `inconclusive`, or no completed result.
+
+Retain API values and observation timestamps even when the UI uses readable labels. An unavailable response leaves the last observation stale; it does not supply a new successful state. A reserved/waiting operation is not necessarily a target request in flight.
+
+### Stop and retest branches
+
+Stop is a branch from active work, not a required step after a completed finding. Use a separately approved held-request fixture to demonstrate actual cancellation. Click Stop inside the broker request timeout; explain the distinction before starting the held probe. Closing the completed engagement can prevent further attempts but does not prove active cancellation.
+
+A stopped run never resumes. Retest creates new work, including after Stop. A different fixed-app origin needs fresh approval and its own credentials/bindings. Compare procedure semantics/version and show changed scopes; do not claim equal digests for different bindings. Missing or incompatible evidence stays explicit. A clean completed check does not establish application-wide security.
+
+## Activity events (D4)
+
+**Implemented in source, not qualified on the D2 deployment.** A typed `activity` journal shares each run's bbolt record. Legacy free-text `events` remain compatible and are never copied into the activity feed. D5 connects this journal to the observed activity panel; scope/approval history remains separate.
+
+The operator endpoint requires the run's tenant credential; worker/run credentials cannot read or write it. Reads perform no target or executor observation:
 
 ```text
-Customer request
-  -> authenticate workspace and record draft scope
-  -> select eligible built-in procedures
-  -> compile and approve a bounded plan
-  -> reserve work and create runs
-  -> reconcile isolated execution
-  -> Mecatl calls permitted tools through trusted enforcement
-  -> capture evidence and validate outcomes
-  -> review, export and optionally retest
+GET /v1/runs/{id}/events?after=<sequence>&limit=50
 ```
 
-An LLM may help propose applicable procedures or choose the next permitted action. Deterministic code checks permission, reservations, supported schemas and evidence. The agent must not mint credentials, approve its own scope, spawn unrestricted children, change verdicts or reset budgets.
+`after` is an exclusive nonnegative sequence cursor, initially `0`; omitted `limit` defaults to 50, with a range of 1–100. Unknown/duplicate query keys, empty/noninteger values, unsafe JSON integers and cursors beyond the stored latest sequence return 400. Wrong-tenant reads return 404; unauthenticated/run-token reads return 401; mutations return 405. Responses use `Cache-Control: no-store`.
 
-Today scripted providers drive configured application tests. Live inference exists for supported synthetic catalog workflows. Both use the real Mecatl loop, but scripted success is not a measurement of LLM discovery quality. A future live application mode needs its own data-handling review and quality evaluation.
+Each run retains at most **256 events**, each at most **2,048 JSON bytes**. Oldest records are evicted without blocking new revocation/cleanup records. This is a demo activity journal, not an immutable audit archive. Oversized future-producer details become `code: details_unavailable`, preserving the event envelope. No message bus or separate tracing service is involved.
 
-Future specialist coordination should be service-owned: tasks receive narrow permissions and tenant-bound artifact references, with aggregate Stop/budgets. The eight toolkit roles are currently references, not implemented autonomous specialists.
+Responses contain `items`, `next_cursor` (last returned sequence, unchanged for an empty page), `oldest_sequence`, `latest_sequence`, `has_more`, `history_truncated`, `gap` and `tracked_from_creation`. All describe one database snapshot. `has_more` requires another bounded page; `gap` means retention removed events after the supplied cursor; `history_truncated` remains true after catching up. Empty journals have oldest/latest `0`. Older runs start with no journal and `tracked_from_creation: false`; later observations may create a partial journal without reconstructing earlier facts.
 
-## 8. Existing APIs: a usable backend journey today
+Common fields: `schema_version: 1`, per-run monotonic `sequence`, `recorded_at`, `kind`, trusted `source`, `run_id`, optional `engagement_id`/`procedure_digest`, optional `operation_id`/`capture_id`, and typed `data`. Legacy runs without a pinned procedure digest omit it. Tenant identity comes from backend state/authentication. Source is assigned by trusted code: `control_plane`, `controller`, `broker` or `validator`. Sequence orders persistence; observed timestamps describe facts that may have happened before persistence, including a send observed near Stop.
 
-All operator routes below require tenant operator authentication. Worker routes use a different credential bound to one run. There is no general customer sign-in/UI or natural-language assessment endpoint today.
-
-`tsunami assess` uses these APIs for preconfigured owned applications. Its [guide](operator-cli.md) covers the exact command sequence, read-only watch, uncertain-start recovery and export behavior.
-
-| Step | Existing endpoint | Current behavior |
-|---|---|---|
-| List configured applications | `GET /v1/applications` | Public plans for this tenant; no target credentials |
-| Create draft | `POST /v1/engagements` | Select a registered application or supported fixture procedures |
-| Approve | `POST /v1/engagements/{id}/approve` | Approve the pinned scope; does not itself launch a worker |
-| Start procedure | `POST /v1/engagements/{id}/runs` | Reserve/create a child and return its run ID |
-| Follow assessment | `GET /v1/engagements/{id}` | Scope, child links and derived progress |
-| List run history | `GET /v1/runs?limit=50&cursor=...` | Tenant-bound metadata page (`items`, optional `next_cursor`); full evidence stays on individual runs |
-| Follow run | `GET /v1/runs/{id}` | State, captures, result and usage where available |
-| Observe without capture bodies | `GET /v1/runs/{id}/status` | Permission, execution/activity/cleanup observations, execution mode and request reservations; used by the CLI |
-| Stop run | `POST /v1/runs/{id}/stop` | Persist revocation and cancel tracked work |
-| Stop engagement | `POST /v1/engagements/{id}/stop` | Revoke active children and prevent new children |
-| Stop tenant | `POST /v1/stop-tenant` | Revoke this authenticated tenant's work and latch its gate |
-| Stop everything | `POST /v1/stop-all` | Requires the separate global operator credential |
-| Review candidate | `POST /v1/engagements/{id}/reviews` | Requires a stopped engagement, matching evidence and revision |
-| Export | `GET /v1/engagements/{id}/export` | Evidence bundle and report draft |
-| Download findings CSV | `GET /v1/engagements/{id}/findings.csv` | Reviewed findings |
-
-For the existing lab, create a draft with `application: vampi-vulnerable`, approve it, then start `assessment: vampi-vulnerable/object-access/v2` with `execution: scripted`. There is no `profile` selector on this API yet. `executor: curl-http/v1` is an optional engagement choice only when the reviewed tool feature is enabled; omitting it uses the native path.
-
-Inside the worker, `GET /v1/runs/{id}/config` loads the approved plan. `POST .../request` submits an HTTP intent, `POST .../finish` asks for validation, and the optional `POST .../model` uses the permitted model gateway. The worker token cannot access operator approval/review routes or another run. Target credentials are added at the broker, not supplied by those intents.
-
-### Proposed API additions — not implemented
-
-The exact contracts need implementation review. The product needs protected application/account onboarding, a profile catalog, prerequisite checks, a plan preview/approval flow, customer identity/roles and audit. These can extend the existing versioned APIs; names below are sketches only:
-
-| Proposed operation | Possible endpoint | Purpose |
-|---|---|---|
-| Register an application | `POST /v1/applications` | Replace manual startup-only onboarding |
-| List eligible profiles | `GET /v1/profiles` | Show supported tests, required access and impact |
-| Prepare a plan | `POST /v1/engagements/{id}/plan` | Select/bind procedures inside recorded permissions |
-
-Credential onboarding should use protected references and dedicated permissions. Unsupported authentication/discovery must be reported explicitly. A future natural-language entry point may help fill out the form, but only the validated, approved backend plan can grant execution permission.
-
-## 9. UI plan
-
-**Yes, a small UI is part of the proposed product. It is not implemented yet.** A CLI and UI should use the same backend APIs. Security checks must remain effective when someone bypasses the UI and calls the API directly.
-
-| Screen | What the user does |
+| Implemented event | Safe `data` fields and meaning |
 |---|---|
-| Applications | Register a target, set public/private connectivity, manage test-account references and view credential health |
-| New assessment | Select a built-in profile, review prerequisites, permissions, exclusions, limits and data handling; approve/start |
-| Assessment detail | Follow tests and usage, see unavailable/inconclusive work, inspect denials and press Stop |
-| Findings and evidence | Review supporting observations, record a disposition and impact, export and request retest |
+| `run.created` | `execution_mode`, `executor`, `request_limit`, `deadline`, from the bound run policy. |
+| `execution.dispatch_requested` | `observed_at` for durable dispatch intent; not Job creation or worker-start proof. |
+| `execution.worker_observed` | `observed_at`, only on an actual running-worker observation. |
+| `execution.failed` | `code: worker_failed`, `observed_at`; the existing worker-failure transition remains inconclusive without automatic replay. |
+| `request.admitted` | `read_index`, `account_slot`, `reservation`, `observed_at`; atomic with the durable request reservation, not target receipt. |
+| `request.sent` | `observed_at` from successful HTTP `WroteRequest`; not response success or target-side processing proof. |
+| `request.rejected` | `code: scope_not_approved`, `stage: scope`, atomic with the blocked capture. No arbitrary rejected URL/account echo. |
+| `request.capture_persisted` | Optional HTTP `status`, `duration_ms`, `outcome`: `response_captured`, `blocked`, or `failed_or_interrupted`. A capture does not confirm a finding. |
+| `validation.completed` | Trusted `verdict`, available `validation` counts (`required`, `verified`, `probe_captured`), bounded `evidence_ids`; atomic with the completed result. |
+| `permission.revoked` | `code`: `run_stop`, `engagement_stop`, `tenant_stop`, `global_stop`, `deadline` (or `unspecified`), `observed_at` equal to durable revocation time. |
+| `activity.drained_locally` | `observed_at`, only after tracked local operations drain; uncertain prior-process operations prevent this claim. |
+| `execution.exit_observed` | `observed_at` for an actual exit observation. |
+| `cleanup.delete_accepted` | `observed_at` for Kubernetes deletion acceptance. |
+| `cleanup.resources_absent` | `observed_at`, after deletion acceptance; not process-exit proof. |
 
-The first UI slice used preconfigured owned applications. The new checked onboarding path adds supported bearer/JSON registration after bounded validation; broader customer onboarding remains work. It should show the real current backend results and clearly label scripted versus model execution. A button must not imply unsupported automatic discovery.
+`read_index` is 1-based into the first matching account/path pair in the reviewed procedure; repeated rechecks may reference that same first read. It does not claim enforced ordering or exactly-once execution. `account_slot` numbers accounts by first appearance in that procedure, without exposing configured aliases. Legacy lab runs use the broker's closed Alice/Bob document/slow/redirect catalog. Rejected arguments never receive an invented approved-read reference.
 
-Use simple status polling first. Keep Stop visible and available during running or failing work. Do not put all progress messages into a chat transcript. Render target/tool content as untrusted text and enforce tenant/evidence permissions on the server. Do not return stored target/provider secrets to the browser or put them in URLs, local storage or logs. Any credential-input form needs a protected flow to the authorized backend; client session handling is a separate identity decision.
+DNS/TLS/connect failures have an admitted reservation and a failed capture, with no successful-send event. Redirect hops are separately validated/reserved/captured. The frozen private connector callback supplies no trusted write observation, so it emits no `request.sent`; admission is never used as a substitute. Failed executor checks and unfinished validation feedback do not invent successful lifecycle/validation events. Consult lifecycle status for current observations and uncertain-operation counts; this journal does not replace it.
 
-The UI framework, customer identity provider and session details are open implementation choices. No separate orchestration framework, general remote shell or large dashboard is required to explain the first workflow.
+Durable transitions and their events share the relevant state transaction, including engagement/tenant/global revocation. Send observations are persisted after the actual write; a crash/storage failure can leave an admission without a send or completion observation. Never backfill imaginary events for older runs. No worker-authored event ingestion endpoint exists; missing completion after a crash remains uncertain.
 
-## 10. Current demonstration and next delivery
+Use approved operation references and account slots rather than arbitrary tool arguments. Do not stream headers, tokens, cookies, raw bodies, prompts, model reasoning, arbitrary errors or unapproved URLs. Even a rejected URL can contain secrets. Resolve references to reviewed scope only when needed; raw evidence uses existing tenant-authorized explicit inspection. Render all target/metadata text as untrusted text.
 
-The owned VAmPI vulnerable/fixed campaign already demonstrates the configured seven-read check, a rejected scope attempt, linked evidence and exports. The optional curl execution has recorded selected network bypass denials with reachable controls. See [the actual results](../examples/tool-execution/README.md).
+Keep Stop independent of polling and telemetry delivery. Do not delay revocation for an event consumer. Local drain must not be labeled target-observed cancellation; the owned fixture's separate counters/qualification supply that evidence when actually collected.
 
-For a coherent next product delivery:
+## Activity presentation and independent Stop (D5)
 
-1. Use the implemented operator CLI to review the configured application's scope, approve, start, observe, Stop and export. A connected UI remains a separate product step.
-2. Improve prerequisite/onboarding support so users supply application facts without writing test instructions. The current preview also accepts plans compiled by checked onboarding. URL-only autonomous assessment and general login/discovery are not implemented.
-3. Extend Stop qualification beyond the recorded gVisor/API-denial/restart cases to broker crashes, uncertain acknowledgements, node partitions and load.
-4. Improve one useful built-in HTTP test/application adapter and reduce manual application-specific assertions with reviewed evidence rules.
-5. Add live application-agent behavior only with synthetic-data controls, bounded permissions and separate evaluation. Retain scripted runs as repeatable infrastructure checks.
-6. Complete customer identity, secret/evidence protection, private connectivity and failure qualification required for a limited pilot before accepting real customer data.
+The assessment screen renders only returned records, their trusted source, sequence, persistence/observation times and bounded request/evidence references. It distinguishes reservation, observed write, persisted capture, rejection and trusted validation. A count of scope rejections in displayed records and **Show scope rejection** make the actual rejected intent inspectable without loading raw evidence. It displays at most 256 received records and explains both server retention gaps and local display truncation. Unknown historical tracking remains unknown; incompatible pages are not promoted.
 
-The broader toolkit-inspired profiles and scale work continue through the stages in [product-roadmap.md](product-roadmap.md). They do not become supported because they appear in a profile list or UI. A customer-ready claim depends on the tested profile and its operational controls, not feature count.
+One refresh is in flight per selection. Manual refresh shares it; the polling loop schedules its next 1.5-second delay only after the current refresh finishes. Scope is read first; status and the bounded event pages then load independently, retaining separate stale/error states. At most six 50-event pages load in one refresh. Sequence checks prevent duplicates and mismatched-run/source/schema records; cursor state resets on run/assessment changes. Existing values and their timestamps survive failed reads.
 
-## 11. Decisions and inputs still open
+Pause, leaving the execution screen, switching selections and disconnect cancel obsolete viewer reads. Generations/connection identity prevent late responses from changing the current selection. None sends Stop. Returning to the execution screen requires explicit Resume for continued polling. The loop ends on errors, explicit pause/navigation, 120 refreshes, a stopped empty scope, or observed resource cleanup with known zero local/uncertain operations and no pending event pages. Ending observation never proves process exit or changes permission.
 
-- Which useful web/API procedure and authentication flow to support next.
-- How to obtain trustworthy application identity/object/sharing facts without manual proof hashes.
-- Destination policy for changing public DNS/CDN addresses and real private customer routes.
-- Customer authorization verification, roles, model disclosure and retention agreements.
-- UI/session implementation, durable multi-replica storage and production evidence/secret services.
-- Toolkit redistribution terms, the friend's actual VM/MCP contracts, mobile platform needs and an approved capacity-test environment/budget.
+The contextual Stop control remains visible across assessment/evidence screens. It bypasses the Start/export action lock, cancels the obsolete observation read, and sends the existing engagement Stop mutation independently. The receipt distinguishes pending, acknowledged and unacknowledged requests; it does not wait for follow-up reads. A later stored engagement read can separately establish revocation after a lost response without rewriting that response as acknowledged. Mutations are never automatically retried. Any Stop request blocks another Start in the loaded viewer while its outcome is being resolved. Late Start/export/status responses cannot erase the separate Stop receipt.
 
-These are explicit future decisions. Existing lab results do not establish complete isolation, general vulnerability discovery, a production 60-second Stop guarantee or 1,000-agent capacity.
+Permission, broker activity, execution and cleanup remain separate status cards, with actual lifecycle timestamps/uncertain-operation counts. Local drain is not target-observed cancellation. Deletion acceptance and API resource absence are not worker-exit proof. A confirmed finding still requires trusted captured evidence, and Stop is not a successful assessment.
+
+## Verification and presentation boundary
+
+The [roadmap](roadmap.md) defines tests and completion gates. Preserve invalid-scope, DNS/IP/redirect/TLS, tenant, Stop/restart and missing-evidence checks while making the presentation simpler. D1 fixes the repeated-object-probe defect; D2 explicitly refreshed and qualified the selected owned deployment. [The demo configuration](demo-configuration.md) and [fresh records](../examples/demo-configuration/README.md) define that build and its limits. Credentials expire and changed builds need new qualification; see [current status](track.md).
+
+The existing [UI guide](local-ui.md), [onboarding guide](application-onboarding.md), [API walkthrough](demo-walkthrough.md) and [showcase guide](showcase.md) describe current operation. Update the timed presenter journey after the relevant tasks land. Show retained evidence only with its recorded build/date; never substitute it for a claimed live result.
+
+Private connector/model experiments remain frozen supporting work. Customer identity, secret/evidence lifecycle, general redaction, broader isolation/failure qualification and scale remain separate release decisions. No new execution profile, external customer assessment or production guarantee is implied by these screens.

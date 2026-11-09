@@ -1,0 +1,4 @@
+positive-before: PASS; tsunami-curl-positive-before-9g6zt
+runner: PASS; tsunami-curl-runner-wcmfm
+positive-after: PASS; tsunami-curl-positive-after-dqmdd
+PASS selected curl bypass checks; records in artifacts/d9/20261109T143951Z/curl-network

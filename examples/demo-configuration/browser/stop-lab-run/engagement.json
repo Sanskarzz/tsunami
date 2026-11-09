@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/ui-qualification",
+  "authorized": false,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 0,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "61bf17a902b5f62b2b9a538ec47a3f2c",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 0,
+    "scope_digest": "3e3d74863603d67d889355e356c2a45ce6f1c57e1b671f6ba9431246b307eb5c"
+  },
+  "name": "UI qualification: stop-lab-run",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080"
+  ],
+  "start_date": "2026-11-07",
+  "status": "On-Hold",
+  "target": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+  "target_type": "api"
+}

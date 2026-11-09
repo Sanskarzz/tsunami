@@ -330,7 +330,7 @@ func (s *Store) stopSetups(tenant string, global bool) ([]string, error) {
 
 // Only onboarded plans opt into this persisted per-run interval. Reservations
 // are serialized with Stop; waiting never retries an HTTP operation.
-func (s *Server) reserveTarget(ctx context.Context, id string) error {
+func (s *Server) reserveTarget(ctx context.Context, id, op, capture, account, path string) error {
 	for {
 		var delay time.Duration
 		s.mu.Lock()
@@ -350,6 +350,8 @@ func (s *Server) reserveTarget(ctx context.Context, id string) error {
 			r.RequestCount++
 			now := time.Now().UTC()
 			tracked(r).LastAdmittedAt = &now
+			index, slot := activityRead(*r, account, path)
+			appendActivity(r, "request.admitted", op, capture, ActivityData{ReadIndex: index, AccountSlot: slot, Reservation: r.RequestCount, ObservedAt: &now})
 			return nil
 		})
 		s.mu.Unlock()

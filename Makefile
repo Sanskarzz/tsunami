@@ -19,6 +19,47 @@ verify:
 verify-toolkit:
 	python3 -B scripts/check-examples.py --toolkit "$(TOOLKIT_PATH)"
 
+.PHONY: verify-ui-metadata
+verify-ui-metadata:
+	node --test scripts/test_ui_metadata.mjs
+
+.PHONY: verify-ui-activity
+verify-ui-activity:
+	node --test scripts/test_ui_metadata.mjs scripts/test_ui_activity.mjs
+
+.PHONY: verify-ui-activity-browser
+verify-ui-activity-browser:
+	TSUNAMI_UI_BROWSER_TEST=1 go test -race -count=1 ./internal/webui -run TestLocalBrowserActivityAndStop -v
+
+.PHONY: verify-ui-onboarding verify-ui-onboarding-browser
+verify-ui-onboarding:
+	node --test scripts/test_ui_metadata.mjs scripts/test_ui_activity.mjs scripts/test_ui_onboarding.mjs
+
+.PHONY: verify-ui-findings
+verify-ui-findings:
+	node --test scripts/test_ui_metadata.mjs scripts/test_ui_activity.mjs scripts/test_ui_onboarding.mjs scripts/test_ui_findings.mjs
+
+.PHONY: verify-ui-findings-browser
+verify-ui-findings-browser:
+	TSUNAMI_UI_FINDINGS_TEST=1 go test -race -count=1 ./internal/webui -run TestLocalBrowserFindingsAndEvidence -v
+
+.PHONY: verify-ui-retest verify-ui-retest-browser
+verify-ui-retest:
+	node --test scripts/test_ui_metadata.mjs scripts/test_ui_activity.mjs scripts/test_ui_onboarding.mjs scripts/test_ui_findings.mjs scripts/test_ui_retest.mjs
+
+verify-ui-retest-browser:
+	TSUNAMI_UI_RETEST_TEST=1 go test -race -count=1 ./internal/webui -run TestLocalBrowserRetest -v
+
+.PHONY: verify-ui-demo demo-rehearse
+verify-ui-demo:
+	node scripts/verify-ui.mjs --demo
+
+demo-rehearse:
+	node scripts/verify-ui.mjs --demo --rehearse
+
+verify-ui-onboarding-browser:
+	python3 -B scripts/verify-ui-onboarding.py
+
 build:
 	CGO_ENABLED=0 go build -trimpath -o bin/tsunami ./cmd/tsunami
 	cp /etc/ssl/certs/ca-certificates.crt bin/ca-certificates.crt

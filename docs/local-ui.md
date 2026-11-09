@@ -1,6 +1,6 @@
 # Local operator interface
 
-This is a small running frontend for the existing configured-application APIs. It replaces neither the CLI nor the static product mockups. Its data comes from the control plane: no sample finding, fictional usage counter or simulated running state is inserted.
+This is the frontend for the existing configured-application APIs. Its data comes from the control plane: no sample finding, fictional usage counter or simulated running state is inserted. D5 activity/Stop, D6 Dashboard/onboarding/Scope Review, D7 findings/evidence/remediation and D8 linked retest were deployed and [qualified in D9](../examples/demo-journey/README.md), including a paced five-minute browser dry run. The older D2 build remains historical. Recheck current readiness before presentation; qualification is tied to a build and timestamp.
 
 The [application onboarding flow](application-onboarding.md) now adds an initial form, checked questions for missing facts, protected bearer access, bounded prerequisite validation and a saved assessment draft. The setup advisor is rule-checked rather than a live model; wider agent planning remains in [the product direction](onboarding-readiness.md).
 
@@ -8,13 +8,17 @@ The interface supports registered synthetic object/property read plans, scope re
 
 ## Enable and open
 
-The dedicated `kind-tsunami-lab` cluster, gVisor/Cilium and configured applications must already exist. Run from the repository root:
+The dedicated `kind-tsunami-lab` cluster, gVisor/Cilium and configured applications must already exist. For the frozen demo selection, follow [configuration and qualification](demo-configuration.md). If the UI is already enabled on that qualified build, use the loopback port-forward below without rebuilding.
+
+For initial enablement or an intentional rebuild, run from the repository root:
 
 ```sh
 make ui-deploy
 ```
 
 This checks for idle owned workloads and nonterminal permissions, builds/loads matching uniquely tagged native/tools images, provisions/preserves a control-only onboarding encryption key and enables `TSUNAMI_ENABLE_UI=true` on the existing control Deployment. The worker image setting is updated with the native image; the tools image is updated with the same source build. Other environment/Secret configuration and durable history are preserved. There is no new cluster, Ingress, NodePort, model call, target reset or automatic assessment. Use the lab exclusively during this maintenance; the check is not a distributed maintenance lock.
+
+A rebuild selects a new build and requires its own qualification; a previous image's results do not qualify the replacement. The frontend has one entry point, `/ui/`. The old fictional templates were removed. D9's matching deployed build and evidence are recorded in [the operating contract](demo-configuration.md); rebuilding after it selects a replacement requiring fresh qualification.
 
 If disposable lab credentials have expired, explicitly refresh them between assessments:
 
@@ -51,21 +55,47 @@ Paste it privately into the masked field, then Connect before sharing your scree
 
 | Screen/action | Existing operator API | Decision |
 |---|---|---|
-| Connect / refresh lists | `GET /v1/applications`, `GET /v1/engagements`; Connect also reads `GET /v1/status` | Tenant-authenticated registered plans and history only. Route status is startup configuration, not a live dependency probe. |
+| Connect / refresh lists | `GET /v1/applications`, `GET /v1/engagements`, `GET /v1/onboarding`; Connect also reads `GET /v1/status` | Tenant-authenticated registered plans and history only. Route status is startup configuration, not a live dependency probe. |
 | Choose application | None | Local selection; no target requests. |
 | Create draft | `POST /v1/engagements`, then `GET /v1/engagements/{id}` | Server snapshots the registered application and limits. |
-| Approve | `POST /v1/engagements/{id}/approve` | Server records approval of immutable scope. The UI additionally requires the reviewed digest and checkbox. |
+| Approve | `POST /v1/engagements/{id}/approve` | Server records approval of immutable scope. The checkbox is bound to the displayed digest; no digest typing is required. The backend still accepts `{}` until D10. |
 | Start | `POST /v1/engagements/{id}/runs` | Creates one scripted attempt; reconciliation creates/observes its Job. |
-| Observe | `GET /v1/engagements/{id}` and `GET /v1/runs/{run}/status` | Read-only metadata. No capture bodies are polled. |
+| Observe | `GET /v1/engagements/{id}`, `GET /v1/runs/{run}/status`, cursor-based `GET /v1/runs/{run}/events` | Read-only status and bounded actual activity metadata. No capture bodies are polled. |
 | Stop assessment | `POST /v1/engagements/{id}/stop` | Durable engagement revocation and cancellation; drain/exit/cleanup are separate facts. |
-| Load evidence | `GET /v1/engagements/{id}/export` | Explicit snapshot including raw synthetic responses and existing candidates/reviews. |
-| Download | No new request after loading a snapshot | Browser creates a local bundle JSON or draft Markdown download. |
+| Open Evidence / refresh findings | `GET /v1/engagements/{id}/findings` | Body-free candidate/check/capture metadata; no automatic full export or raw inspection. |
+| Inspect one capture | `GET /v1/engagements/{id}/evidence/{E-sha256}` | Explicit raw artifact read; verify bytes and provenance before display. No target replay. |
+| Load full export | `GET /v1/engagements/{id}/export` | Separate explicit snapshot including raw synthetic responses and existing candidates/reviews. |
+| Create linked retest draft | `POST /v1/engagements` with `source_engagement_id` and explicitly selected registered application | New unapproved scope with its own access bindings; no copied approval/credentials or automatic Start. |
+| Compare source/retest | `GET /v1/engagements/{retest-id}/retest` | Read-only scope differences, compatibility, latest actual outcomes and selected artifact references. No raw bodies/target replay. |
+| Download | No new request after inspecting an artifact or loading an export | Original artifact bytes, bundle JSON or draft Markdown. |
 
-The API explorer shows actual operator HTTP calls made by **this tab**, with method/path, body, response status and duration. Authorization is omitted. Exports are summarized in that explorer; raw evidence is available in the evidence panel. It is not a trace of internal controller decisions, broker tool calls, target packets or another terminal's API calls. Broker captures and recorded status/events provide those separate observations. Target/tool traffic never comes from the frontend.
+The API explorer shows actual operator HTTP calls made by **this tab**, with method/path, body, response status and duration. Authorization is omitted. Full exports and single raw artifacts are summarized in that explorer; raw evidence is available only in its explicit viewer/download. It is not a trace of internal controller decisions, broker tool calls, target packets or another terminal's API calls. Broker captures and recorded status/events provide those separate observations. Target/tool traffic never comes from the frontend.
 
-The planned seven reads are shown before execution, with their purpose. Full public scope/prerequisite assertions are available for review. The result and baseline verification count come from the trusted validator. `confirmed` produces a candidate requiring review; `no_issue_observed` is limited to the selected test; `inconclusive` and Stop do not mean secure. This UI creates no review or severity rating. Previously recorded reviews remain in the downloaded bundle.
+The planned seven reads are shown before execution, with their purpose. Full public scope/prerequisite assertions are available for review. The result and baseline verification count come from the trusted validator. `confirmed` produces a candidate requiring review; `no_issue_observed` is limited to the selected test; `inconclusive` and Stop do not mean secure. This UI creates no review or severity rating. Matching previously recorded reviews retain their actual provenance/rating in finding metadata and downloads; automated lab review is not human signoff.
 
-Use [the API-by-API presenter walkthrough](demo-walkthrough.md) for a call. The older [14 templates](templates/README.md) remain disconnected future-product previews; do not present their fictional states as live behavior.
+D3's source implementation uses [backend metadata](engagements.md#read-only-assessment-metadata-d3) for prospective scope limits, actual stored run allowance/deadline, procedure version/digest, executor/mode and observation times. Registered applications, scope approval records and latest attempt outcomes are separate labels. Access is described as locally configured/unavailable/changed, with current session health unknown; setup permission expiry and historical baseline validation are labeled separately. No access check is performed by reading metadata.
+
+The stored-attempt policy panel uses the run's recorded allowance, not the current profile default. Missing metadata has no hardcoded budget fallback. Failed status refreshes retain the last snapshot with a stale marker; an executor-check attempt is not proof of a successful worker observation. Start is disabled for missing/disabled scope metadata or locally unavailable access, while Stop remains independent. Backend admission remains authoritative even if a client bypasses these UI guards.
+
+D4's [durable activity events](design.md#activity-events-d4) now appear in D5's **Observed run activity** panel, separate from scope/approval history and this tab's API explorer. Rows distinguish admission, observed write, persisted capture, actual scope rejection, trusted validation and lifecycle facts, with source/timestamps/references. **Show scope rejection** locates a real rejected intent. Missing history, server retention gaps, locally truncated display, invalid pages and stale/error reads remain explicit. Only bounded metadata is polled; no raw evidence/export is loaded by observation.
+
+The persistent assessment permission bar keeps Stop accessible on the evidence screen and during a pending Start/export/read. Its receipt distinguishes pending, acknowledged and unacknowledged Stop; a later stored read may separately establish revocation after a lost response. Acknowledgement never means drain, worker exit or cleanup. A late response cannot clear the receipt. The lifecycle details expose actual revocation, local drain, deletion/absence timestamps and uncertain-operation counts.
+
+D6's Dashboard uses real registrations and the [stored latest-attempt projection](engagements.md#dashboard-list-metadata-d6), separating scope approval from attempt state/verdict. Access configuration/observations are expandable; current credential health stays unknown. Add Application distinguishes a new integration from reuse of exact lab facts/credentials, with missing facts handled by checked questions. Readable preflight and assessment tables show the actual account/GET/path pairs, addresses, intended rule, limits and expiry. Setup revision/digest changes clear preflight review; scope changes clear assessment review. Registration, preflight, approval and Start remain separate.
+
+The normal journey requires no JSON editing, manual fingerprint typing or Kubernetes operation. API/architecture inspection and raw scope/assertions/fingerprint are collapsed by default. Read the primary scope, check the explicit permission box and approve. The fingerprint remains a client consistency guard; the server approval body is unchanged until D10. Unsupported procedures disable approval/Start. Scope exclusions and synthetic-evidence handling remain visible.
+
+D7's Evidence screen uses [body-free finding metadata](engagements.md#finding-and-evidence-reads-d7), loaded once on navigation or explicit refresh. It shows candidate status, expected versus observed behavior, actual validator-selected owner/probe/identity/recheck references, and deterministic object/property remediation. Per-attempt outcomes remain separate, including no-issue, inconclusive and stopped/unfinished work. Original stored verdict and current read-time validation are labeled separately. Missing checks or unresolved earlier exposures remain visible; an unrelated later denial does not replace the selected earlier exposure.
+
+Owner baseline and peer probe cards compare approved account/path, HTTP status, timestamp and validator outcome without bodies. **Inspect raw capture** loads only that selected artifact. The browser verifies its exact SHA-256, artifact/run/capture identity and decoded engagement/procedure provenance before display; **Download inspected artifact bytes** preserves those exact bytes. Raw bodies/rejected arguments can contain sensitive values. Hash agreement is not independent authenticity or redaction. The full bundle/report remains under a separate explicit export action. Failed metadata refresh retains a stale snapshot; leaving Evidence, changing selection, Stop and disconnect cancel obsolete reads. Late responses cannot repopulate another context or clear Stop.
+
+D8 adds **Retest with an owned registered application** below remediation. Explicitly choose the application containing your correction, supply a fresh name/authorization reference and select an executor. Saving creates a linked unapproved draft and opens Scope Review with changed bindings shown; the fresh checkbox remains unchecked, and linked approval waits for the comparison to load. Existing approval and Start stay separate. Nothing selects a target or assumes a fixed result automatically. The backend uses the chosen registration's own access binding, never the source's credentials.
+
+The [linked comparison](engagements.md#linked-fixed-app-retest-d8) shows source/retest scope records, expiry, profile/version/digests, latest reserved runs, current trusted outcomes, original stored verdicts and selected artifact references. Open either side's evidence without raw-body/export transfer. Different profiles, access rules, ownership/protected field names or denial policy are labeled incompatible. Missing, stopped, failed or inconclusive work never becomes clean; a comparable no-issue result covers only the configured check and does not independently verify a deployed patch. Source Stop/expiry never grants new authority, and the original evidence stays intact. Dashboard retains the link for recovery; failed comparison reads retain stale facts, while Stop remains independent. Lost draft responses require refreshing history, without automatic replay.
+
+D3–D8 require matching assets/server. D5–D8's disposable local checks below remain separate from [D9's selected Kubernetes/browser/runtime qualification](../examples/demo-journey/README.md). Neither campaign establishes general hostile-process containment or customer readiness.
+
+Use [the API-by-API presenter walkthrough](demo-walkthrough.md) for the interface. The disconnected fictional product templates have been removed. [The screen/state design](design.md) distinguishes implemented source from proposed improvements and the older deployed build.
 
 ## Failures and browser boundary
 
@@ -73,20 +103,49 @@ Use [the API-by-API presenter walkthrough](demo-walkthrough.md) for a call. The 
 - The opt-in wrapper sets `Cache-Control: no-store` and the UI has a same-origin CSP with no external scripts/fonts. Target/API text and Markdown are rendered as text, not HTML. Evidence can still contain sensitive echoed values; general redaction remains unfinished. Treat raw evidence/downloads accordingly.
 - Draft/approve/start/Stop are never automatically retried. A lost Start response may already have created work. Refresh/recover its stored child IDs. This viewer blocks duplicate Start clicks and a second attempt for its loaded engagement; another client/operator can still create attempts within backend limits. There is no server start idempotency key.
 - Stop is available independently of a pending Start/export/observation request. A failed acknowledgement is shown as unconfirmed. An acknowledged Stop followed by a failed read is not called a cleanup success. No external emergency egress cutoff is added.
-- Observation polls after a run starts, without overlap within that loop. It ends on observed API resource cleanup, errors, pause, navigation/disconnect or a bounded observation window. Closing/pausing/reloading the viewer never implies Stop. Observations may be stale and API object absence is not process-exit proof.
+- Manual/polled observation shares one in-flight refresh, with separate status/feed errors and bounded cursor pages. It ends on errors, pause, leaving the execution screen, selection changes, disconnect, 120 refreshes, a stopped empty scope, or observed cleanup with known zero local/uncertain work and no unread page. Explicit Resume restarts read-only observation. Cancelled/late viewer reads cannot overwrite the new selection or Stop receipt. Disconnect remains available during pending actions; it cancels reads, invalidates late responses and never sends Stop. Observations may be stale; API object absence is not process-exit proof.
 - The viewer uses the existing 192 MiB inline export ceiling. Large exports can consume significant browser memory; this is a small lab interface, not scalable evidence storage/delivery. Downloads are JSON/Markdown, not an automatically materialized evidence directory. Use `tsunami export-bundle --input FILE --out NEW_DIRECTORY` to materialize and run the existing verifier.
 
 ## Qualification
 
+The selected-deployment D9 driver is `make verify-ui-demo`; `make demo-rehearse` adds scheduled 0/30/90/150/200/255-second stages and a 300-second finish. The former does not prove a timed rehearsal. Both check deployed asset hashes and create six fresh owned assessments: real onboarding/finding, active held-request Stop during a pending viewer export, a linked fixed-app retest with lost Start recovery, and three separate property controls. The property controls run after the timed presentation. Actual journal sequences, validator-selected artifacts/download hashes, target cancellation/counters, fresh approval, preserved original evidence and same-origin behavior are checked. The onboarded worker is inspected through CRI for actual gVisor/runtime/image identity.
+
+Builds, credential preparation and native/curl network checks are separate qualification steps; see [configuration](demo-configuration.md). The [retained D9 campaign](../examples/demo-journey/README.md) is an automated paced browser dry run with a presenter script, not recorded human narration or a guarantee for future response times. It ended with eight engagement slots. Recheck credentials/capacity and reserve six slots before repeating the full campaign; never discard history to make it fit. The three-assessment live presentation and the property campaign remain distinct owned scopes. Private full records live under `artifacts/ui/browser-.../`; only a reviewed selection is retained under `examples/demo-journey/`.
+
+`make verify-ui-retest` runs all **36 frontend tests**, adding fresh-review gating, real comparison presentation, incompatible/unfinished outcomes, explicit destination/source submission, lost draft recovery, stale/mismatched reads, safe text, Stop and disconnect independence. `make verify-ui-retest-browser` checks two real native Mecatl attempts across distinct owned origins: a confirmed source, source revocation, linked changed-target draft, separate approval/Start, no-issue retest and preserved original candidate/artifact bytes. It also checks an unexecuted incompatible draft, Dashboard recovery without replay, metadata-only navigation and narrow layout. Go asserts fourteen target reads/two probes and no unexpected paths. Requires Go, Node 22 and Chrome; private records live under `artifacts/ui-retest/local-.../`. This is disposable source integration, not Kubernetes/gVisor/Cilium qualification.
+
+`make verify-ui-findings` runs all **30 frontend tests**, including prior metadata/activity/onboarding coverage plus explicit raw-read integrity, download bytes, safe text, missing/stopped evidence, stale/late reads and Stop/disconnect independence. `make verify-ui-findings-browser` runs five real native Mecatl controls against disposable object/property targets: leak, denial, property leak, filtering and ambiguity. Go asserts 35 reads/five probes and no unexpected paths; Chrome checks metadata-only navigation, exact validator links, explicit owner/probe artifacts, original-byte downloads, full-export correspondence, review provenance, narrow layout and same-origin behavior. It requires Go, Node 22 and Chrome and saves private records under `artifacts/ui-findings/local-.../`. This uses `LocalScheduler`, not Kubernetes isolation, and calls no model.
+
+`make verify-ui-onboarding` runs all 23 frontend tests. `make verify-ui-onboarding-browser` checks the real Add -> explicit four-read preflight -> unapproved draft -> reviewed approval -> Start path, with target-side counts and the existing fixed curl adapter. Negative checks cover invalid operator tokens, missing API, unsupported password/SSO, changed setup review, stale grant rejection without traffic, protected-input omission, exact scope rendering, text injection, Dashboard state/result separation and narrow layout.
+
+The onboarding browser check requires Linux, Python 3, `bwrap`, Go, Node 22, Chrome and curl. Its test-only launcher mounts the exact reviewed script at its fixed `/opt/tsunami/http-read.sh` path in a temporary filesystem view for the Go fixture/worker. It installs nothing on the host and adds no configurable worker script path. Chrome retains its normal host sandbox outside that view; its temporary profile is passed only to the test driver. This is not a Kubernetes/worker-containment qualification. Private summaries/screenshots live under `artifacts/ui-onboarding/local-.../`; temporary fixture state/profile are cleaned up.
+
+`make verify-ui-activity` runs 18 isolated frontend tests, including concurrency and failure injections. `make verify-ui-activity-browser` is an opt-in Go/Chrome integration test using a temporary database, disposable loopback bearer/JSON targets, and the real control plane, broker, validator and scripted Mecatl `LocalScheduler`. It makes five explicitly approved attempts: vulnerable/fixed outcomes and three active held-request Stops during pending export/Start and a lost Stop response. Go asserts target holds/cancellations and no remaining active work. It also checks journal-to-screen sequences, read-only recovery, same-origin requests and narrow layout. Node 22 and Google Chrome are required; ordinary `make verify` skips this optional browser test.
+
+The local browser test saves private summaries/source asset hash/screenshots under `artifacts/ui-activity/local-.../` and cleans up its temporary browser profile/database/targets. It changes no cluster, fixture configuration or selected history and calls no model. It establishes source/UI integration, **not Kubernetes/gVisor/Cilium isolation**. Failure injection delays/drops real responses; it never supplies fake findings/events to the frontend. The existing deployment driver below remains a separate qualification and needs matching rebuilt assets/server, current credentials and capacity.
+
 ```sh
 make verify
+make verify-ui-metadata
+make verify-ui-activity
+# Disposable loopback database/targets and real Mecatl; requires Node 22 + Chrome:
+make verify-ui-activity-browser
+make verify-ui-onboarding
+make verify-ui-onboarding-browser
+make verify-ui-findings
+make verify-ui-findings-browser
+make verify-ui-retest
+make verify-ui-retest-browser
 node --check internal/webui/static/app.js
 node scripts/verify-ui.mjs
 # Include form/question/protected-access/validation/dynamic-registration checks:
 node scripts/verify-ui.mjs --onboarding
+# Current selected-deployment journey (six fresh engagements), optional pacing:
+make verify-ui-demo
+make demo-rehearse
 ```
 
-The browser driver requires local Node 22 with WebSocket support and Google Chrome. It uses a fresh temporary headless profile, the owned cluster and a loopback port-forward. It reads the lab token into process/page memory without printing it. It automatically approves **owned-lab** scopes, runs the vulnerable/fixed/held-Stop cases, inspects actual API results, downloads/materializes evidence, checks hashes, and tests invalid tokens, wrong digests, duplicate clicks, display injection and narrow-screen layout. It also simulates a lost response after a committed Start and holds a real export response while Stop is used. These are client-side failure injections, not production partitions. It creates new run history and attempts to Stop only its own engagements. It never contacts a customer application or a model. A forced kill/platform failure can still leave uncertain work; inspect it before maintenance.
+The Kubernetes browser driver requires local Node 22 with WebSocket support and Google Chrome. It uses a fresh temporary headless profile, the owned cluster and a loopback port-forward. It reads the lab token into process/page memory without printing it. It automatically approves **owned-lab** scopes, inspects real results, downloads/materializes evidence, checks hashes, and tests invalid tokens, wrong digests, duplicate clicks, display injection and narrow-screen layout. It simulates a lost response after committed Start and holds a real export response while Stop is used. These are client-side failure injections, not production partitions. The legacy no-flag/`--onboarding` modes retain their three/four-assessment campaigns; D9 uses `--demo --rehearse`. Each creates new history and attempts to Stop only its own engagements. No customer application or external model is contacted. A forced kill/platform failure can still leave uncertain work; inspect it before maintenance.
 
 It saves a private result under `artifacts/ui/browser-.../`, including screenshots, IDs/status, credential-free operator request metadata, downloads and materialized exports. The display-injection check modifies only a browser-side application-list response; it does not fabricate target evidence. Failed records remain failed. Review output for credentials/data before sharing. This does not qualify arbitrary hostile shell execution, all browsers, accessibility, distributed failures, scale or real customer readiness.
 

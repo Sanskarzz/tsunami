@@ -1,0 +1,276 @@
+{
+  "checked_at": "2026-11-07T09:37:26.754609+00:00",
+  "context": "kind-tsunami-lab",
+  "binary_sha256": "aad5d0b98d08cedc83334a71cbc85eece2348439e2da2d8bfa7e1825f48327bf",
+  "external_model_calls": 0,
+  "profile": "object",
+  "checks": [
+    {
+      "application": "vampi-vulnerable",
+      "passed": true,
+      "engagement_id": "17db847636ff157eac3e3d7a41692349",
+      "run_id": "0a6bc7741a5b0e26b286925585ed7164",
+      "result_status": {
+        "run_id": "0a6bc7741a5b0e26b286925585ed7164",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:38:57.072034803Z",
+        "execution": "dispatch_intent",
+        "dispatch_intent_at": "2026-11-07T09:37:27.168428565Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:37:28.882649324Z",
+        "cleanup": "pending",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Cross-user book secret access",
+          "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+          "evidence_ids": [
+            "6f18458a647a3ffed8aba3a8a082ca98",
+            "e967beef02e4abb8aaafd6ce8522020d",
+            "387515862fd1465c1ae4bf02674f2389",
+            "7fc0a0591d80ba7c06bbb417304c528c",
+            "d1a3ce179dda6ab1cd1bbf1cf6061cb8",
+            "11093941fab4c88f5f45ed55e3df5c7a",
+            "f3d5d46efd6562397ebb22cb661fdf3c"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "candidates": 1,
+      "artifacts": 8,
+      "after_cleanup": {
+        "run_id": "0a6bc7741a5b0e26b286925585ed7164",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:38:57.072034803Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:37:27.168428565Z",
+        "exit_observed_at": "2026-11-07T09:37:29.668978863Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:37:28.882649324Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:37:29.177538733Z",
+        "api_resources_absent_at": "2026-11-07T09:37:31.171131672Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "confirmed",
+          "title": "Cross-user book secret access",
+          "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+          "evidence_ids": [
+            "6f18458a647a3ffed8aba3a8a082ca98",
+            "e967beef02e4abb8aaafd6ce8522020d",
+            "387515862fd1465c1ae4bf02674f2389",
+            "7fc0a0591d80ba7c06bbb417304c528c",
+            "d1a3ce179dda6ab1cd1bbf1cf6061cb8",
+            "11093941fab4c88f5f45ed55e3df5c7a",
+            "f3d5d46efd6562397ebb22cb661fdf3c"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      }
+    },
+    {
+      "application": "vampi-fixed",
+      "passed": true,
+      "engagement_id": "ea7d836fed1ac65b3aee1a4595ff3284",
+      "run_id": "f1713b9b4a06dddf247e993d9f5af104",
+      "result_status": {
+        "run_id": "f1713b9b4a06dddf247e993d9f5af104",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:39:01.337008887Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-07T09:37:31.664540003Z",
+        "worker_observed_at": "2026-11-07T09:37:32.673126955Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:37:33.55048237Z",
+        "cleanup": "delete_accepted",
+        "delete_accepted_at": "2026-11-07T09:37:33.671937782Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "no_issue_observed",
+          "title": "Cross-user book secret access",
+          "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+          "evidence_ids": [
+            "d72d7d6be84125e50c7dd0c6e760d620",
+            "a22d85d7685d27d9099fa936d2f1e224",
+            "57eb1ffc4fb8d72368dd4fb3a811421a",
+            "191f50fdfb7c351400164fd795689400",
+            "cb1e5a0600f8c8868f92cfc1e86a2e77",
+            "707de0a99c1afbe440aeb5e3355c2735",
+            "5b6fe30996fb5ccc7aa0b8b54bd95cec"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      },
+      "candidates": 0,
+      "artifacts": 8,
+      "after_cleanup": {
+        "run_id": "f1713b9b4a06dddf247e993d9f5af104",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 7,
+        "permission": "closed",
+        "expires_at": "2026-11-07T09:39:01.337008887Z",
+        "execution": "exit_observed",
+        "dispatch_intent_at": "2026-11-07T09:37:31.664540003Z",
+        "worker_observed_at": "2026-11-07T09:37:32.673126955Z",
+        "exit_observed_at": "2026-11-07T09:37:34.164202367Z",
+        "activity": "no_local_work",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:37:33.55048237Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:37:33.671937782Z",
+        "api_resources_absent_at": "2026-11-07T09:37:35.168597721Z",
+        "observation_code": "observed",
+        "assessment": {
+          "verdict": "no_issue_observed",
+          "title": "Cross-user book secret access",
+          "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+          "evidence_ids": [
+            "d72d7d6be84125e50c7dd0c6e760d620",
+            "a22d85d7685d27d9099fa936d2f1e224",
+            "57eb1ffc4fb8d72368dd4fb3a811421a",
+            "191f50fdfb7c351400164fd795689400",
+            "cb1e5a0600f8c8868f92cfc1e86a2e77",
+            "707de0a99c1afbe440aeb5e3355c2735",
+            "5b6fe30996fb5ccc7aa0b8b54bd95cec"
+          ],
+          "validation": {
+            "baselines_required": 6,
+            "baselines_verified": 6,
+            "probe_captured": true,
+            "expected_access": "deny"
+          }
+        }
+      }
+    },
+    {
+      "application": "stop-lab-run",
+      "passed": true,
+      "target_before": {
+        "requests": 0,
+        "active": 0,
+        "probe_started": 0,
+        "probe_cancelled": 0,
+        "probe_completed": 0
+      },
+      "engagement_id": "fd593e0729e773d688dc44c0401781a5",
+      "run_id": "b2f91a9553a02a000d4d6a7b6a83f358",
+      "target_held": {
+        "requests": 5,
+        "active": 1,
+        "probe_started": 1,
+        "probe_cancelled": 0,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-07T09:37:37.251736329Z",
+        "probe_started_at": "2026-11-07T09:37:37.251736329Z"
+      },
+      "runtime": {
+        "handler": "runsc",
+        "type": "io.containerd.runsc.v1"
+      },
+      "worker_image_id": "sha256:42d715d0f828322f673ecb2bc08e893039cd515e0c380831d71b92d9c50430d0",
+      "worker_container_id": "a121b71d102c763ecd9ddaa9cdbd2bd6fdbce474feba4771c6e431d872e259bb",
+      "target_cancelled": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-07T09:37:37.251736329Z",
+        "probe_started_at": "2026-11-07T09:37:37.251736329Z",
+        "probe_cancelled_at": "2026-11-07T09:37:38.922777405Z"
+      },
+      "result_status": {
+        "run_id": "b2f91a9553a02a000d4d6a7b6a83f358",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 5,
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-07T09:37:38.920373328Z",
+        "expires_at": "2026-11-07T09:39:05.450914835Z",
+        "execution": "worker_observed",
+        "dispatch_intent_at": "2026-11-07T09:37:35.674950769Z",
+        "worker_observed_at": "2026-11-07T09:37:37.162032414Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:37:37.247722255Z",
+        "local_drain_observed_at": "2026-11-07T09:37:38.925308123Z",
+        "cleanup": "pending",
+        "observation_code": "observed"
+      },
+      "candidates": 0,
+      "artifacts": 6,
+      "after_cleanup": {
+        "run_id": "b2f91a9553a02a000d4d6a7b6a83f358",
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "target_requests_reserved": 5,
+        "permission": "revoked",
+        "revocation_reason": "engagement_stop",
+        "revoked_at": "2026-11-07T09:37:38.920373328Z",
+        "expires_at": "2026-11-07T09:39:05.450914835Z",
+        "execution": "unknown_after_resource_removal",
+        "dispatch_intent_at": "2026-11-07T09:37:35.674950769Z",
+        "worker_observed_at": "2026-11-07T09:37:37.162032414Z",
+        "activity": "drained_locally",
+        "local_operations": 0,
+        "uncertain_operations": 0,
+        "last_admitted_at": "2026-11-07T09:37:37.247722255Z",
+        "local_drain_observed_at": "2026-11-07T09:37:38.925308123Z",
+        "cleanup": "api_resources_absent",
+        "delete_accepted_at": "2026-11-07T09:37:39.171397476Z",
+        "api_resources_absent_at": "2026-11-07T09:37:40.162424793Z",
+        "observation_code": "observed"
+      },
+      "target_final": {
+        "requests": 5,
+        "active": 0,
+        "probe_started": 1,
+        "probe_cancelled": 1,
+        "probe_completed": 0,
+        "last_request_at": "2026-11-07T09:37:37.251736329Z",
+        "probe_started_at": "2026-11-07T09:37:37.251736329Z",
+        "probe_cancelled_at": "2026-11-07T09:37:38.922777405Z"
+      }
+    }
+  ],
+  "limitations": [
+    "Owned synthetic data with known identities and inventory; no blind discovery or customer readiness.",
+    "Approvals in this campaign are automated lab actions, not customer authorization or human finding review.",
+    "One node and selected CLI paths; production failures, load and broad sandbox containment remain unqualified."
+  ],
+  "control_image_id": "sha256:100c336063b39d928a65b9516e995e0712ef298e47f9a79d345d7c5c4407a51f"
+}

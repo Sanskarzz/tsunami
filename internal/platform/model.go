@@ -12,6 +12,9 @@ import (
 
 var ErrWorkerFailed = errors.New("worker Job failed")
 
+// MaxRunDuration is the prospective run ceiling; engagement expiry may shorten it.
+const MaxRunDuration = 90 * time.Second
+
 const (
 	Pending   = "pending"
 	Running   = "running"
@@ -55,6 +58,7 @@ type Run struct {
 	ActiveModelRequests int                    `json:"active_model_requests,omitempty"`
 	Captures            []Capture              `json:"captures"`
 	Events              []Event                `json:"events"`
+	Activity            *Activity              `json:"activity,omitempty"`
 	Result              *Result                `json:"result,omitempty"`
 }
 

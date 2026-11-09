@@ -1,0 +1,134 @@
+{
+  "id": "7ee98da26f459aef6393d2dfe3de5bb4",
+  "tenant": "demo-a",
+  "revision": 5,
+  "details": {
+    "name": "Onboarded owned VAmPI",
+    "environment": "dev",
+    "frontend_url": "https://owned-frontend.example.test",
+    "authorization_ref": "owned-lab/onboarding-browser",
+    "api_origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "approved_addresses": [
+      "10.97.122.76"
+    ],
+    "auth_method": "bearer",
+    "identity_path": "/me",
+    "owner_path": "/books/v1/tsunami-owner-46015d1f7668",
+    "peer_path": "/books/v1/tsunami-peer-320166a08bb9",
+    "expected_access": "deny",
+    "protected_fields": [
+      "/secret"
+    ],
+    "synthetic_only": true,
+    "source_application": "vampi-vulnerable"
+  },
+  "state": "ready_for_approval",
+  "created_at": "2026-11-07T09:38:41.528622793Z",
+  "expires_at": "2026-11-07T10:38:41.528622793Z",
+  "messages": [
+    {
+      "role": "assistant",
+      "text": "I will review the supplied information and ask only for missing prerequisites. No target requests or security tests have started. This setup advisor uses checked rules, not a live model.",
+      "at": "2026-11-07T09:38:41.528622793Z"
+    },
+    {
+      "role": "assistant",
+      "text": "Provide the two bearer test tokens through the protected access form. They will not be added to the conversation, worker configuration or model context.",
+      "at": "2026-11-07T09:38:41.528632536Z"
+    },
+    {
+      "role": "assistant",
+      "text": "Two bearer credentials were assigned to this API origin through the protected form. Sessions are not verified until you approve baseline validation.",
+      "at": "2026-11-07T09:38:41.534241195Z"
+    },
+    {
+      "role": "assistant",
+      "text": "Two bearer credentials were assigned to this API origin through the protected form. Sessions are not verified until you approve baseline validation.",
+      "at": "2026-11-07T09:38:41.697757561Z"
+    },
+    {
+      "role": "assistant",
+      "text": "Four legitimate identity/own-resource reads passed and an unambiguous supported plan was compiled. No cross-user probe has run. Review the exact assessment scope before approving and starting; sessions will be rechecked during assessment.",
+      "at": "2026-11-07T09:38:44.860964564Z"
+    }
+  ],
+  "access_ready": true,
+  "access_origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+  "validation_attempts": 1,
+  "validation_requests": 4,
+  "validation_id": "3894c0424749f1291580cd59a65d68b8",
+  "validation_deadline": "2026-11-07T09:38:56.821937983Z",
+  "validated_at": "2026-11-07T09:38:44.860964564Z",
+  "plan": {
+    "version": "http-object-access/v2",
+    "id": "onboard-7ee98da26f459aef6393d2dfe3de5bb4",
+    "title": "Onboarded owned VAmPI",
+    "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+    "approved_addresses": [
+      "10.97.122.76"
+    ],
+    "credential_set_id": "b4c74cb0d35c1933e5557da49eb8cb29dc009554bcb2a122cc4e19c98c6a940d",
+    "synthetic_data_only": true,
+    "owner_pointer": "/owner",
+    "identity": [
+      {
+        "account": "owner",
+        "path": "/me",
+        "equals": {
+          "/data/username": "tsunami_owner_078cf785"
+        }
+      },
+      {
+        "account": "peer",
+        "path": "/me",
+        "equals": {
+          "/data/username": "tsunami_peer_0aa96e2b"
+        }
+      }
+    ],
+    "baselines": [
+      {
+        "account": "owner",
+        "path": "/books/v1/tsunami-owner-46015d1f7668",
+        "equals": {
+          "/book_title": "tsunami-owner-46015d1f7668",
+          "/owner": "tsunami_owner_078cf785"
+        },
+        "sha256": {
+          "/secret": "817322d7811ed4672324e0d40df373cd530f332ad765cd35ec854a9d6f67578a"
+        }
+      },
+      {
+        "account": "peer",
+        "path": "/books/v1/tsunami-peer-320166a08bb9",
+        "equals": {
+          "/book_title": "tsunami-peer-320166a08bb9",
+          "/owner": "tsunami_peer_0aa96e2b"
+        },
+        "sha256": {
+          "/secret": "d4dd855e73f50d5087b17c8ce2ae0539a25b0c286f6f54d7e9e9231268ce8887"
+        }
+      }
+    ],
+    "probe": {
+      "account": "peer",
+      "path": "/books/v1/tsunami-owner-46015d1f7668",
+      "equals": {
+        "/book_title": "tsunami-owner-46015d1f7668",
+        "/owner": "tsunami_owner_078cf785"
+      },
+      "sha256": {
+        "/secret": "817322d7811ed4672324e0d40df373cd530f332ad765cd35ec854a9d6f67578a"
+      }
+    },
+    "expected_access": "deny",
+    "denial_statuses": [
+      401,
+      403,
+      404
+    ],
+    "min_interval_ms": 1000
+  },
+  "advisor_mode": "checked_workflow",
+  "preflight_digest": "2510c6ad26741af690a22472c628f781efa0ad39afe6e00c43bd0661b10d7569"
+}

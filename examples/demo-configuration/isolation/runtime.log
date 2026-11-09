@@ -1,0 +1,3 @@
+Kernel: Linux version 4.19.0-gvisor #1 SMP Sun Jan 10 15:06:54 PST 2016
+PASS no API token, raw socket denied, root filesystem write denied
+READY for host runtime inspection

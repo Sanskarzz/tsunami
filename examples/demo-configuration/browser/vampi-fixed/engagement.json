@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/ui-qualification",
+  "authorized": true,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 1,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "c8796d7eb02d2c74375fd994ee5f661f",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 0,
+    "scope_digest": "7f6f196366776dc668f5f8e84d871442936542d7a20999378c1a71991228cdf6"
+  },
+  "name": "UI qualification: vampi-fixed",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000"
+  ],
+  "start_date": "2026-11-07",
+  "status": "Testing",
+  "target": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+  "target_type": "api"
+}

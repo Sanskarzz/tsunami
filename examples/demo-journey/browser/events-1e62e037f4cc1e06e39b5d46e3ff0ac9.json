@@ -1,0 +1,500 @@
+{
+  "items": [
+    {
+      "schema_version": 1,
+      "sequence": 1,
+      "recorded_at": "2026-11-09T14:50:27.756931208Z",
+      "kind": "run.created",
+      "source": "control_plane",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "execution_mode": "scripted",
+        "executor": "curl-http/v1",
+        "request_limit": 8,
+        "deadline": "2026-11-09T14:51:57.756669026Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 2,
+      "recorded_at": "2026-11-09T14:50:27.984873802Z",
+      "kind": "execution.dispatch_requested",
+      "source": "controller",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "observed_at": "2026-11-09T14:50:27.984872053Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 3,
+      "recorded_at": "2026-11-09T14:50:28.941035002Z",
+      "kind": "request.rejected",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "ab8479f502ce4ea1f9495b5ccc8eb648",
+      "capture_id": "db43ea086d0a3d205b9a84dcf047dda4",
+      "data": {
+        "stage": "scope",
+        "code": "scope_not_approved"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 4,
+      "recorded_at": "2026-11-09T14:50:28.941056783Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "ab8479f502ce4ea1f9495b5ccc8eb648",
+      "capture_id": "db43ea086d0a3d205b9a84dcf047dda4",
+      "data": {
+        "outcome": "blocked"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 5,
+      "recorded_at": "2026-11-09T14:50:29.0474832Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "d44493a1842d49d0fe7a2ed5c53bac3f",
+      "capture_id": "c81a5997e5cb7e74d3936da7b1ec1d39",
+      "data": {
+        "read_index": 1,
+        "account_slot": 1,
+        "reservation": 1,
+        "observed_at": "2026-11-09T14:50:29.047481301Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 6,
+      "recorded_at": "2026-11-09T14:50:29.051090268Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "d44493a1842d49d0fe7a2ed5c53bac3f",
+      "capture_id": "c81a5997e5cb7e74d3936da7b1ec1d39",
+      "data": {
+        "observed_at": "2026-11-09T14:50:29.05100506Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 7,
+      "recorded_at": "2026-11-09T14:50:29.055101091Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "d44493a1842d49d0fe7a2ed5c53bac3f",
+      "capture_id": "c81a5997e5cb7e74d3936da7b1ec1d39",
+      "data": {
+        "status": 200,
+        "duration_ms": 7,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 8,
+      "recorded_at": "2026-11-09T14:50:29.478705075Z",
+      "kind": "execution.worker_observed",
+      "source": "controller",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "observed_at": "2026-11-09T14:50:29.478704597Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 9,
+      "recorded_at": "2026-11-09T14:50:30.05116936Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "ca6e8d728614b71b9ba3a5924a0fcc20",
+      "capture_id": "971ee50839666c587ae7f663c8a94a67",
+      "data": {
+        "read_index": 2,
+        "account_slot": 2,
+        "reservation": 2,
+        "observed_at": "2026-11-09T14:50:30.051156117Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 10,
+      "recorded_at": "2026-11-09T14:50:30.059278635Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "ca6e8d728614b71b9ba3a5924a0fcc20",
+      "capture_id": "971ee50839666c587ae7f663c8a94a67",
+      "data": {
+        "observed_at": "2026-11-09T14:50:30.058984572Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 11,
+      "recorded_at": "2026-11-09T14:50:30.065440083Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "ca6e8d728614b71b9ba3a5924a0fcc20",
+      "capture_id": "971ee50839666c587ae7f663c8a94a67",
+      "data": {
+        "status": 200,
+        "duration_ms": 619,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 12,
+      "recorded_at": "2026-11-09T14:50:31.053548488Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "bc6f8be91aaf50209165ece19fb3eafb",
+      "capture_id": "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+      "data": {
+        "read_index": 3,
+        "account_slot": 1,
+        "reservation": 3,
+        "observed_at": "2026-11-09T14:50:31.053541797Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 13,
+      "recorded_at": "2026-11-09T14:50:31.060821823Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "bc6f8be91aaf50209165ece19fb3eafb",
+      "capture_id": "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+      "data": {
+        "observed_at": "2026-11-09T14:50:31.060537153Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 14,
+      "recorded_at": "2026-11-09T14:50:31.068126068Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "bc6f8be91aaf50209165ece19fb3eafb",
+      "capture_id": "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+      "data": {
+        "status": 200,
+        "duration_ms": 932,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 15,
+      "recorded_at": "2026-11-09T14:50:32.055273196Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "0dbe16aeeb68e2cdd84a89f738fa0b1b",
+      "capture_id": "735489ed5e5b972e02afbe40f376f236",
+      "data": {
+        "read_index": 4,
+        "account_slot": 2,
+        "reservation": 4,
+        "observed_at": "2026-11-09T14:50:32.055268573Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 16,
+      "recorded_at": "2026-11-09T14:50:32.061810626Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "0dbe16aeeb68e2cdd84a89f738fa0b1b",
+      "capture_id": "735489ed5e5b972e02afbe40f376f236",
+      "data": {
+        "observed_at": "2026-11-09T14:50:32.06161424Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 17,
+      "recorded_at": "2026-11-09T14:50:32.067923274Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "0dbe16aeeb68e2cdd84a89f738fa0b1b",
+      "capture_id": "735489ed5e5b972e02afbe40f376f236",
+      "data": {
+        "status": 200,
+        "duration_ms": 974,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 18,
+      "recorded_at": "2026-11-09T14:50:33.05794863Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "57ea7a9024c500620fe0c0fb70115c05",
+      "capture_id": "56826bf1dc4045757eef630b4eaf18f5",
+      "data": {
+        "read_index": 5,
+        "account_slot": 2,
+        "reservation": 5,
+        "observed_at": "2026-11-09T14:50:33.057937463Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 19,
+      "recorded_at": "2026-11-09T14:50:33.067253814Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "57ea7a9024c500620fe0c0fb70115c05",
+      "capture_id": "56826bf1dc4045757eef630b4eaf18f5",
+      "data": {
+        "observed_at": "2026-11-09T14:50:33.066892503Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 20,
+      "recorded_at": "2026-11-09T14:50:33.074950302Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "57ea7a9024c500620fe0c0fb70115c05",
+      "capture_id": "56826bf1dc4045757eef630b4eaf18f5",
+      "data": {
+        "status": 200,
+        "duration_ms": 977,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 21,
+      "recorded_at": "2026-11-09T14:50:34.060503466Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "71989738cee650b56c8733f9e2bdda11",
+      "capture_id": "8fd535ab9d99fe64d74efc474ba759ac",
+      "data": {
+        "read_index": 3,
+        "account_slot": 1,
+        "reservation": 6,
+        "observed_at": "2026-11-09T14:50:34.060498556Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 22,
+      "recorded_at": "2026-11-09T14:50:34.065575684Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "71989738cee650b56c8733f9e2bdda11",
+      "capture_id": "8fd535ab9d99fe64d74efc474ba759ac",
+      "data": {
+        "observed_at": "2026-11-09T14:50:34.065354557Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 23,
+      "recorded_at": "2026-11-09T14:50:34.070358511Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "71989738cee650b56c8733f9e2bdda11",
+      "capture_id": "8fd535ab9d99fe64d74efc474ba759ac",
+      "data": {
+        "status": 200,
+        "duration_ms": 969,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 24,
+      "recorded_at": "2026-11-09T14:50:35.063965072Z",
+      "kind": "request.admitted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "be4385ce47329405c3916d26b6dd3e97",
+      "capture_id": "4b2d711ec355901da8063f20dd601ce0",
+      "data": {
+        "read_index": 2,
+        "account_slot": 2,
+        "reservation": 7,
+        "observed_at": "2026-11-09T14:50:35.063954501Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 25,
+      "recorded_at": "2026-11-09T14:50:35.070889381Z",
+      "kind": "request.sent",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "be4385ce47329405c3916d26b6dd3e97",
+      "capture_id": "4b2d711ec355901da8063f20dd601ce0",
+      "data": {
+        "observed_at": "2026-11-09T14:50:35.070615143Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 26,
+      "recorded_at": "2026-11-09T14:50:35.076546981Z",
+      "kind": "request.capture_persisted",
+      "source": "broker",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "operation_id": "be4385ce47329405c3916d26b6dd3e97",
+      "capture_id": "4b2d711ec355901da8063f20dd601ce0",
+      "data": {
+        "status": 200,
+        "duration_ms": 933,
+        "outcome": "response_captured"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 27,
+      "recorded_at": "2026-11-09T14:50:35.086992937Z",
+      "kind": "validation.completed",
+      "source": "validator",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "verdict": "confirmed",
+        "validation": {
+          "required": 6,
+          "verified": 6,
+          "probe_captured": true
+        },
+        "evidence_ids": [
+          "c81a5997e5cb7e74d3936da7b1ec1d39",
+          "971ee50839666c587ae7f663c8a94a67",
+          "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+          "735489ed5e5b972e02afbe40f376f236",
+          "56826bf1dc4045757eef630b4eaf18f5",
+          "8fd535ab9d99fe64d74efc474ba759ac",
+          "4b2d711ec355901da8063f20dd601ce0"
+        ]
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 28,
+      "recorded_at": "2026-11-09T14:50:35.502457272Z",
+      "kind": "cleanup.delete_accepted",
+      "source": "controller",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "observed_at": "2026-11-09T14:50:35.502456431Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 29,
+      "recorded_at": "2026-11-09T14:50:36.973623709Z",
+      "kind": "execution.exit_observed",
+      "source": "controller",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "observed_at": "2026-11-09T14:50:36.97362311Z"
+      }
+    },
+    {
+      "schema_version": 1,
+      "sequence": 30,
+      "recorded_at": "2026-11-09T14:50:37.980699459Z",
+      "kind": "cleanup.resources_absent",
+      "source": "controller",
+      "engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "data": {
+        "observed_at": "2026-11-09T14:50:37.98069866Z"
+      }
+    }
+  ],
+  "next_cursor": 30,
+  "oldest_sequence": 1,
+  "latest_sequence": 30,
+  "has_more": false,
+  "history_truncated": false,
+  "gap": false,
+  "tracked_from_creation": true
+}

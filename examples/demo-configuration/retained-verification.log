@@ -1,0 +1,4 @@
+PASS showcase index, seven unreviewed outcomes and 54 selected network denials with reachable before/after controls.
+PASS onboarding readiness controls, four baseline reads, inferred plan and actual gVisor assessment evidence.
+PASS 11 fresh D2 materialized bundles and 82 artifact hashes/provenance links.
+PASS selected current assigned credential/key values absent from files and decoded artifacts; not general redaction.

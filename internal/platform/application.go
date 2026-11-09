@@ -170,47 +170,85 @@ func (r Run) ProcedureRemediation() string {
 }
 
 func validateApplication(r Run) Result {
+	return validateApplicationEvidence(r, nil)
+}
+
+// Optional trace records the same selected captures/checks as validation. It is
+// a read-only explanation, never a second path for confirming a finding.
+func validateApplicationEvidence(r Run, checks *[]EvidenceCheck) Result {
 	p := r.Application
 	if p == nil {
 		return Result{Verdict: "inconclusive", Reason: "Application plan unavailable.", EvidenceIDs: []string{}}
 	}
-	if p.Version != application.PropertyAccessProfile || !r.ProcedureValid() {
-		return validateApplicationAtProbe(r, -1)
+	if !r.ProcedureValid() || (p.Version != application.PropertyAccessProfile && p.ExpectedAccess != "deny") {
+		return validateApplicationAtProbe(r, -1, checks)
 	}
-	// A worker may repeat an allowed read within its budget. A later filtered
-	// reply must not erase a known private value already captured by the broker.
+	// A worker may repeat an allowed read within its budget. A later denial,
+	// filtered reply or failure cannot erase an earlier exposure. Validate each
+	// matching exposure against its own ordered prerequisites and rechecks.
 	unproven := []string{}
 	for i, capture := range r.Captures {
-		if capture.URL != r.Target+p.Probe.Path || capture.Account != p.Probe.Account || capture.Blocked || capture.Error != "" || capture.Status != 200 || p.Probe.PropertyResult(capture.Body) != "leaked" {
+		if capture.URL != r.Target+p.Probe.Path || capture.Account != p.Probe.Account || capture.Blocked || capture.Error != "" || capture.Status != 200 {
 			continue
 		}
-		result := validateApplicationAtProbe(r, i)
+		if p.Version == application.PropertyAccessProfile {
+			if p.Probe.PropertyResult(capture.Body) != "leaked" {
+				continue
+			}
+		} else if !p.Probe.Matches(capture.Body) {
+			continue
+		}
+		var selected []EvidenceCheck
+		result := validateApplicationAtProbe(r, i, &selected)
 		if result.Verdict == "confirmed" {
+			if checks != nil {
+				*checks = selected
+			}
 			return result
 		}
 		unproven = append(unproven, capture.ID)
 	}
-	result := validateApplicationAtProbe(r, -1)
+	result := validateApplicationAtProbe(r, -1, checks)
 	if len(unproven) > 0 && result.Verdict == "no_issue_observed" {
 		result.Verdict = "inconclusive"
 		result.Reason = "An earlier private-value exposure lacked complete ordered prerequisites. A later filtered reply cannot erase that observation."
-		for _, id := range unproven {
-			found := false
-			for _, existing := range result.EvidenceIDs {
-				if existing == id {
-					found = true
+		if p.Version == application.ObjectAccessProfile {
+			result.Reason = "An earlier protected-object exposure lacked complete ordered prerequisites. A later denied reply cannot erase that observation."
+		}
+	}
+	// Keep the unresolved exposure inspectable even when the latest probe is
+	// already inconclusive, rather than referencing only the later response.
+	for _, id := range unproven {
+		found := false
+		for _, existing := range result.EvidenceIDs {
+			if existing == id {
+				found = true
+			}
+		}
+		if !found {
+			result.EvidenceIDs = append(result.EvidenceIDs, id)
+		}
+		if checks != nil {
+			mapped := false
+			for _, check := range *checks {
+				if check.CaptureID == id {
+					mapped = true
+					break
 				}
 			}
-			if !found {
-				result.EvidenceIDs = append(result.EvidenceIDs, id)
+			if !mapped {
+				*checks = append(*checks, EvidenceCheck{Role: "earlier_unresolved_probe", Account: p.Probe.Account, Path: p.Probe.Path, CaptureID: id, Outcome: "unresolved_prior_exposure"})
 			}
 		}
 	}
 	return result
 }
 
-func validateApplicationAtProbe(r Run, selectedProbe int) Result {
+func validateApplicationAtProbe(r Run, selectedProbe int, checks *[]EvidenceCheck) Result {
 	p := r.Application
+	if checks != nil {
+		*checks = applicationChecks(r)
+	}
 	out := Result{Verdict: "inconclusive", Title: p.Title, Reason: "Verified identities, legitimate reads and an owner recheck are required.", EvidenceIDs: []string{}, Validation: &ValidationDetails{BaselinesRequired: 6, ExpectedAccess: p.ExpectedAccess}}
 	if !r.ProcedureValid() {
 		return out
@@ -228,7 +266,7 @@ func validateApplicationAtProbe(r Run, selectedProbe int) Result {
 	}
 	probe := r.Captures[probeIndex]
 	valid := func(c Capture) bool { return !c.Blocked && c.Error == "" && c.Status > 0 }
-	find := func(read application.Read, start, end int) bool {
+	find := func(read application.Read, start, end, checkIndex int) bool {
 		var last *Capture
 		for i := start; i < end; i++ {
 			c := &r.Captures[i]
@@ -239,17 +277,29 @@ func validateApplicationAtProbe(r Run, selectedProbe int) Result {
 		if last != nil {
 			out.EvidenceIDs = append(out.EvidenceIDs, last.ID)
 		}
-		return last != nil && valid(*last) && last.Status == 200 && read.Matches(last.Body)
+		verified := last != nil && valid(*last) && last.Status == 200 && read.Matches(last.Body)
+		if checks != nil {
+			check := &(*checks)[checkIndex]
+			check.Outcome = "missing"
+			if last != nil {
+				check.CaptureID = last.ID
+				check.Outcome = "not_verified"
+			}
+			if verified {
+				check.Outcome = "verified"
+			}
+		}
+		return verified
 	}
-	for _, read := range append(append([]application.Read{}, p.Identity...), p.Baselines...) {
-		if find(read, 0, probeIndex) {
+	for i, read := range append(append([]application.Read{}, p.Identity...), p.Baselines...) {
+		if find(read, 0, probeIndex, i) {
 			out.Validation.BaselinesVerified++
 		}
 	}
-	if find(p.Baselines[0], probeIndex+1, len(r.Captures)) {
+	if find(p.Baselines[0], probeIndex+1, len(r.Captures), 5) {
 		out.Validation.BaselinesVerified++
 	}
-	if find(p.Identity[1], probeIndex+1, len(r.Captures)) {
+	if find(p.Identity[1], probeIndex+1, len(r.Captures), 6) {
 		out.Validation.BaselinesVerified++
 	}
 	out.EvidenceIDs = append(out.EvidenceIDs, probe.ID)
@@ -265,6 +315,10 @@ func validateApplicationAtProbe(r Run, selectedProbe int) Result {
 		}
 	}
 	out.Validation.ProbeCaptured = valid(probe)
+	if checks != nil {
+		check := &(*checks)[4]
+		check.CaptureID, check.Outcome = probe.ID, applicationProbeOutcome(r, probe)
+	}
 	if out.Validation.BaselinesVerified != 6 || !out.Validation.ProbeCaptured {
 		return out
 	}

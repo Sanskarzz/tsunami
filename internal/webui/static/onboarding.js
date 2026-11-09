@@ -1,8 +1,10 @@
 // Typed, rule-checked setup conversation. This is deliberately not labelled a
 // live LLM. Protected values never become chat messages or API explorer bodies.
-export function createOnboardingUI({api,act,message,page,openEngagement,element,details,time,pretty}) {
+export function createOnboardingUI({api,act,message,page,openEngagement,element,details,time,pretty,actionTable,ruleText}) {
   const $=id=>document.getElementById(id);
   let current=null, editing=false, accessEditor=false, connected=false, locked=false, stopping=false, generation=0;
+  let applications=[], reviewedPreflight='';
+  const reviewKey=()=>current?current.id+'/'+current.revision+'/'+current.preflight_digest:'';
   const fields=['name','environment','frontend','reference','api','auth','identity','owner','peer','rule','fields'];
   const privateFields=value=>value.split(',').map(x=>x.trim()).filter(Boolean).map(x=>x.startsWith('/')?x:'/'+x.replaceAll('~','~0').replaceAll('/','~1'));
   function lock(on,busy) {
@@ -13,13 +15,14 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     $('edit-setup').disabled=!on||!current||busy||stopping||current.state==='stopped'||current.state==='validating'||!!current.engagement_id;
     $('update-setup-access').disabled=$('edit-setup').disabled||current?.details.auth_method!=='bearer'||!current?.details.api_origin;
     $('stop-setup').disabled=!on||!current||stopping||current.state==='stopped';
-    $('validate-setup').disabled=!on||!current||busy||stopping||current.validation_attempts>=3||!$('setup-preflight-approved').checked||!['ready_for_validation','validation_failed','interrupted'].includes(current.state);
-    $('prepare-setup').disabled=!on||busy||stopping||!current||(!current.engagement_id&&current.state!=='ready_for_approval');
+    $('validate-setup').disabled=!on||!current||busy||stopping||Date.parse(current.expires_at)<=Date.now()||current.validation_attempts>=3||!$('setup-preflight-approved').checked||reviewedPreflight!==reviewKey()||!['ready_for_validation','validation_failed','interrupted'].includes(current.state);
+    $('prepare-setup').disabled=!on||busy||stopping||!current||(!current.engagement_id&&(Date.parse(current.expires_at)<=Date.now()||current.state!=='ready_for_approval'));
     for (const b of document.querySelectorAll('.setup-open,.setup-submit')) b.disabled=!on||busy||stopping;
   }
   function apply(data,expectedGeneration=generation) {
     if(expectedGeneration!==generation)return;
     if(current&&current.id===data.id&&current.revision>data.revision)return;
+    if(!current||current.id!==data.id||current.revision!==data.revision||current.preflight_digest!==data.preflight_digest){reviewedPreflight='';$('setup-preflight-approved').checked=false;}
     current=data;render();
   }
   async function load(id) {
@@ -32,16 +35,21 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     $('setup-current').hidden=!current;
     $('setup-form').hidden=!!current&&!editing;
     $('cancel-edit-setup').hidden=!editing;
-    if(!current){lock(connected,locked);return;}
+    if(!current){$('setup-question').replaceChildren();$('setup-messages').replaceChildren();$('setup-preflight-approved').checked=false;reviewedPreflight='';renderSource();lock(connected,locked);return;}
     const d=current.details;
     $('setup-title').textContent=d.name;
     $('setup-state').textContent=current.state;
+    const next={needs_input:'Supply the missing prerequisites below. Saving answers makes no target request.',unsupported:'This authentication adapter is unavailable. No validation or assessment can start.',ready_for_validation:'Review and explicitly allow the four legitimate reads below. This is separate from assessment approval.',validating:'Prerequisite validation is active. Stop remains a separate action.',ready_for_approval:'Four legitimate reads passed. Review a separate assessment scope before approving any security probe.',assessment_created:'A saved assessment draft exists. Open its scope; approval and Start remain separate.',validation_failed:'Readiness was not established. Inspect the recorded reason, correct access/details and explicitly review another validation.',interrupted:'A previous validation is uncertain. Nothing was replayed. Inspect state before approving another attempt.',expired:'Setup permission expired. No readiness or execution permission is inferred.',stopped:'Setup permission is revoked. Cancellation and assessment cleanup are separate observations.'};
+    $('setup-next').textContent=next[current.state]||'Read the stored setup state; no readiness is inferred.';
+    details($('setup-summary'),[['Environment',d.environment],['API target',d.api_origin||'Awaiting API origin'],['Protected access',current.access_ready?'Configured for this origin; current session health unknown':'Not configured'],['Intended rule',ruleText(d.expected_access)],['Setup permission expires',time(current.expires_at)],['Last validation',current.validation_code|| (current.validated_at?'Passed at '+time(current.validated_at)+'; current session health unknown':'Not established')]]);
     details($('setup-facts'),[['Setup',current.id+' · revision '+current.revision],['Frontend',d.frontend_url],['API origin',d.api_origin||'Not supplied'],['API addresses',(d.approved_addresses||[]).join('\n')||'Not resolved/approved'],['Authentication',d.auth_method||'Not known'],['Protected access',current.access_ready?'Assigned to this origin; not shown':'Not assigned'],['Baseline validation',current.validated_at?time(current.validated_at):(current.validation_code||'Not established')],['Preflight requests',current.validation_requests+' / 4 this attempt · '+current.validation_attempts+' / 3 attempts'],['Setup expiry',time(current.expires_at)],['Advisor mode','Checked workflow · no external model calls']]);
     $('setup-messages').replaceChildren();
     for(const m of current.messages||[]){const row=element('div',undefined,'setup-message '+(m.role==='user'?'user':'assistant'));row.append(element('span',m.role==='user'?'You':'Setup assistant','eyebrow'),element('p',m.text),element('small',time(m.at)));$('setup-messages').append(row);}
     renderQuestion();
     const canValidate=['ready_for_validation','validation_failed','interrupted','validating'].includes(current.state)&&!!d.api_origin&&current.access_ready;
     $('setup-validation').hidden=!canValidate;
+    details($('setup-preflight-summary'),[['Target',d.api_origin],['Approved addresses',(d.approved_addresses||[]).join('\n')],['Permission expires',time(current.expires_at)],['Grant','Four GETs; at most 15 seconds; at least 1 second between reads; no redirects or cross-user probe'],['Current attempt',current.validation_requests+' recorded target requests · '+current.validation_attempts+' of 3 attempts used']]);
+    actionTable($('setup-preflight-actions'),[['owner',d.identity_path,'Verify account A identity'],['peer',d.identity_path,'Verify account B identity'],['owner',d.owner_path,"Read A's own record"],['peer',d.peer_path,"Read B's own record"]]);
     $('setup-preflight').textContent=pretty({api_origin:d.api_origin,approved_addresses:d.approved_addresses,method:'GET',reads:[{account:'owner',path:d.identity_path},{account:'peer',path:d.identity_path},{account:'owner',path:d.owner_path},{account:'peer',path:d.peer_path}],limits:{requests:4,deadline_seconds:15,min_interval_ms:1000},grant_digest:current.preflight_digest,validation_code:current.validation_code||undefined});
     $('setup-ready').hidden=!(current.state==='ready_for_approval'||current.engagement_id);
     $('prepare-setup').textContent=current.engagement_id?'Open saved assessment scope →':'Open the assessment scope for approval →';
@@ -94,14 +102,24 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     node.append(form);
   }
   function formDetails() {
-    return {name:$('setup-name').value.trim(),environment:$('setup-environment').value.trim(),frontend_url:$('setup-frontend').value.trim(),authorization_ref:$('setup-reference').value.trim(),source_application:$('setup-source').value,
+    const value={name:$('setup-name').value.trim(),environment:$('setup-environment').value.trim(),frontend_url:$('setup-frontend').value.trim(),authorization_ref:$('setup-reference').value.trim(),source_application:$('setup-source').value,
       api_origin:$('setup-api').value.trim(),auth_method:$('setup-auth').value,identity_path:$('setup-identity').value.trim(),owner_path:$('setup-owner').value.trim(),peer_path:$('setup-peer').value.trim(),expected_access:$('setup-rule').value,protected_fields:privateFields($('setup-fields').value),synthetic_only:$('setup-synthetic').checked,
       approved_addresses:editing&&current?current.details.approved_addresses:undefined};
+    if(value.source_application&&!editing){for(const key of ['api_origin','auth_method','identity_path','owner_path','peer_path','expected_access','protected_fields'])delete value[key];}
+    return value;
+  }
+  function renderSource(){
+    const app=applications.find(app=>app.id===$('setup-source').value);
+    $('setup-source-info').hidden=!app;
+    $('setup-extra').hidden=!!app&&!editing;
+    if(app)details($('setup-source-details'),[['Existing API',app.origin],['Approved addresses',app.approved_addresses.join('\n')],['Intended rule',ruleText(app.expected_access)],['Reuse','Existing lab credentials, routes and test facts are reused by the backend. A frontend URL does not change this API target. Saving creates no network permission.']]);
   }
   function clearForm() {
     for(const id of fields)$('setup-'+id).value='';$('setup-environment').value='dev';$('setup-source').value='';$('setup-source').disabled=false;$('setup-synthetic').checked=false;
   }
-  $('new-setup').addEventListener('click',()=>{generation++;current=null;editing=false;accessEditor=false;clearForm();render();page('setup');});
+  function start(){if(!connected||locked||stopping)return;generation++;current=null;editing=false;accessEditor=false;clearForm();render();page('setup');}
+  $('new-setup').addEventListener('click',start);
+  $('setup-source').addEventListener('change',renderSource);
   $('update-setup-access').addEventListener('click',()=>{accessEditor=true;renderQuestion();lock(connected,locked);});
   $('setup-form').addEventListener('submit',event=>{event.preventDefault();void act(async()=>{
     const d=formDetails(),g=generation;
@@ -115,9 +133,9 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
   });
   $('cancel-edit-setup').addEventListener('click',()=>{editing=false;render();});
   $('refresh-setup').addEventListener('click',()=>void act(async()=>{const g=generation;apply(await api('GET','/v1/onboarding/'+current.id),g);}));
-  $('setup-preflight-approved').addEventListener('input',()=>lock(connected,locked));
+  $('setup-preflight-approved').addEventListener('input',()=>{reviewedPreflight=$('setup-preflight-approved').checked?reviewKey():'';lock(connected,locked);});
   $('validate-setup').addEventListener('click',()=>void act(async()=>{
-    if(!$('setup-preflight-approved').checked)throw new Error('Review and approve the exact four-read preflight grant.');
+    if(!$('setup-preflight-approved').checked||reviewedPreflight!==reviewKey())throw new Error('Review and approve the current revision of the exact four-read grant.');
     const id=current.id,g=generation,revision=current.revision,digest=current.preflight_digest;
     $('setup-preflight-approved').checked=false;
     let observing=true,timer;
@@ -138,10 +156,11 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     finally{stopping=false;lock(connected,locked);}
   });
   return {
-    lock,
+    lock,start,
     lists(sessions,apps){
+      applications=apps.filter(app=>app.metadata?.registration==='startup');
       const selected=$('setup-source').value;$('setup-source').replaceChildren();const first=element('option','New integration · ask for missing facts');first.value='';$('setup-source').append(first);
-      for(const app of apps.filter(x=>!x.id.startsWith('onboard-'))){const option=element('option',app.id+' · '+app.version);option.value=app.id;$('setup-source').append(option);}if([...$('setup-source').options].some(o=>o.value===selected))$('setup-source').value=selected;
+      for(const app of applications){const option=element('option','Reuse lab: '+app.title+' · '+app.id);option.value=app.id;$('setup-source').append(option);}if([...$('setup-source').options].some(o=>o.value===selected))$('setup-source').value=selected;renderSource();
       $('setup-history').replaceChildren();
       for(const item of sessions.sort((a,b)=>b.created_at.localeCompare(a.created_at))){const b=element('button',undefined,'history-row setup-open');b.type='button';b.dataset.setup=item.id;const text=element('span',item.details.name);text.append(element('small',item.id));b.append(text,element('span',item.state,'badge'));b.addEventListener('click',()=>void act(()=>load(item.id)));$('setup-history').append(b);}
       if(!sessions.length)$('setup-history').textContent='No saved setups.';lock(connected,locked);

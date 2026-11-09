@@ -1,6 +1,6 @@
 # Testing the execution boundary
 
-The dedicated `tsunami-lab` Kind cluster adds a real gVisor runtime and Cilium networking. It is separate from the original `kind-kind` cluster. Shell execution is still disabled: these checks cover a small list of paths, not complete hostile-process containment.
+The dedicated `tsunami-lab` Kind cluster adds a real gVisor runtime and Cilium networking. It is separate from the original `kind-kind` cluster. General agent-controlled shell execution remains disabled. The fixed curl adapter has its own [reviewed boundary](tool-execution.md); the native checks here cover selected paths, not complete hostile-process containment. [D2's fresh qualification](../examples/demo-configuration/README.md) records both native and curl checks on the selected demo build.
 
 ## Why a separate cluster
 
@@ -50,11 +50,11 @@ The scripts save logs and JSON under `artifacts/isolation/<context>/`. A refusal
 - No IPv6, metadata-route, arbitrary UDP, DNS tunneling, ICMP, alternate interface, or node-failure qualification yet.
 - No cross-node or production multi-tenant validation. The lab has one node and one application namespace.
 - No measured runtime overhead or production capacity claim; resource requests need profiling before scale estimates.
-- No arbitrary shell, curl adapter, or external scanner. Later opt-in live-model trials use the same constrained broker tools; the original isolation experiment itself used scripted execution.
+- No arbitrary shell or external scanner qualification. The fixed curl adapter is assessed separately; later opt-in live-model trials use the same constrained broker tools. The original isolation experiment itself used scripted execution.
 - No guarantee that target-side work already accepted before cancellation has stopped.
 - No distributed permission lease or independent emergency cutoff yet.
 
-The next shell milestone needs an explicit tool adapter and more bypass tests. A proxy environment variable is insufficient. The later live-model path uses the constrained HTTP tools and does not require unrestricted shell access.
+Additional shell/scanner capabilities are deferred by the [current roadmap](roadmap.md). Any later selection needs its own reviewed adapter and containment/bypass tests. A proxy environment variable is insufficient. Existing live-model paths use constrained HTTP tools and do not require unrestricted shell access.
 
 ## Sources used for setup
 

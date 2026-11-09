@@ -1,0 +1,230 @@
+{
+  "schema_version": 1,
+  "engagement_id": "5c664e18a78a16843002daf474d871d8",
+  "observed_at": "2026-11-09T14:51:24.029479075Z",
+  "scope_digest": "2814be32b4ec6cfe89c9d79769418bd4177699cac6c77c51d27c3d71283086c0",
+  "candidates": [
+    {
+      "id": "F-ef57f6d7e29e499626bc8296353ffbdf",
+      "candidate_digest": "c408265900409167210a71cb3e9002d41bd2d905ca6c6c39c625d6b9aed8d9bd",
+      "title": "Onboarded owned VAmPI",
+      "display_title": "Cross-user access to a protected object",
+      "procedure": "onboard-3cefa1f66fc95e05dee4121d12b688e1/object-access/v2",
+      "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+      "status": "needs_human_review",
+      "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+      "remediation": "Authorize every object read against the authenticated principal and intended sharing rules on the server.",
+      "run_ids": [
+        "1e62e037f4cc1e06e39b5d46e3ff0ac9"
+      ],
+      "evidence_ids": [
+        "E-a63d8287b9a32b9b457cc507e104b7ac663f4df30c3141349cae156e804c75f3",
+        "E-503d286c6397d7d152535478faf8778603a4ffb57b533bb53e62b5dc067e0f81",
+        "E-021f295ae0091b1b5fd6e64ec9eb7f02d2decea17a62852347ed5cc3127923ce",
+        "E-f5ea3b36e1ad8103dfb7b0f27265c9add6e12396eabfb4832c91503c47711c23",
+        "E-b828a58e07f3689275732795960f53a5c099160d8c1d02bc54a2ac6f1b096017",
+        "E-1721be4ed505c1b2fb99dd16ebb9df479b9c5de1784bd2cb1b699b4c821da346",
+        "E-e5a2330bb0f5046d71cb8001c9f62eeaa2f28dbf0d1baa2270d4ffa9036c6867"
+      ]
+    }
+  ],
+  "assessments": [
+    {
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "state": "completed",
+      "procedure": "onboard-3cefa1f66fc95e05dee4121d12b688e1/object-access/v2",
+      "procedure_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "display_title": "Cross-user access to a protected object",
+      "stored_verdict": "confirmed",
+      "result": {
+        "verdict": "confirmed",
+        "title": "Onboarded owned VAmPI",
+        "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+        "evidence_ids": [
+          "c81a5997e5cb7e74d3936da7b1ec1d39",
+          "971ee50839666c587ae7f663c8a94a67",
+          "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+          "735489ed5e5b972e02afbe40f376f236",
+          "56826bf1dc4045757eef630b4eaf18f5",
+          "8fd535ab9d99fe64d74efc474ba759ac",
+          "4b2d711ec355901da8063f20dd601ce0"
+        ],
+        "validation": {
+          "baselines_required": 6,
+          "baselines_verified": 6,
+          "probe_captured": true,
+          "expected_access": "deny"
+        }
+      },
+      "checks": [
+        {
+          "role": "owner_identity",
+          "account": "owner",
+          "path": "/me",
+          "outcome": "verified",
+          "capture_id": "c81a5997e5cb7e74d3936da7b1ec1d39",
+          "evidence_id": "E-a63d8287b9a32b9b457cc507e104b7ac663f4df30c3141349cae156e804c75f3"
+        },
+        {
+          "role": "peer_identity",
+          "account": "peer",
+          "path": "/me",
+          "outcome": "verified",
+          "capture_id": "971ee50839666c587ae7f663c8a94a67",
+          "evidence_id": "E-503d286c6397d7d152535478faf8778603a4ffb57b533bb53e62b5dc067e0f81"
+        },
+        {
+          "role": "owner_baseline",
+          "account": "owner",
+          "path": "/books/v1/tsunami-owner-3bb414680a30",
+          "outcome": "verified",
+          "capture_id": "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+          "evidence_id": "E-021f295ae0091b1b5fd6e64ec9eb7f02d2decea17a62852347ed5cc3127923ce"
+        },
+        {
+          "role": "peer_baseline",
+          "account": "peer",
+          "path": "/books/v1/tsunami-peer-844f0e2af635",
+          "outcome": "verified",
+          "capture_id": "735489ed5e5b972e02afbe40f376f236",
+          "evidence_id": "E-f5ea3b36e1ad8103dfb7b0f27265c9add6e12396eabfb4832c91503c47711c23"
+        },
+        {
+          "role": "peer_probe",
+          "account": "peer",
+          "path": "/books/v1/tsunami-owner-3bb414680a30",
+          "outcome": "expected_object_and_proof_returned",
+          "capture_id": "56826bf1dc4045757eef630b4eaf18f5",
+          "evidence_id": "E-b828a58e07f3689275732795960f53a5c099160d8c1d02bc54a2ac6f1b096017"
+        },
+        {
+          "role": "owner_recheck",
+          "account": "owner",
+          "path": "/books/v1/tsunami-owner-3bb414680a30",
+          "outcome": "verified",
+          "capture_id": "8fd535ab9d99fe64d74efc474ba759ac",
+          "evidence_id": "E-1721be4ed505c1b2fb99dd16ebb9df479b9c5de1784bd2cb1b699b4c821da346"
+        },
+        {
+          "role": "peer_identity_recheck",
+          "account": "peer",
+          "path": "/me",
+          "outcome": "verified",
+          "capture_id": "4b2d711ec355901da8063f20dd601ce0",
+          "evidence_id": "E-e5a2330bb0f5046d71cb8001c9f62eeaa2f28dbf0d1baa2270d4ffa9036c6867"
+        }
+      ],
+      "expected_access": "deny",
+      "owner_account": "owner",
+      "peer_account": "peer",
+      "object_path": "/books/v1/tsunami-owner-3bb414680a30",
+      "protected_fields": [
+        "/secret"
+      ],
+      "remediation": "Authorize every object read against the authenticated principal and intended sharing rules on the server."
+    }
+  ],
+  "captures": [
+    {
+      "id": "E-6a75df52b410b0cea0c24cd867d078623af0c17ac1818bc20d493d4ffd2ad055",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "db43ea086d0a3d205b9a84dcf047dda4",
+      "sha256": "6a75df52b410b0cea0c24cd867d078623af0c17ac1818bc20d493d4ffd2ad055",
+      "artifact_path": "evidence/6a75df52b410b0cea0c24cd867d078623af0c17ac1818bc20d493d4ffd2ad055.json",
+      "started_at": "2026-11-09T14:50:28.940973708Z",
+      "finished_at": "2026-11-09T14:50:28.940976004Z",
+      "outcome": "blocked"
+    },
+    {
+      "id": "E-a63d8287b9a32b9b457cc507e104b7ac663f4df30c3141349cae156e804c75f3",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "c81a5997e5cb7e74d3936da7b1ec1d39",
+      "sha256": "a63d8287b9a32b9b457cc507e104b7ac663f4df30c3141349cae156e804c75f3",
+      "artifact_path": "evidence/a63d8287b9a32b9b457cc507e104b7ac663f4df30c3141349cae156e804c75f3.json",
+      "started_at": "2026-11-09T14:50:29.047432712Z",
+      "finished_at": "2026-11-09T14:50:29.055012506Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "owner",
+      "request_path": "/me"
+    },
+    {
+      "id": "E-503d286c6397d7d152535478faf8778603a4ffb57b533bb53e62b5dc067e0f81",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "971ee50839666c587ae7f663c8a94a67",
+      "sha256": "503d286c6397d7d152535478faf8778603a4ffb57b533bb53e62b5dc067e0f81",
+      "artifact_path": "evidence/503d286c6397d7d152535478faf8778603a4ffb57b533bb53e62b5dc067e0f81.json",
+      "started_at": "2026-11-09T14:50:29.445514107Z",
+      "finished_at": "2026-11-09T14:50:30.065272073Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "peer",
+      "request_path": "/me"
+    },
+    {
+      "id": "E-021f295ae0091b1b5fd6e64ec9eb7f02d2decea17a62852347ed5cc3127923ce",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+      "sha256": "021f295ae0091b1b5fd6e64ec9eb7f02d2decea17a62852347ed5cc3127923ce",
+      "artifact_path": "evidence/021f295ae0091b1b5fd6e64ec9eb7f02d2decea17a62852347ed5cc3127923ce.json",
+      "started_at": "2026-11-09T14:50:30.134946664Z",
+      "finished_at": "2026-11-09T14:50:31.067929029Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "owner",
+      "request_path": "/books/v1/tsunami-owner-3bb414680a30"
+    },
+    {
+      "id": "E-f5ea3b36e1ad8103dfb7b0f27265c9add6e12396eabfb4832c91503c47711c23",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "735489ed5e5b972e02afbe40f376f236",
+      "sha256": "f5ea3b36e1ad8103dfb7b0f27265c9add6e12396eabfb4832c91503c47711c23",
+      "artifact_path": "evidence/f5ea3b36e1ad8103dfb7b0f27265c9add6e12396eabfb4832c91503c47711c23.json",
+      "started_at": "2026-11-09T14:50:31.093550823Z",
+      "finished_at": "2026-11-09T14:50:32.067724028Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "peer",
+      "request_path": "/books/v1/tsunami-peer-844f0e2af635"
+    },
+    {
+      "id": "E-b828a58e07f3689275732795960f53a5c099160d8c1d02bc54a2ac6f1b096017",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "56826bf1dc4045757eef630b4eaf18f5",
+      "sha256": "b828a58e07f3689275732795960f53a5c099160d8c1d02bc54a2ac6f1b096017",
+      "artifact_path": "evidence/b828a58e07f3689275732795960f53a5c099160d8c1d02bc54a2ac6f1b096017.json",
+      "started_at": "2026-11-09T14:50:32.097477912Z",
+      "finished_at": "2026-11-09T14:50:33.07468489Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "peer",
+      "request_path": "/books/v1/tsunami-owner-3bb414680a30"
+    },
+    {
+      "id": "E-1721be4ed505c1b2fb99dd16ebb9df479b9c5de1784bd2cb1b699b4c821da346",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "8fd535ab9d99fe64d74efc474ba759ac",
+      "sha256": "1721be4ed505c1b2fb99dd16ebb9df479b9c5de1784bd2cb1b699b4c821da346",
+      "artifact_path": "evidence/1721be4ed505c1b2fb99dd16ebb9df479b9c5de1784bd2cb1b699b4c821da346.json",
+      "started_at": "2026-11-09T14:50:33.100541995Z",
+      "finished_at": "2026-11-09T14:50:34.070196289Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "owner",
+      "request_path": "/books/v1/tsunami-owner-3bb414680a30"
+    },
+    {
+      "id": "E-e5a2330bb0f5046d71cb8001c9f62eeaa2f28dbf0d1baa2270d4ffa9036c6867",
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "capture_id": "4b2d711ec355901da8063f20dd601ce0",
+      "sha256": "e5a2330bb0f5046d71cb8001c9f62eeaa2f28dbf0d1baa2270d4ffa9036c6867",
+      "artifact_path": "evidence/e5a2330bb0f5046d71cb8001c9f62eeaa2f28dbf0d1baa2270d4ffa9036c6867.json",
+      "started_at": "2026-11-09T14:50:34.142927209Z",
+      "finished_at": "2026-11-09T14:50:35.07627302Z",
+      "status": 200,
+      "outcome": "response_captured",
+      "account": "peer",
+      "request_path": "/me"
+    }
+  ]
+}

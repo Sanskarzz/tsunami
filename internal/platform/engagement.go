@@ -27,27 +27,28 @@ const (
 // These records are operator-owned. A run token cannot create, approve, skip,
 // stop, or read an engagement. This first integration still selects lab targets.
 type Engagement struct {
-	Executor         string            `json:"executor,omitempty"`
-	Application      *application.Plan `json:"application,omitempty"`
-	ID               string            `json:"id"`
-	Tenant           string            `json:"tenant"`
-	Name             string            `json:"name"`
-	State            string            `json:"state"`
-	AuthorizationRef string            `json:"authorization_ref"`
-	Target           string            `json:"target"`
-	Scenario         string            `json:"scenario"`
-	Connectivity     string            `json:"connectivity,omitempty"`
-	CreatedAt        time.Time         `json:"created_at"`
-	ExpiresAt        time.Time         `json:"expires_at"`
-	ApprovedAt       *time.Time        `json:"approved_at,omitempty"`
-	StoppedAt        *time.Time        `json:"stopped_at,omitempty"`
-	ScopeDigest      string            `json:"scope_digest"`
-	ApprovedDigest   string            `json:"approved_digest,omitempty"`
-	MaxRuns          int               `json:"max_runs"`
-	MaxConcurrent    int               `json:"max_concurrent"`
-	Items            []EngagementItem  `json:"items"`
-	RunIDs           []string          `json:"run_ids"`
-	Events           []Event           `json:"events"`
+	SourceEngagementID string            `json:"source_engagement_id,omitempty"`
+	Executor           string            `json:"executor,omitempty"`
+	Application        *application.Plan `json:"application,omitempty"`
+	ID                 string            `json:"id"`
+	Tenant             string            `json:"tenant"`
+	Name               string            `json:"name"`
+	State              string            `json:"state"`
+	AuthorizationRef   string            `json:"authorization_ref"`
+	Target             string            `json:"target"`
+	Scenario           string            `json:"scenario"`
+	Connectivity       string            `json:"connectivity,omitempty"`
+	CreatedAt          time.Time         `json:"created_at"`
+	ExpiresAt          time.Time         `json:"expires_at"`
+	ApprovedAt         *time.Time        `json:"approved_at,omitempty"`
+	StoppedAt          *time.Time        `json:"stopped_at,omitempty"`
+	ScopeDigest        string            `json:"scope_digest"`
+	ApprovedDigest     string            `json:"approved_digest,omitempty"`
+	MaxRuns            int               `json:"max_runs"`
+	MaxConcurrent      int               `json:"max_concurrent"`
+	Items              []EngagementItem  `json:"items"`
+	RunIDs             []string          `json:"run_ids"`
+	Events             []Event           `json:"events"`
 }
 
 type EngagementItem struct {
@@ -58,13 +59,14 @@ type EngagementItem struct {
 }
 
 type EngagementInput struct {
-	Executor         string   `json:"executor,omitempty"`
-	Application      string   `json:"application,omitempty"`
-	Name             string   `json:"name"`
-	AuthorizationRef string   `json:"authorization_ref"`
-	Scenario         string   `json:"scenario"`
-	Connectivity     string   `json:"connectivity,omitempty"`
-	Assessments      []string `json:"assessments"`
+	SourceEngagementID string   `json:"source_engagement_id,omitempty"`
+	Executor           string   `json:"executor,omitempty"`
+	Application        string   `json:"application,omitempty"`
+	Name               string   `json:"name"`
+	AuthorizationRef   string   `json:"authorization_ref"`
+	Scenario           string   `json:"scenario"`
+	Connectivity       string   `json:"connectivity,omitempty"`
+	Assessments        []string `json:"assessments"`
 }
 
 type ChecklistItem struct {
@@ -87,9 +89,10 @@ type ChecklistProgress struct {
 }
 
 type EngagementView struct {
-	Engagement Engagement        `json:"engagement"`
-	Checklist  []ChecklistItem   `json:"checklist"`
-	Progress   ChecklistProgress `json:"progress"`
+	Metadata   *EngagementMetadata `json:"metadata,omitempty"` // Operator projection only; never stored/approved.
+	Engagement Engagement          `json:"engagement"`
+	Checklist  []ChecklistItem     `json:"checklist"`
+	Progress   ChecklistProgress   `json:"progress"`
 }
 
 func shortText(s string, max int) bool {
@@ -118,12 +121,13 @@ func (e Engagement) digest() string {
 		Items                                                    []item
 		ApplicationDigest                                        string `json:",omitempty"`
 		Executor                                                 string `json:",omitempty"`
+		SourceEngagementID                                       string `json:",omitempty"`
 	}{e.Tenant, e.Target, e.Scenario, e.Connectivity, e.AuthorizationRef, e.ExpiresAt, e.MaxRuns, e.MaxConcurrent, items, func() string {
 		if e.Application != nil {
 			return e.Application.Digest()
 		}
 		return ""
-	}(), e.Executor})
+	}(), e.Executor, e.SourceEngagementID})
 	sum := sha256.Sum256(data)
 	return hex.EncodeToString(sum[:])
 }
@@ -156,13 +160,27 @@ func (s *Store) CreateEngagement(tenant, target string, in EngagementInput, plan
 	if err != nil {
 		return Engagement{}, err
 	}
-	err = s.db.Update(func(tx *bolt.Tx) error { return putEngagementLimited(tx, e) })
+	err = s.db.Update(func(tx *bolt.Tx) error {
+		if e.SourceEngagementID != "" {
+			source, err := getEngagement(tx, tenant, e.SourceEngagementID)
+			if err != nil {
+				return err
+			}
+			if !retestScopeValid(source) {
+				return errors.New("source application scope is unavailable")
+			}
+		}
+		return putEngagementLimited(tx, e)
+	})
 	return e, err
 }
 
 func buildEngagement(tenant, target string, in EngagementInput, plans ...application.Plan) (Engagement, error) {
 	var e Engagement
 	configured := len(plans) == 1
+	if in.SourceEngagementID != "" && (!configured || !retestID.MatchString(in.SourceEngagementID)) {
+		return e, errors.New("retest requires a configured application and valid source assessment ID")
+	}
 	if in.Executor != "" && (in.Executor != toolcontract.CurlHTTP || !configured) {
 		return e, errors.New("unsupported executor for this procedure")
 	}
@@ -193,6 +211,7 @@ func buildEngagement(tenant, target string, in EngagementInput, plans ...applica
 		e.Items = append(e.Items, EngagementItem{Procedure: d.ID, Digest: d.Digest(), Title: d.Title})
 	}
 	sort.Slice(e.Items, func(i, j int) bool { return e.Items[i].Procedure < e.Items[j].Procedure })
+	e.SourceEngagementID = in.SourceEngagementID
 	e.ScopeDigest = e.digest()
 	return e, nil
 }
@@ -502,18 +521,26 @@ func (s *Store) GetEngagement(tenant, id string) (Engagement, error) {
 }
 
 func (s *Store) ListEngagements(tenant string) ([]Engagement, error) {
-	items := []Engagement{}
+	var items []Engagement
 	err := s.db.View(func(tx *bolt.Tx) error {
-		return tx.Bucket([]byte("engagements")).ForEach(func(_, data []byte) error {
-			var e Engagement
-			if json.Unmarshal(data, &e) != nil {
-				return errors.New("invalid engagement state")
-			}
-			if e.Tenant == tenant {
-				items = append(items, e)
-			}
-			return nil
-		})
+		var err error
+		items, err = listEngagements(tx, tenant)
+		return err
+	})
+	return items, err
+}
+
+func listEngagements(tx *bolt.Tx, tenant string) ([]Engagement, error) {
+	items := []Engagement{}
+	err := tx.Bucket([]byte("engagements")).ForEach(func(_, data []byte) error {
+		var e Engagement
+		if json.Unmarshal(data, &e) != nil {
+			return errors.New("invalid engagement state")
+		}
+		if e.Tenant == tenant {
+			items = append(items, e)
+		}
+		return nil
 	})
 	return items, err
 }

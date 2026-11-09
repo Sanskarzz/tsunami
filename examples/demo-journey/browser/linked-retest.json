@@ -1,0 +1,384 @@
+{
+  "schema_version": 1,
+  "observed_at": "2026-11-09T14:53:19.770785782Z",
+  "compatibility": "comparable",
+  "reason": "Same supported profile, intended access rule, ownership pointer, protected field names and denial policy. Bindings and approvals remain separate; this is a comparison of configured checks, not proof of application-wide security or a deployed code fix.",
+  "source": {
+    "engagement": {
+      "executor": "curl-http/v1",
+      "application": {
+        "version": "http-object-access/v2",
+        "id": "onboard-3cefa1f66fc95e05dee4121d12b688e1",
+        "title": "Onboarded owned VAmPI",
+        "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+        "approved_addresses": [
+          "10.97.122.76"
+        ],
+        "credential_set_id": "b0d3900b98aedb1dd97c7bc983f309c140f2c864bbe9d0fa38d682dfc59a2ab6",
+        "synthetic_data_only": true,
+        "owner_pointer": "/owner",
+        "identity": [
+          {
+            "account": "owner",
+            "path": "/me",
+            "equals": {
+              "/data/username": "tsunami_owner_708e6cf5"
+            }
+          },
+          {
+            "account": "peer",
+            "path": "/me",
+            "equals": {
+              "/data/username": "tsunami_peer_c01fa580"
+            }
+          }
+        ],
+        "baselines": [
+          {
+            "account": "owner",
+            "path": "/books/v1/tsunami-owner-3bb414680a30",
+            "equals": {
+              "/book_title": "tsunami-owner-3bb414680a30",
+              "/owner": "tsunami_owner_708e6cf5"
+            },
+            "sha256": {
+              "/secret": "aa9b4227de19c7b12d5ab894734cc8c38b88caaee00448fb91d95fb31b376650"
+            }
+          },
+          {
+            "account": "peer",
+            "path": "/books/v1/tsunami-peer-844f0e2af635",
+            "equals": {
+              "/book_title": "tsunami-peer-844f0e2af635",
+              "/owner": "tsunami_peer_c01fa580"
+            },
+            "sha256": {
+              "/secret": "d6b5d92cc9c0613764b35105a00aad47e6a1f8a30f1d228aa676407d22540b02"
+            }
+          }
+        ],
+        "probe": {
+          "account": "peer",
+          "path": "/books/v1/tsunami-owner-3bb414680a30",
+          "equals": {
+            "/book_title": "tsunami-owner-3bb414680a30",
+            "/owner": "tsunami_owner_708e6cf5"
+          },
+          "sha256": {
+            "/secret": "aa9b4227de19c7b12d5ab894734cc8c38b88caaee00448fb91d95fb31b376650"
+          }
+        },
+        "expected_access": "deny",
+        "denial_statuses": [
+          401,
+          403,
+          404
+        ],
+        "min_interval_ms": 1000
+      },
+      "id": "5c664e18a78a16843002daf474d871d8",
+      "tenant": "demo-a",
+      "name": "Onboarded owned VAmPI",
+      "state": "stopped",
+      "authorization_ref": "owned-lab/onboarding-browser",
+      "target": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+      "scenario": "application",
+      "created_at": "2026-11-09T14:50:27.402337079Z",
+      "expires_at": "2026-11-09T15:50:27.402337079Z",
+      "approved_at": "2026-11-09T14:50:27.64315538Z",
+      "stopped_at": "2026-11-09T14:50:39.293574506Z",
+      "scope_digest": "2814be32b4ec6cfe89c9d79769418bd4177699cac6c77c51d27c3d71283086c0",
+      "approved_digest": "2814be32b4ec6cfe89c9d79769418bd4177699cac6c77c51d27c3d71283086c0",
+      "max_runs": 20,
+      "max_concurrent": 2,
+      "items": [
+        {
+          "procedure": "onboard-3cefa1f66fc95e05dee4121d12b688e1/object-access/v2",
+          "definition_digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+          "title": "Onboarded owned VAmPI"
+        }
+      ],
+      "run_ids": [
+        "1e62e037f4cc1e06e39b5d46e3ff0ac9"
+      ],
+      "events": [
+        {
+          "at": "2026-11-09T14:50:27.402337079Z",
+          "kind": "engagement_created",
+          "detail": "draft scope; explicit operator approval required"
+        },
+        {
+          "at": "2026-11-09T14:50:27.64315538Z",
+          "kind": "engagement_approved",
+          "detail": "operator approved pinned lab scope"
+        },
+        {
+          "at": "2026-11-09T14:50:27.756883005Z",
+          "kind": "engagement_run_reserved",
+          "detail": "1e62e037f4cc1e06e39b5d46e3ff0ac9"
+        },
+        {
+          "at": "2026-11-09T14:50:39.293574506Z",
+          "kind": "engagement_stopped",
+          "detail": "all active child permissions revoked atomically"
+        }
+      ]
+    },
+    "procedure": {
+      "id": "onboard-3cefa1f66fc95e05dee4121d12b688e1/object-access/v2",
+      "version": "http-object-access/v2",
+      "digest": "33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177",
+      "supported": true,
+      "max_requests": 8,
+      "planned_reads": 7,
+      "min_interval_ms": 1000
+    },
+    "attempt_status": "recorded",
+    "latest_attempt": {
+      "run_id": "1e62e037f4cc1e06e39b5d46e3ff0ac9",
+      "state": "completed",
+      "stored_verdict": "confirmed",
+      "result": {
+        "verdict": "confirmed",
+        "title": "Onboarded owned VAmPI",
+        "reason": "The authenticated peer received the owner's approved proof data; account identities and owner access were independently checked.",
+        "evidence_ids": [
+          "c81a5997e5cb7e74d3936da7b1ec1d39",
+          "971ee50839666c587ae7f663c8a94a67",
+          "ca2eccfafe0cc8eb6a7867c3eb2c1cd9",
+          "735489ed5e5b972e02afbe40f376f236",
+          "56826bf1dc4045757eef630b4eaf18f5",
+          "8fd535ab9d99fe64d74efc474ba759ac",
+          "4b2d711ec355901da8063f20dd601ce0"
+        ],
+        "validation": {
+          "baselines_required": 6,
+          "baselines_verified": 6,
+          "probe_captured": true,
+          "expected_access": "deny"
+        }
+      },
+      "evidence_ids": [
+        "E-a63d8287b9a32b9b457cc507e104b7ac663f4df30c3141349cae156e804c75f3",
+        "E-503d286c6397d7d152535478faf8778603a4ffb57b533bb53e62b5dc067e0f81",
+        "E-021f295ae0091b1b5fd6e64ec9eb7f02d2decea17a62852347ed5cc3127923ce",
+        "E-f5ea3b36e1ad8103dfb7b0f27265c9add6e12396eabfb4832c91503c47711c23",
+        "E-b828a58e07f3689275732795960f53a5c099160d8c1d02bc54a2ac6f1b096017",
+        "E-1721be4ed505c1b2fb99dd16ebb9df479b9c5de1784bd2cb1b699b4c821da346",
+        "E-e5a2330bb0f5046d71cb8001c9f62eeaa2f28dbf0d1baa2270d4ffa9036c6867"
+      ]
+    }
+  },
+  "retest": {
+    "engagement": {
+      "source_engagement_id": "5c664e18a78a16843002daf474d871d8",
+      "executor": "curl-http/v1",
+      "application": {
+        "version": "http-object-access/v2",
+        "id": "vampi-fixed",
+        "title": "Cross-user book secret access",
+        "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+        "approved_addresses": [
+          "10.97.254.51"
+        ],
+        "credential_set_id": "14569ae15850be78e7fed3ad8abe3b3ed472859b28f8957d77907d55a28d0f55",
+        "synthetic_data_only": true,
+        "owner_pointer": "/owner",
+        "identity": [
+          {
+            "account": "owner",
+            "path": "/me",
+            "equals": {
+              "/data/username": "tsunami_owner_6150c773"
+            }
+          },
+          {
+            "account": "peer",
+            "path": "/me",
+            "equals": {
+              "/data/username": "tsunami_peer_6870c134"
+            }
+          }
+        ],
+        "baselines": [
+          {
+            "account": "owner",
+            "path": "/books/v1/tsunami-owner-be387b6781e4",
+            "equals": {
+              "/book_title": "tsunami-owner-be387b6781e4",
+              "/owner": "tsunami_owner_6150c773"
+            },
+            "sha256": {
+              "/secret": "04eaf91c03d6be323c68b0d5daf8520d86fb725f046a747176ad3caac6f7ed67"
+            }
+          },
+          {
+            "account": "peer",
+            "path": "/books/v1/tsunami-peer-09dde6dc8580",
+            "equals": {
+              "/book_title": "tsunami-peer-09dde6dc8580",
+              "/owner": "tsunami_peer_6870c134"
+            },
+            "sha256": {
+              "/secret": "2227f36d04a50d59df34b370fb2e4148d9de6c37995e4cd99a87d58c94c60055"
+            }
+          }
+        ],
+        "probe": {
+          "account": "peer",
+          "path": "/books/v1/tsunami-owner-be387b6781e4",
+          "equals": {
+            "/book_title": "tsunami-owner-be387b6781e4",
+            "/owner": "tsunami_owner_6150c773"
+          },
+          "sha256": {
+            "/secret": "04eaf91c03d6be323c68b0d5daf8520d86fb725f046a747176ad3caac6f7ed67"
+          }
+        },
+        "expected_access": "deny",
+        "denial_statuses": [
+          401,
+          403,
+          404
+        ]
+      },
+      "id": "c31d302393a49ae42528460b95daa537",
+      "tenant": "demo-a",
+      "name": "D9 linked fixed-app retest",
+      "state": "active",
+      "authorization_ref": "owned-lab/D9-new-scope",
+      "target": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+      "scenario": "application",
+      "created_at": "2026-11-09T14:53:14.293373265Z",
+      "expires_at": "2026-11-09T15:53:14.293373265Z",
+      "approved_at": "2026-11-09T14:53:14.508754573Z",
+      "scope_digest": "b88bf16593576299c05607dc7aed5a7de485e406c360a1dfe83bd764614249e3",
+      "approved_digest": "b88bf16593576299c05607dc7aed5a7de485e406c360a1dfe83bd764614249e3",
+      "max_runs": 20,
+      "max_concurrent": 2,
+      "items": [
+        {
+          "procedure": "vampi-fixed/object-access/v2",
+          "definition_digest": "40113120694ba35a84a80cdc4540ce2afee96ae8beeadc12fd3875019251f39a",
+          "title": "Cross-user book secret access"
+        }
+      ],
+      "run_ids": [
+        "91fb497a845395cddfbbd09e7dbec2de"
+      ],
+      "events": [
+        {
+          "at": "2026-11-09T14:53:14.293373265Z",
+          "kind": "engagement_created",
+          "detail": "draft scope; explicit operator approval required"
+        },
+        {
+          "at": "2026-11-09T14:53:14.508754573Z",
+          "kind": "engagement_approved",
+          "detail": "operator approved pinned lab scope"
+        },
+        {
+          "at": "2026-11-09T14:53:14.623684637Z",
+          "kind": "engagement_run_reserved",
+          "detail": "91fb497a845395cddfbbd09e7dbec2de"
+        }
+      ]
+    },
+    "procedure": {
+      "id": "vampi-fixed/object-access/v2",
+      "version": "http-object-access/v2",
+      "digest": "40113120694ba35a84a80cdc4540ce2afee96ae8beeadc12fd3875019251f39a",
+      "supported": true,
+      "max_requests": 8,
+      "planned_reads": 7,
+      "min_interval_ms": 0
+    },
+    "attempt_status": "recorded",
+    "latest_attempt": {
+      "run_id": "91fb497a845395cddfbbd09e7dbec2de",
+      "state": "completed",
+      "stored_verdict": "no_issue_observed",
+      "result": {
+        "verdict": "no_issue_observed",
+        "title": "Cross-user book secret access",
+        "reason": "The prohibited read was denied and the owner could still read the same proof object afterward. This is one tested rule, not application-wide assurance.",
+        "evidence_ids": [
+          "ba15b0035e5fa83fcc369da746ea3574",
+          "8ba377805cb948f8289e8e85fca727b4",
+          "b35072dde3d673a7e5603fb3fbeb9c4f",
+          "2336362f68cf24cded9a3d8af9b71d2d",
+          "13de080d183a3ca6789073faeedb81af",
+          "8dc0e18c4b84353046321dcee94d2a7c",
+          "97c9b65f93471c5cde3709c675fb8f8c"
+        ],
+        "validation": {
+          "baselines_required": 6,
+          "baselines_verified": 6,
+          "probe_captured": true,
+          "expected_access": "deny"
+        }
+      },
+      "evidence_ids": [
+        "E-c26e65e64d3fe37f2255a314bd57e660bf6b307ebb5360c9d898e68d59ae65e2",
+        "E-3f10445161291b4e32a824cafd255c6a47be0e1a82074c80221267854f8955c6",
+        "E-4be159ed854f74f9cca64fd4938d7b8048d68795641894532705c63655ff28a3",
+        "E-fcc54e70527d82b0c07122c2738b87ff9b019f454e9fd5a75fe1d9f40ff18d2f",
+        "E-42062ef8454d80fed1d077ff92e9e7a3a0adf0b1c3becc313023b87c8f49cc86",
+        "E-dd7b14d516e5120a6f12baf0bd981becb1d019e8c915cdf3ffff1a37ca106518",
+        "E-e9179f80a9921e6ba170e1502d80ca64b9ab7e2c715d0bbcc2993daab6d9e1ca"
+      ]
+    }
+  },
+  "differences": [
+    {
+      "field": "Application",
+      "source": "\"onboard-3cefa1f66fc95e05dee4121d12b688e1\"",
+      "retest": "\"vampi-fixed\""
+    },
+    {
+      "field": "Origin",
+      "source": "\"http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000\"",
+      "retest": "\"http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000\""
+    },
+    {
+      "field": "Approved addresses",
+      "source": "[\"10.97.122.76\"]",
+      "retest": "[\"10.97.254.51\"]"
+    },
+    {
+      "field": "Reviewed reads and assertions",
+      "source": "[{\"account\":\"owner\",\"path\":\"/me\",\"equals\":{\"/data/username\":\"tsunami_owner_708e6cf5\"}},{\"account\":\"peer\",\"path\":\"/me\",\"equals\":{\"/data/username\":\"tsunami_peer_c01fa580\"}},{\"account\":\"owner\",\"path\":\"/books/v1/tsunami-owner-3bb414680a30\",\"equals\":{\"/book_title\":\"tsunami-owner-3bb414680a30\",\"/owner\":\"tsunami_owner_708e6cf5\"},\"sha256\":{\"/secret\":\"aa9b4227de19c7b12d5ab894734cc8c38b88caaee00448fb91d95fb31b376650\"}},{\"account\":\"peer\",\"path\":\"/books/v1/tsunami-peer-844f0e2af635\",\"equals\":{\"/book_title\":\"tsunami-peer-844f0e2af635\",\"/owner\":\"tsunami_peer_c01fa580\"},\"sha256\":{\"/secret\":\"d6b5d92cc9c0613764b35105a00aad47e6a1f8a30f1d228aa676407d22540b02\"}},{\"account\":\"peer\",\"path\":\"/books/v1/tsunami-owner-3bb414680a30\",\"equals\":{\"/book_title\":\"tsunami-owner-3bb414680a30\",\"/owner\":\"tsunami_owner_708e6cf5\"},\"sha256\":{\"/secret\":\"aa9b4227de19c7b12d5ab894734cc8c38b88caaee00448fb91d95fb31b376650\"}},{\"account\":\"owner\",\"path\":\"/books/v1/tsunami-owner-3bb414680a30\",\"equals\":{\"/book_title\":\"tsunami-owner-3bb414680a30\",\"/owner\":\"tsunami_owner_708e6cf5\"},\"sha256\":{\"/secret\":\"aa9b4227de19c7b12d5ab894734cc8c38b88caaee00448fb91d95fb31b376650\"}},{\"account\":\"peer\",\"path\":\"/me\",\"equals\":{\"/data/username\":\"tsunami_peer_c01fa580\"}}]",
+      "retest": "[{\"account\":\"owner\",\"path\":\"/me\",\"equals\":{\"/data/username\":\"tsunami_owner_6150c773\"}},{\"account\":\"peer\",\"path\":\"/me\",\"equals\":{\"/data/username\":\"tsunami_peer_6870c134\"}},{\"account\":\"owner\",\"path\":\"/books/v1/tsunami-owner-be387b6781e4\",\"equals\":{\"/book_title\":\"tsunami-owner-be387b6781e4\",\"/owner\":\"tsunami_owner_6150c773\"},\"sha256\":{\"/secret\":\"04eaf91c03d6be323c68b0d5daf8520d86fb725f046a747176ad3caac6f7ed67\"}},{\"account\":\"peer\",\"path\":\"/books/v1/tsunami-peer-09dde6dc8580\",\"equals\":{\"/book_title\":\"tsunami-peer-09dde6dc8580\",\"/owner\":\"tsunami_peer_6870c134\"},\"sha256\":{\"/secret\":\"2227f36d04a50d59df34b370fb2e4148d9de6c37995e4cd99a87d58c94c60055\"}},{\"account\":\"peer\",\"path\":\"/books/v1/tsunami-owner-be387b6781e4\",\"equals\":{\"/book_title\":\"tsunami-owner-be387b6781e4\",\"/owner\":\"tsunami_owner_6150c773\"},\"sha256\":{\"/secret\":\"04eaf91c03d6be323c68b0d5daf8520d86fb725f046a747176ad3caac6f7ed67\"}},{\"account\":\"owner\",\"path\":\"/books/v1/tsunami-owner-be387b6781e4\",\"equals\":{\"/book_title\":\"tsunami-owner-be387b6781e4\",\"/owner\":\"tsunami_owner_6150c773\"},\"sha256\":{\"/secret\":\"04eaf91c03d6be323c68b0d5daf8520d86fb725f046a747176ad3caac6f7ed67\"}},{\"account\":\"peer\",\"path\":\"/me\",\"equals\":{\"/data/username\":\"tsunami_peer_6870c134\"}}]"
+    },
+    {
+      "field": "Minimum interval (ms)",
+      "source": "1000",
+      "retest": "0"
+    },
+    {
+      "field": "Credential binding digest",
+      "source": "\"b0d3900b98aedb1dd97c7bc983f309c140f2c864bbe9d0fa38d682dfc59a2ab6\"",
+      "retest": "\"14569ae15850be78e7fed3ad8abe3b3ed472859b28f8957d77907d55a28d0f55\""
+    },
+    {
+      "field": "Definition digest",
+      "source": "\"33eaca53be9f58b0ff81a3ae24a53c589167f2c3e9d2b828bbf37d01f0464177\"",
+      "retest": "\"40113120694ba35a84a80cdc4540ce2afee96ae8beeadc12fd3875019251f39a\""
+    },
+    {
+      "field": "Authorization reference",
+      "source": "\"owned-lab/onboarding-browser\"",
+      "retest": "\"owned-lab/D9-new-scope\""
+    },
+    {
+      "field": "Expiry",
+      "source": "\"2026-11-09T15:50:27.402337079Z\"",
+      "retest": "\"2026-11-09T15:53:14.293373265Z\""
+    },
+    {
+      "field": "Scope digest",
+      "source": "\"2814be32b4ec6cfe89c9d79769418bd4177699cac6c77c51d27c3d71283086c0\"",
+      "retest": "\"b88bf16593576299c05607dc7aed5a7de485e406c360a1dfe83bd764614249e3\""
+    }
+  ]
+}

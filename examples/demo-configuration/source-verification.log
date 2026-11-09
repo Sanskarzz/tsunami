@@ -1,0 +1,33 @@
+go test -race -count=1 ./...
+ok  	github.com/Sanskarzz/tsunami/cmd/tsunami	1.035s
+ok  	github.com/Sanskarzz/tsunami/internal/application	1.012s
+ok  	github.com/Sanskarzz/tsunami/internal/assessment	1.025s
+ok  	github.com/Sanskarzz/tsunami/internal/binding	1.045s
+ok  	github.com/Sanskarzz/tsunami/internal/connector	8.813s
+ok  	github.com/Sanskarzz/tsunami/internal/demo	28.140s
+ok  	github.com/Sanskarzz/tsunami/internal/httpserver	1.049s
+ok  	github.com/Sanskarzz/tsunami/internal/inference	1.107s
+ok  	github.com/Sanskarzz/tsunami/internal/isolation	1.017s
+ok  	github.com/Sanskarzz/tsunami/internal/journey	9.071s
+ok  	github.com/Sanskarzz/tsunami/internal/kube	2.039s
+ok  	github.com/Sanskarzz/tsunami/internal/lab	1.018s
+ok  	github.com/Sanskarzz/tsunami/internal/onboarding	1.015s
+ok  	github.com/Sanskarzz/tsunami/internal/platform	7.539s
+ok  	github.com/Sanskarzz/tsunami/internal/scoring	1.013s
+?   	github.com/Sanskarzz/tsunami/internal/toolcontract	[no test files]
+ok  	github.com/Sanskarzz/tsunami/internal/toolrunner	2.372s
+ok  	github.com/Sanskarzz/tsunami/internal/webui	1.018s
+?   	github.com/Sanskarzz/tsunami/internal/worker	[no test files]
+go vet ./...
+python3 -B -m unittest discover -s scripts -p 'test_*.py'
+....................
+----------------------------------------------------------------------
+Ran 20 tests in 1.222s
+
+OK
+python3 -B scripts/check-examples.py
+PASS showcase index, seven unreviewed outcomes and 54 selected network denials with reachable before/after controls.
+PASS retained UI downloads, three browser outcomes, lost Start recovery and independent Stop observations.
+PASS onboarding readiness controls, four baseline reads, inferred plan and actual gVisor assessment evidence.
+PASS 32 materialized bundles, 240 artifacts and 20 historical trial hashes.
+Actual local toolkit schemas: not requested; run make verify-toolkit separately.

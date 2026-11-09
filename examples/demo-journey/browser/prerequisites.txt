@@ -1,0 +1,82 @@
+{
+  "context": "kind-tsunami-lab",
+  "node_count": 1,
+  "kubelet_version": "v1.34.0",
+  "runtime_class": "gvisor",
+  "runtime_handler_configured": "runsc",
+  "runsc_version": "runsc version release-20261026.0\nspec: 1.2.1",
+  "cilium_policy": "always",
+  "cilium_image": "quay.io/cilium/cilium:v1.20.4@sha256:20fe92e4c86641233a450098c158d2d29085f3419931ab6bf681d2485dedf16e",
+  "native_image": "tsunami:showcase-20261109t144510z",
+  "tools_image": "tsunami-tools:showcase-20261109t144510z",
+  "checked_at": "2026-11-09T14:49:51.730378+00:00",
+  "target_requests": 0,
+  "external_model_calls": 0,
+  "applications": [
+    {
+      "application": "vampi-vulnerable",
+      "owned_service": "vampi-vulnerable",
+      "origin": "http://vampi-vulnerable.tsunami-app-lab.svc.cluster.local:5000",
+      "credential_expiry_hints": [
+        {
+          "remaining_seconds": 3331,
+          "scope": "unsigned_expiry_hint_not_account_validation"
+        },
+        {
+          "remaining_seconds": 3331,
+          "scope": "unsigned_expiry_hint_not_account_validation"
+        }
+      ]
+    },
+    {
+      "application": "vampi-fixed",
+      "owned_service": "vampi-fixed",
+      "origin": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+      "credential_expiry_hints": [
+        {
+          "remaining_seconds": 3332,
+          "scope": "unsigned_expiry_hint_not_account_validation"
+        },
+        {
+          "remaining_seconds": 3332,
+          "scope": "unsigned_expiry_hint_not_account_validation"
+        }
+      ]
+    },
+    {
+      "application": "stop-lab-run",
+      "owned_service": "tsunami-stop-fixture",
+      "origin": "http://tsunami-stop-fixture.tsunami-stop-lab.svc.cluster.local:8080",
+      "credential_expiry_scope": "opaque_lab_credentials_no_local_expiry_hint"
+    },
+    {
+      "application": "property-vulnerable",
+      "owned_service": "tsunami-property-fixture",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "credential_expiry_scope": "opaque_lab_credentials_no_local_expiry_hint"
+    },
+    {
+      "application": "property-filtered",
+      "owned_service": "tsunami-property-fixture",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "credential_expiry_scope": "opaque_lab_credentials_no_local_expiry_hint"
+    },
+    {
+      "application": "property-ambiguous",
+      "owned_service": "tsunami-property-fixture",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "credential_expiry_scope": "opaque_lab_credentials_no_local_expiry_hint"
+    },
+    {
+      "application": "property-stop",
+      "owned_service": "tsunami-property-fixture",
+      "origin": "http://tsunami-property-fixture.tsunami-property-lab.svc.cluster.local:8080",
+      "credential_expiry_scope": "opaque_lab_credentials_no_local_expiry_hint"
+    }
+  ],
+  "warnings": [
+    "private route not ready; not used by this scripted public-lab showcase"
+  ],
+  "remaining_lab_engagement_slots": 14
+}
+PASS prerequisites; no target requests. JWT expiry is only a hint; execution still validates identities.

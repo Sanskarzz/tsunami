@@ -145,6 +145,34 @@ func (s *Store) ReviewFinding(tenant, engagementID string, in ReviewInput) (Find
 	return review, err
 }
 
+// Shared by exports and metadata reads. Only an exact current evidence digest
+// can acquire stored review provenance/rating; a read never creates a review.
+func loadCandidateReview(tx *bolt.Tx, engagementID string, c *FindingCandidate) error {
+	data := tx.Bucket([]byte("finding_reviews")).Get([]byte(engagementID + ":" + c.ID))
+	if data == nil {
+		return nil
+	}
+	var review FindingReview
+	if json.Unmarshal(data, &review) != nil {
+		return errors.New("invalid finding review")
+	}
+	if review.CandidateDigest != c.Digest {
+		return nil
+	}
+	if review.Decision == "false_positive" {
+		c.Review = &review
+		c.Status = "reviewed_false_positive"
+		return nil
+	}
+	calculated, severity, err := scoring.Base(review.CVSSVector)
+	if err != nil || review.CVSSScore == nil || *review.CVSSScore != calculated || review.Severity != severity {
+		return errors.New("stored finding rating invalid")
+	}
+	c.Review = &review
+	c.Status = "reviewed_confirmed"
+	return nil
+}
+
 func applyFindingReviews(tx *bolt.Tx, b *EngagementBundle) error {
 	artifacts := map[string]EvidenceArtifact{}
 	for _, a := range b.Artifacts {
@@ -153,27 +181,13 @@ func applyFindingReviews(tx *bolt.Tx, b *EngagementBundle) error {
 	index := []map[string]any{}
 	for i := range b.Candidates {
 		c := &b.Candidates[i]
-		data := tx.Bucket([]byte("finding_reviews")).Get([]byte(b.View.Engagement.ID + ":" + c.ID))
-		if data == nil {
+		if err := loadCandidateReview(tx, b.View.Engagement.ID, c); err != nil {
+			return err
+		}
+		if c.Review == nil || c.Review.Decision == "false_positive" {
 			continue
 		}
-		var review FindingReview
-		if json.Unmarshal(data, &review) != nil {
-			return errors.New("invalid finding review")
-		}
-		if review.CandidateDigest != c.Digest {
-			continue
-		} // Stale review never blesses changed evidence.
-		c.Review = &review
-		if review.Decision == "false_positive" {
-			c.Status = "reviewed_false_positive"
-			continue
-		}
-		calculated, severity, err := scoring.Base(review.CVSSVector)
-		if err != nil || review.CVSSScore == nil || *review.CVSSScore != calculated || review.Severity != severity {
-			return errors.New("stored finding rating invalid")
-		}
-		c.Status = "reviewed_confirmed"
+		review := *c.Review
 		f := ToolkitFinding{ID: c.ID, Title: c.Title, Severity: review.Severity, CVSSScore: *review.CVSSScore, CVSSVector: review.CVSSVector, Status: "Confirmed", Category: "Broken Access Control", CWEID: 639, Description: c.Reason, Impact: review.Impact, Steps: []string{}, Evidence: []ToolkitEvidence{}, Remediation: c.Remediation, Target: c.Target, EngagementID: b.View.Engagement.ID, FoundBy: "trusted_http_validator", Tags: []string{"owned-lab", review.Purpose}}
 		if plan := b.View.Engagement.Application; plan != nil && plan.Version == application.PropertyAccessProfile {
 			f.Category = "Broken Object Property Level Authorization"

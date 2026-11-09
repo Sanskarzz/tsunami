@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"slices"
 	"strings"
 	"sync/atomic"
 	"testing"
@@ -176,9 +177,12 @@ func TestPropertyProfileRejectsUnclearOrUnsupportedPolicies(t *testing.T) {
 	}
 }
 
-func TestLaterFilteringCannotEraseCapturedPropertyExposure(t *testing.T) {
-	for _, ordered := range []bool{true, false} {
-		t.Run(fmt.Sprintf("ordered_baselines_%t", ordered), func(t *testing.T) {
+func TestLaterResponsesCannotEraseCapturedPropertyExposure(t *testing.T) {
+	for _, tc := range []struct {
+		ordered bool
+		generic bool
+	}{{true, false}, {false, false}, {true, true}, {false, true}} {
+		t.Run(fmt.Sprintf("ordered_baselines_%t_later_generic_%t", tc.ordered, tc.generic), func(t *testing.T) {
 			s, store, c, flags := applicationFixture(t)
 			c.Plan.ID, c.Plan.Version, c.Plan.ExpectedAccess, c.Plan.DenialStatuses = "repeated-property", application.PropertyAccessProfile, "filtered", nil
 			flags.property.Store(true)
@@ -187,20 +191,21 @@ func TestLaterFilteringCannotEraseCapturedPropertyExposure(t *testing.T) {
 			}
 			_, run := applicationEngagement(t, s, c)
 			reads := run.Application.Reads()
-			if ordered {
+			if tc.ordered {
 				executeAppReads(t, s, run, reads[:4])
 			}
 			executeAppReads(t, s, run, reads[4:5]) // First response exposes the value.
 			snapshot, _ := store.Get(run.ID)
 			exposed := snapshot.Captures[len(snapshot.Captures)-1].ID
-			flags.fixed.Store(true)
-			if !ordered {
+			flags.fixed.Store(!tc.generic)
+			flags.ambiguousProperty.Store(tc.generic)
+			if !tc.ordered {
 				executeAppReads(t, s, run, reads[:4])
 			}
-			executeAppReads(t, s, run, reads[4:]) // Later response filters it.
+			executeAppReads(t, s, run, reads[4:]) // Later response filters it or is ambiguous.
 			result, err := s.Finish(run.ID)
 			want := "inconclusive"
-			if ordered {
+			if tc.ordered {
 				want = "confirmed"
 			}
 			if err != nil || result.Verdict != want {
@@ -322,15 +327,173 @@ func TestApplicationScopeCredentialsAndConfigurationDrift(t *testing.T) {
 	}
 }
 
-func TestApplicationLatestFailedProbeDoesNotReuseOldSuccess(t *testing.T) {
-	s, _, c, flags := applicationFixture(t)
-	_, r := applicationEngagement(t, s, c)
-	executeAppReads(t, s, r, r.Application.Reads()[:5])
-	flags.generic.Store(true)
-	executeAppReads(t, s, r, []application.Read{r.Application.Probe, r.Application.Baselines[0], r.Application.Identity[1]})
-	result, err := s.Finish(r.ID)
-	if err != nil || result.Verdict != "inconclusive" {
-		t.Fatal("stale successful probe reused")
+func TestRepeatedObjectProbePreservesCapturedExposure(t *testing.T) {
+	for _, tc := range []struct {
+		name, later, rechecks, want string
+		latePrerequisites           bool
+		repeatAfterRechecks         bool
+	}{
+		{name: "later_denial", later: "denied", want: "confirmed"},
+		{name: "later_generic_200", later: "generic", want: "confirmed"},
+		{name: "later_expired_probe", later: "expired", want: "confirmed"},
+		{name: "denial_after_complete_evidence", later: "denied", repeatAfterRechecks: true, want: "confirmed"},
+		{name: "generic_after_complete_evidence", later: "generic", repeatAfterRechecks: true, want: "confirmed"},
+		{name: "prerequisites_only_after_leak", later: "denied", latePrerequisites: true, want: "inconclusive"},
+		{name: "missing_rechecks", later: "denied", rechecks: "none", want: "inconclusive"},
+		{name: "missing_owner_recheck", later: "denied", rechecks: "peer_only", want: "inconclusive"},
+		{name: "missing_peer_recheck", later: "denied", rechecks: "owner_only", want: "inconclusive"},
+		{name: "expired_peer_recheck", later: "denied", rechecks: "expired_peer", want: "inconclusive"},
+		{name: "deleted_owner_recheck", later: "denied", rechecks: "deleted_owner", want: "inconclusive"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s, store, c, flags := applicationFixture(t)
+			e, run := applicationEngagement(t, s, c)
+			reads := run.Application.Reads()
+			if !tc.latePrerequisites {
+				executeAppReads(t, s, run, reads[:4])
+			}
+			executeAppReads(t, s, run, reads[4:5])
+			snapshot, err := store.Get(run.ID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			exposed := snapshot.Captures[len(snapshot.Captures)-1].ID
+			if tc.latePrerequisites {
+				executeAppReads(t, s, run, reads[:4])
+			}
+			if tc.repeatAfterRechecks {
+				executeAppReads(t, s, run, reads[5:])
+			}
+			flags.fixed.Store(tc.later == "denied")
+			flags.generic.Store(tc.later == "generic")
+			flags.expiredPeer.Store(tc.later == "expired")
+			executeAppReads(t, s, run, reads[4:5])
+			// Expiry on the repeated probe cannot substitute for the required
+			// successful peer recheck. Restore it only when that recheck passes.
+			flags.expiredPeer.Store(tc.rechecks == "expired_peer")
+			flags.deleted.Store(tc.rechecks == "deleted_owner")
+			if !tc.repeatAfterRechecks {
+				if tc.rechecks != "none" && tc.rechecks != "peer_only" {
+					executeAppReads(t, s, run, reads[5:6])
+				}
+				if tc.rechecks != "none" && tc.rechecks != "owner_only" {
+					executeAppReads(t, s, run, reads[6:7])
+				}
+			}
+			result, err := s.Finish(run.ID)
+			if err != nil || result.Verdict != tc.want {
+				t.Fatalf("got %+v, %v; want %s", result, err, tc.want)
+			}
+			if !slices.Contains(result.EvidenceIDs, exposed) {
+				t.Fatal("earlier exposure disappeared from referenced evidence")
+			}
+			snapshot, err = store.Get(run.ID)
+			if err != nil || snapshot.State != Completed || snapshot.Result == nil || snapshot.Result.Verdict != tc.want {
+				t.Fatalf("result was not persisted: %+v, %v", snapshot.Result, err)
+			}
+			if snapshot.RequestCount > snapshot.MaxRequests || snapshot.MaxRequests != 8 {
+				t.Fatal("repeated-probe scenario exceeded the approved request budget")
+			}
+			bundle, err := store.ExportEngagement("a", e.ID)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if tc.want != "confirmed" {
+				if len(bundle.Candidates) != 0 {
+					t.Fatal("incomplete evidence produced a finding candidate")
+				}
+				return
+			}
+			if result.Validation.BaselinesVerified != 6 || !result.Validation.ProbeCaptured || len(result.EvidenceIDs) != 7 {
+				t.Fatalf("confirmation lacks its ordered prerequisites/probe: %+v", result)
+			}
+			if len(bundle.Candidates) != 1 || bundle.View.Checklist[0].Verdict != "confirmed" {
+				t.Fatal("earlier exposure disappeared from engagement progress/export")
+			}
+			candidate := bundle.Candidates[0]
+			if candidate.Status != "needs_human_review" || candidate.Review != nil || len(bundle.Findings) != 0 {
+				t.Fatal("validator result invented a human review or rating")
+			}
+			if len(candidate.EvidenceIDs) != len(result.EvidenceIDs) {
+				t.Fatal("candidate lost supporting evidence")
+			}
+			foundExposure := false
+			for _, artifact := range bundle.Artifacts {
+				if slices.Contains(candidate.EvidenceIDs, artifact.ID) && !slices.Contains(result.EvidenceIDs, artifact.CaptureID) {
+					t.Fatal("candidate references evidence outside the confirmed result")
+				}
+				if artifact.CaptureID == exposed && slices.Contains(candidate.EvidenceIDs, artifact.ID) {
+					foundExposure = true
+				}
+			}
+			if !foundExposure {
+				t.Fatal("candidate lost the original exposure artifact")
+			}
+		})
+	}
+}
+
+func TestObjectExposurePreservationRequiresProtectedProof(t *testing.T) {
+	s, store, c, flags := applicationFixture(t)
+	_, run := applicationEngagement(t, s, c)
+	reads := run.Application.Reads()
+	executeAppReads(t, s, run, reads[:5])
+	flags.fixed.Store(true)
+	executeAppReads(t, s, run, reads[4:])
+	snapshot, err := store.Get(run.ID)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct {
+		name   string
+		change func(*Capture)
+	}{
+		{"generic_200", func(c *Capture) { c.Body = `{"message":"ok"}` }},
+		{"wrong_proof", func(c *Capture) { c.Body = strings.ReplaceAll(c.Body, "opaque-proof-one", "unrelated-proof") }},
+		{"wrong_owner", func(c *Capture) { c.Body = strings.ReplaceAll(c.Body, "first", "second") }},
+		{"wrong_object", func(c *Capture) { c.Body = strings.ReplaceAll(c.Body, `"a"`, `"b"`) }},
+		{"blocked", func(c *Capture) { c.Blocked = true }},
+		{"interrupted", func(c *Capture) { c.Error = "response interrupted" }},
+		{"unsuccessful_status", func(c *Capture) { c.Status = 401 }},
+		{"wrong_account", func(c *Capture) { c.Account = "owner" }},
+		{"wrong_destination", func(c *Capture) { c.URL = "http://not-approved.invalid/objects/a" }},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			// Change only this copy of captured evidence, never the stored run.
+			r := snapshot
+			r.Captures = slices.Clone(snapshot.Captures)
+			tc.change(&r.Captures[4])
+			if result := Validate(r); result.Verdict != "no_issue_observed" {
+				t.Fatalf("invalid earlier capture overrode a valid denial: %+v", result)
+			}
+		})
+	}
+}
+
+func TestRepeatedIntentionalSharingIsNotExposure(t *testing.T) {
+	for _, tc := range []struct {
+		name, want string
+		generic    bool
+	}{
+		{name: "shared_object", want: "no_issue_observed"},
+		{name: "later_generic_response", generic: true, want: "inconclusive"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			s, _, c, flags := applicationFixture(t)
+			c.Plan.ID, c.Plan.ExpectedAccess = "shared-api", "allow"
+			if err := s.RegisterApplication(c); err != nil {
+				t.Fatal(err)
+			}
+			_, run := applicationEngagement(t, s, c)
+			reads := run.Application.Reads()
+			executeAppReads(t, s, run, reads[:5])
+			flags.generic.Store(tc.generic)
+			executeAppReads(t, s, run, reads[4:])
+			result, err := s.Finish(run.ID)
+			if err != nil || result.Verdict != tc.want {
+				t.Fatalf("incorrect sharing result: %+v, %v; want %s", result, err, tc.want)
+			}
+		})
 	}
 }
 

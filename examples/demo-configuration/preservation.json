@@ -1,0 +1,14 @@
+{
+  "run_ids_preserved": true,
+  "engagement_ids_preserved": true,
+  "setup_ids_preserved": true,
+  "operator_secret_preserved": true,
+  "onboarding_key_preserved": true,
+  "state_volume_preserved": true,
+  "unrelated_control_configuration_preserved": true,
+  "unrelated_application_configuration_preserved": true,
+  "existing_run_count": 334,
+  "existing_engagement_count": 75,
+  "existing_setup_count": 9,
+  "unrelated_startup_application_entries": 0
+}

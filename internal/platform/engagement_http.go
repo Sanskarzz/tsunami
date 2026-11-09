@@ -33,7 +33,7 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path == "/v1/engagements" {
 		switch r.Method {
 		case "GET":
-			items, err := s.Store.ListEngagements(tenant)
+			items, err := s.Store.ListEngagementSummaries(tenant)
 			if err != nil {
 				problem(w, 500, errors.New("engagement state unavailable"))
 				return
@@ -90,12 +90,24 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	if len(parts) == 3 && r.Method == "GET" {
-		view, err := s.Store.EngagementSnapshot(tenant, id)
+		view, err := s.engagementMetadataView(tenant, id)
 		if err != nil {
 			problem(w, 500, errors.New("engagement state unavailable"))
 			return
 		}
 		writeJSON(w, 200, view)
+		return
+	}
+	if len(parts) == 4 && parts[3] == "findings" {
+		s.serveFindings(w, r, tenant, id, "")
+		return
+	}
+	if len(parts) == 4 && parts[3] == "retest" {
+		s.serveRetest(w, r, tenant, id)
+		return
+	}
+	if len(parts) == 5 && parts[3] == "evidence" {
+		s.serveFindings(w, r, tenant, id, parts[4])
 		return
 	}
 	if len(parts) == 4 && parts[3] == "export" && r.Method == "GET" {
@@ -141,7 +153,7 @@ func (s *Server) serveEngagements(w http.ResponseWriter, r *http.Request) {
 				problem(w, 409, err)
 				return
 			}
-			snapshot, err := s.Store.EngagementSnapshot(tenant, id)
+			snapshot, err := s.engagementMetadataView(tenant, id)
 			if err != nil {
 				problem(w, 500, errors.New("engagement state unavailable"))
 				return

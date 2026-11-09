@@ -1,0 +1,14 @@
+node scripts/verify-ui.mjs --demo --rehearse
+D9 stage: Problem and architecture
+D9 stage: Add application, scope review, approval and real agent
+PASS browser onboarding: four approved preflight reads; explicit scope approval; real gVisor/Mecatl assessment and candidate.
+D9 stage: Finding, reproducible evidence and remediation
+D9 stage: Stop during an active request and pending viewer export
+PASS browser stop-lab-run: stopped; one explicit run; unreviewed evidence exported.
+D9 stage: Fresh linked fixed-app retest and lost Start recovery
+D9 stage: Limitations and original history
+D9 core journey complete; separate property qualification follows outside presentation time.
+PASS browser property-vulnerable: confirmed; one explicit run; unreviewed evidence exported.
+PASS browser property-filtered: no_issue_observed; one explicit run; unreviewed evidence exported.
+PASS browser property-ambiguous: inconclusive; one explicit run; unreviewed evidence exported.
+PASS browser qualification. Records: artifacts/ui/browser-20261109T144950912Z

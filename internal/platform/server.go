@@ -125,7 +125,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 		items := []any{}
 		for _, configured := range s.Applications[tenant] {
-			items = append(items, configured.Plan)
+			items = append(items, ApplicationSummary{Plan: configured.Plan, Metadata: s.applicationMetadata(tenant, configured.Plan)})
 		}
 		if len(s.SetupKey) == 32 {
 			plans, err := s.Store.onboardedPlans(tenant)
@@ -134,7 +134,7 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			for _, plan := range plans {
-				items = append(items, plan)
+				items = append(items, ApplicationSummary{Plan: plan, Metadata: s.applicationMetadata(tenant, plan)})
 			}
 		}
 		writeJSON(w, 200, items)
@@ -391,6 +391,10 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		problem(w, 404, ErrNotFound)
 		return
 	}
+	if len(parts) == 4 && parts[3] == "events" {
+		s.serveActivity(w, r, tenant, id)
+		return
+	}
 	if len(parts) == 4 && parts[3] == "status" && r.Method == "GET" {
 		status, err := s.Status(id)
 		if err != nil {
@@ -594,13 +598,13 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 		if e != nil {
 			cap.Blocked = true
 			cap.Error = e.Error()
-			if err := s.capture(id, &cap); err != nil {
+			if err := s.capture(id, op, &cap); err != nil {
 				return captures, err
 			}
 			captures = append(captures, cap)
 			return captures, e
 		}
-		if e = s.reserveTarget(ctx, id); e != nil {
+		if e = s.reserveTarget(ctx, id, op, cap.ID, in.Account, u.Path); e != nil {
 			return captures, e
 		}
 		req, e := http.NewRequestWithContext(ctx, "GET", u.String(), nil)
@@ -624,7 +628,22 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 			req.Header.Set("Authorization", "Bearer lab-"+in.Account)
 		}
 		req.Header.Set("X-Tsunami-Request-ID", cap.ID)
-		req = req.WithContext(httptrace.WithClientTrace(req.Context(), &httptrace.ClientTrace{GotConn: func(info httptrace.GotConnInfo) { cap.Peer = info.Conn.RemoteAddr().String() }}))
+		captureID := cap.ID
+		req = req.WithContext(httptrace.WithClientTrace(req.Context(), &httptrace.ClientTrace{
+			GotConn: func(info httptrace.GotConnInfo) { cap.Peer = info.Conn.RemoteAddr().String() },
+			WroteRequest: func(info httptrace.WroteRequestInfo) {
+				if info.Err != nil {
+					return
+				}
+				at := time.Now().UTC()
+				if err := s.Store.Update(id, func(current *Run) error {
+					appendActivity(current, "request.sent", op, captureID, ActivityData{ObservedAt: &at})
+					return nil
+				}); err != nil {
+					slog.Warn("request send observation not persisted", "run", id)
+				}
+			},
+		}))
 		var resp *http.Response
 		if target.Forward != nil {
 			resp, cap.Peer, e = target.Forward(ctx, r, req)
@@ -633,7 +652,7 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 		}
 		if e != nil {
 			cap.Error = "request failed or was cancelled"
-			if err := s.capture(id, &cap); err != nil {
+			if err := s.capture(id, op, &cap); err != nil {
 				return captures, err
 			}
 			captures = append(captures, cap)
@@ -653,7 +672,7 @@ func (s *Server) Execute(parent context.Context, id string, in Request) ([]Captu
 			cap.Body = ""
 			cap.Error = "response reflected an assigned credential"
 		}
-		if err := s.capture(id, &cap); err != nil {
+		if err := s.capture(id, op, &cap); err != nil {
 			return captures, err
 		}
 		captures = append(captures, cap)
@@ -693,9 +712,21 @@ func (s *Server) target(tenant, scenario, connectivity string) (Target, error) {
 	return target, nil
 }
 
-func (s *Server) capture(id string, c *Capture) error {
+func (s *Server) capture(id, op string, c *Capture) error {
 	c.FinishedAt = time.Now().UTC()
-	if err := s.Store.Update(id, func(r *Run) error { r.Captures = append(r.Captures, *c); return nil }); err != nil {
+	if err := s.Store.Update(id, func(r *Run) error {
+		r.Captures = append(r.Captures, *c)
+		outcome := "response_captured"
+		if c.Error != "" {
+			outcome = "failed_or_interrupted"
+		}
+		if c.Blocked {
+			outcome = "blocked"
+			appendActivity(r, "request.rejected", op, c.ID, ActivityData{Stage: "scope", Code: "scope_not_approved"})
+		}
+		appendActivity(r, "request.capture_persisted", op, c.ID, ActivityData{Status: c.Status, DurationMillis: c.FinishedAt.Sub(c.StartedAt).Milliseconds(), Outcome: outcome})
+		return nil
+	}); err != nil {
 		slog.Error("evidence persistence failed", "run", id, "error", err)
 		return errors.New("evidence persistence unavailable")
 	}
@@ -777,6 +808,16 @@ func (s *Server) Finish(id string) (Result, error) {
 		now := time.Now().UTC()
 		r.FinishedAt = &now
 		r.Events = append(r.Events, Event{now, "validated", result.Verdict})
+		data := ActivityData{Verdict: result.Verdict}
+		if v := result.Validation; v != nil {
+			data.Validation = &ValidationCounts{Required: v.BaselinesRequired, Verified: v.BaselinesVerified, ProbeCaptured: v.ProbeCaptured}
+		}
+		for _, id := range result.EvidenceIDs {
+			if activityRef(id) != "" && len(data.EvidenceIDs) < 24 {
+				data.EvidenceIDs = append(data.EvidenceIDs, id)
+			}
+		}
+		appendActivity(r, "validation.completed", "", "", data)
 		return nil
 	})
 	if err == nil && feedback != nil {
@@ -817,7 +858,14 @@ func (s *Server) Reconcile(ctx context.Context) {
 					if err != nil {
 						slog.Warn("workload cleanup pending", "run", r.ID)
 					} else {
-						_ = s.Store.Update(r.ID, func(run *Run) error { now := time.Now().UTC(); run.DeletionRequestedAt = &now; return nil })
+						_ = s.Store.Update(r.ID, func(run *Run) error {
+							if run.DeletionRequestedAt == nil {
+								now := time.Now().UTC()
+								run.DeletionRequestedAt = &now
+								appendActivity(run, "cleanup.delete_accepted", "", "", ActivityData{ObservedAt: &now})
+							}
+							return nil
+						})
 					}
 					continue
 				}
@@ -836,6 +884,7 @@ func (s *Server) Reconcile(ctx context.Context) {
 							run.State = Running
 							now := time.Now().UTC()
 							tracked(run).DispatchIntentAt = &now
+							appendActivity(run, "execution.dispatch_requested", "", "", ActivityData{ObservedAt: &now})
 							allowCreate = true
 						}
 						return nil

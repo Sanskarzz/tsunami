@@ -1,0 +1,19 @@
+{
+  "dirty_working_tree": true,
+  "native_image": "tsunami:showcase-20261109t144510z",
+  "tools_image": "tsunami-tools:showcase-20261109t144510z",
+  "binary_sha256": "013faa595eac50ccd2fa45e0e87285c5e4fce84314cf29224ee68d91066c0c1b",
+  "ui_assets": {
+    "index.html": "8c4dbfc44495db57875b371a1b565e39313513fb07da30495b9d00e1a36ef8d2",
+    "app.js": "f67fd146f7ecf0a00d3cf2631b81f9a30ccfbf4968438d22b57f688f3eab5373",
+    "onboarding.js": "44d75fac9df2f25eba5b31b94334eaf7fe545b13d852bc2e2730c01b8c0e9432",
+    "styles.css": "8a4c853a6fe3bc859c46ddd401b4a8a4689a67f0228d3927e4151e12d309fef1"
+  },
+  "inspected_binary_hashes": {
+    "native": "013faa595eac50ccd2fa45e0e87285c5e4fce84314cf29224ee68d91066c0c1b",
+    "tools": "013faa595eac50ccd2fa45e0e87285c5e4fce84314cf29224ee68d91066c0c1b"
+  },
+  "native_image_id": "sha256:2581f5408e99616b93209799c4af6adee37e0108b87bd2ad684b91a3ffb687f1",
+  "tools_image_id": "sha256:b771f2c236fb42a4e68b8485b354db24714973cd00255c5892f927b90f9263ae",
+  "driver_sha256": "df7f0d636dd137941df7bdb113e9963f215d0aa20fa607f6c890dde5f67bceb3"
+}

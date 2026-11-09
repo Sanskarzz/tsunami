@@ -56,6 +56,7 @@ func (s *Store) Fail(id string) error {
 		r.FinishedAt = &now
 		r.Result = &Result{Verdict: "inconclusive", Title: "Assessment incomplete", Reason: "Worker ended before trusted validation; no automatic replay.", EvidenceIDs: []string{}}
 		r.Events = append(r.Events, Event{now, "worker_failed", "no automatic retry of uncertain requests"})
+		appendActivity(r, "execution.failed", "", "", ActivityData{Code: "worker_failed", ObservedAt: &now})
 		return nil
 	})
 }
@@ -98,7 +99,7 @@ func (s *Store) create(tenant, scenario, target, mode string, model *ModelUsage,
 	now := time.Now().UTC()
 	r := Run{ID: randomID(), Tenant: tenant, Scenario: scenario, State: Pending,
 		Lifecycle: &Lifecycle{Version: 1, FromCreation: true},
-		Target:    target, Mode: mode, CreatedAt: now, Deadline: now.Add(90 * time.Second),
+		Target:    target, Mode: mode, CreatedAt: now, Deadline: now.Add(MaxRunDuration),
 		Execution: "scripted", Connectivity: connectivity, Workflow: "object-ownership/v1", Model: model,
 		MaxRequests: 12, Captures: []Capture{}, Events: []Event{{now, "created", "server-owned lab policy; no arbitrary target selection"}}}
 	if model != nil {
@@ -134,6 +135,7 @@ func (s *Store) create(tenant, scenario, target, mode string, model *ModelUsage,
 				return err
 			}
 		}
+		activityCreated(&r)
 		data, e := json.Marshal(r)
 		if e != nil {
 			return e

@@ -1,0 +1,28 @@
+{
+  "authorization_note": "owned-lab/D9-new-scope",
+  "authorized": true,
+  "checklist_progress": {
+    "tsunami_authorization_v1": {
+      "completed": 1,
+      "not_applicable": 0,
+      "skipped": 0,
+      "total": 1
+    }
+  },
+  "findings": [],
+  "id": "c31d302393a49ae42528460b95daa537",
+  "metadata": {
+    "authorization_enforced_by": "Tsunami durable state, not this exported boolean",
+    "finding_candidates": 0,
+    "scope_digest": "b88bf16593576299c05607dc7aed5a7de485e406c360a1dfe83bd764614249e3"
+  },
+  "name": "D9 linked fixed-app retest",
+  "notes": "Synthetic lab export. Procedure completion is not application-wide security assurance. Unrated candidates are separate from findings.",
+  "scope_in": [
+    "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000"
+  ],
+  "start_date": "2026-11-09",
+  "status": "Testing",
+  "target": "http://vampi-fixed.tsunami-app-lab.svc.cluster.local:5000",
+  "target_type": "api"
+}
