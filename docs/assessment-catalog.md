@@ -48,6 +48,7 @@ make catalog-local
 make catalog-fixture-local
 
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make private-deploy CONTEXT=kind-tsunami-lab
 make catalog-verify CONTEXT=kind-tsunami-lab
 make catalog-private-verify CONTEXT=kind-tsunami-lab

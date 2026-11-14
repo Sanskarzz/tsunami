@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Build and enable the local-only UI in the existing idle owned Kind lab."""
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
 from datetime import datetime, timezone
 import base64
 import json
@@ -9,9 +13,11 @@ from pathlib import Path
 import subprocess
 
 from showcase import Lab
+from deployment_guard import require_secured_lab
 
 
 def main():
+    require_secured_lab()
     lab = Lab(False, 900)
     lab.foundation()
     lab.permission_idle(required=0)

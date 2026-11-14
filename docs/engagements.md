@@ -143,6 +143,7 @@ python3 scripts/toolkit.py validate-export \
   --out artifacts/engagements/schema-validation.json
 
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make private-deploy CONTEXT=kind-tsunami-lab
 make engagement-verify CONTEXT=kind-tsunami-lab
 make engagement-private-verify CONTEXT=kind-tsunami-lab

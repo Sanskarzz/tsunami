@@ -38,6 +38,7 @@ Use the dedicated local cluster. Put a valid key in the ignored `.local/openrout
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 
 # Metadata GETs only; verifies tool support and zero listed token/request prices.
 python3 scripts/openrouter-preflight.py \

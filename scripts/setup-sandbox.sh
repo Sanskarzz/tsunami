@@ -3,6 +3,7 @@ set -eu
 # All installation is inside this dedicated Kind node. No sudo, host runtime
 # installation, host daemon restart, or changes to the user's kubeconfig.
 cd "$(dirname "$0")/.."
+python3 -B scripts/deployment_guard.py --bootstrap --context "${CONTEXT:-}" --runtime-class "${RUNTIME_CLASS:-}"
 name=tsunami-lab
 node=tsunami-lab-control-plane
 config="$PWD/.local/sandbox.kubeconfig"

@@ -51,6 +51,7 @@ On the already provisioned dedicated gVisor/Cilium lab:
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make tools-deploy CONTEXT=kind-tsunami-lab IMAGE=tsunami:property-lab TOOL_IMAGE=tsunami-tools:property-lab
 
 # Only if the application Secret mount/observation role is not configured yet:

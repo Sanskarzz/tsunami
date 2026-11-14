@@ -47,6 +47,7 @@ This is independent of the broker process, **not an external firewall cutoff**. 
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make private-deploy CONTEXT=kind-tsunami-lab
 make private-verify CONTEXT=kind-tsunami-lab
 

@@ -6,6 +6,9 @@ CONTEXT ?= kind-kind
 RUNTIME_CLASS ?=
 TOOLKIT_PATH ?= ../vapt-toolkit
 
+# Deployment scripts receive the same explicit selection as their Make caller.
+export CONTEXT RUNTIME_CLASS
+
 test:
 	go test -race ./...
 
@@ -77,7 +80,8 @@ model-fixture-demo:
 image: build
 	docker build -t $(IMAGE) .
 
-deploy: image
+deploy: check-secured-lab
+	$(MAKE) image
 	kind load docker-image $(IMAGE) --name $(patsubst kind-%,%,$(CONTEXT))
 	@if [ -n "$(RUNTIME_CLASS)" ]; then kubectl --context $(CONTEXT) get runtimeclass $(RUNTIME_CLASS) >/dev/null; fi
 	@if ! kubectl --context $(CONTEXT) get namespace tsunami >/dev/null 2>&1; then kubectl --context $(CONTEXT) create namespace tsunami; fi
@@ -123,7 +127,7 @@ free-eval:
 free-stop-check:
 	python3 scripts/evaluate-model.py --context $(CONTEXT) --free-only --allow-model-calls --stop-check
 
-private-deploy:
+private-deploy: check-secured-lab
 	@test "$(CONTEXT)" = "kind-tsunami-lab" || { echo 'Use the dedicated kind-tsunami-lab context.' >&2; exit 1; }
 	kubectl --context $(CONTEXT) get runtimeclass gvisor >/dev/null
 	$(MAKE) image
@@ -174,7 +178,8 @@ engagement-verify:
 engagement-private-verify:
 	python3 scripts/verify-engagement.py --context $(CONTEXT) --private
 
-application-setup: build
+application-setup: check-secured-lab
+	$(MAKE) build
 	python3 scripts/setup-vampi.py --context $(CONTEXT)
 
 application-verify:
@@ -184,7 +189,8 @@ application-verify:
 tools-image: build
 	docker build -f Dockerfile.tools -t $(TOOL_IMAGE) .
 
-tools-deploy: image tools-image
+tools-deploy: check-secured-lab
+	$(MAKE) image tools-image
 	@test "$(CONTEXT)" = "kind-tsunami-lab" || { echo 'Use the dedicated kind-tsunami-lab context.' >&2; exit 1; }
 	kind load docker-image $(IMAGE) $(TOOL_IMAGE) --name tsunami-lab
 	python3 scripts/configure-tools.py --context $(CONTEXT) --tool-image "$(TOOL_IMAGE)" --native-image "$(IMAGE)"
@@ -207,7 +213,8 @@ journey-verify: build
 	python3 scripts/verify-journey.py --context $(CONTEXT)
 
 .PHONY: property-lab-setup property-verify
-property-lab-setup: build
+property-lab-setup: check-secured-lab
+	$(MAKE) build
 	python3 scripts/setup-property-lab.py --context $(CONTEXT)
 
 property-verify: build
@@ -230,3 +237,10 @@ showcase-extended:
 .PHONY: ui-deploy
 ui-deploy:
 	python3 scripts/configure-ui.py
+
+# A single prerequisite precedes every build-bearing deployment recipe.
+.PHONY: check-secured-lab
+check-secured-lab:
+	python3 -B scripts/deployment_guard.py --context "$(CONTEXT)" --runtime-class "$(RUNTIME_CLASS)"
+
+configure-model-fixture disable-model stop-lab-setup ui-deploy showcase-prepare: check-secured-lab

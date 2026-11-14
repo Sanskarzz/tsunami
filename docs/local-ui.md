@@ -10,7 +10,7 @@ The UI supports synthetic object/property plans, exact scope approval, a keyed s
 
 Follow the [Getting Started](getting-started.md) for idle-work checks, explicit fixture refresh/build, loopback port-forwarding and private operator-token connection. The sole UI entry point is `/ui/`; it refuses non-loopback Host values and credentials/query parameters in UI URLs. This is an exposure guard, not authentication or protection from a compromised workstation.
 
-`make ui-deploy` opts the existing control deployment into `TSUNAMI_ENABLE_UI=true`, preserving its onboarding key/configuration/history and selecting matching native/tools images. It adds no public ingress or customer sign-in. A replacement build needs fresh qualification. The token remains in page memory only and must be entered privately before screen sharing.
+With the [explicit secured-lab selection](getting-started.md#build-deploy-and-seed-synthetic-targets), `make ui-deploy` opts the existing control deployment into `TSUNAMI_ENABLE_UI=true`, preserving its onboarding key/configuration/history and selecting matching native/tools images. It adds no public ingress or customer sign-in. A replacement build needs fresh qualification. The token remains in page memory only and must be entered privately before screen sharing.
 
 ## Screens and API calls
 

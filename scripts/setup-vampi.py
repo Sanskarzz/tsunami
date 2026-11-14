@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Provision and seed only the owned VAmPI lab. No agent or model calls."""
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
 import argparse
+from deployment_guard import require_secured_lab
 import base64
 from contextlib import contextmanager
 import json
@@ -29,6 +34,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--context", default="kind-tsunami-lab")
     args = parser.parse_args()
+    require_secured_lab(args.context)
     if args.context != "kind-tsunami-lab":
         parser.error("use the dedicated kind-tsunami-lab context")
     binding_compiler()

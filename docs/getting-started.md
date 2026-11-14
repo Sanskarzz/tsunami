@@ -7,7 +7,7 @@ Choose **Path A** to inspect and test the implementation without Kubernetes. Cho
 | Requirement | Source verification | Kubernetes demo |
 |---|---|---|
 | Platform | Tested Ubuntu 25.10, Linux amd64; other OS/architectures unqualified | Linux x86_64; the helper accepts only x86_64 and assumes Linux Docker/Kind behavior; complete bootstrap remains unqualified |
-| Go | `go.mod`: language 1.27.2, toolchain 1.27.3; use Go 1.27.3 | Same |
+| Go | `go.mod` requires Go 1.27.4; older patch versions are refused | Same |
 | Build tools | Git, make, C compiler/CGO for race tests, `/bin/sh`, `/usr/bin/curl` | Same, plus tar, zstd, curl and SHA-512 utilities |
 | Python | Tested 3.13.7; venv/pip; install `scripts/requirements-test.txt` | Same; target image separately uses Python 3.11 |
 | Node | Tested 22.23.3; no npm installation needed | Node 22 for automated browser qualification |
@@ -20,8 +20,6 @@ Choose **Path A** to inspect and test the implementation without Kubernetes. Cho
 Install tools using their upstream instructions: [Go](https://go.dev/doc/install), [Kind](https://kind.sigs.k8s.io/docs/user/quick-start/), [Docker](https://docs.docker.com/engine/install/), [kubectl](https://kubernetes.io/docs/tasks/tools/), [Helm](https://helm.sh/docs/intro/install/). The checked-in [setup script](../scripts/setup-sandbox.sh) supplies the lab Cilium/gVisor configuration; do not install or replace the host's runtime/CNI to follow this guide.
 
 Minimum RAM/CPU/disk has not been measured. The inspected host had about 15 GiB RAM; its idle lab node used about 1.5 GiB at one observation. This is not a minimum or peak-load estimate. Builds, race tests, browser tests and image downloads need additional resources.
-
-The pinned Go 1.27.3 toolchain has a reported standard-library vulnerability awaiting review/update. Source tests can reproduce this version; do not expose its services beyond the owned lab. See [scanner status](verification.md#security-scan-status).
 
 ## Path A — verify the source locally
 
@@ -47,7 +45,7 @@ make build
 
 Expected success:
 
-- `make verify`: fresh Go race tests, vet, 23 Python tests and evidence checks for 38 materialized bundles, 286 artifacts and 20 historical trial hashes.
+- `make verify`: fresh Go race tests, vet, 34 Python tests and evidence checks for 38 materialized bundles, 286 artifacts and 20 historical trial hashes.
 - `make verify-ui-retest`: 38 frontend tests pass. These isolated test fixtures never appear in the product UI.
 - `make build`: `bin/tsunami` and its host CA bundle are created. The release record identifies the tested build; counts may change in later versions.
 
@@ -89,11 +87,12 @@ if [ -e .local/sandbox.kubeconfig ]; then
   echo 'Existing lab configuration found. Stop and inspect its ownership.' >&2
   exit 1
 fi
-make sandbox-cluster
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
+make sandbox-cluster
 ```
 
-The helper creates a dedicated single-node cluster with default CNI disabled, installs pinned Cilium and runsc inside that node, and writes a private kubeconfig. It does not change the normal kubeconfig context or restart the host Docker daemon. Re-running it on an existing environment is maintenance, not fresh qualification.
+The helper creates a dedicated single-node cluster with default CNI disabled, installs pinned Cilium and runsc inside that node, and writes a private kubeconfig. It does not change the normal kubeconfig context or restart the host Docker daemon. Bootstrap now refuses an existing dedicated kubeconfig or Kind node before downloads or writes. Use the explicit maintenance helpers for an existing owned lab; do not bypass bootstrap refusal.
 
 Inspect prerequisites before deployment:
 
@@ -104,14 +103,15 @@ kubectl --context kind-tsunami-lab -n kube-system get configmap cilium-config \
   -o jsonpath='{.data.enable-policy}'
 ```
 
-Require a Ready `tsunami-lab-control-plane`, RuntimeClass handler `runsc` and policy value `always`. These configuration checks alone do not prove runtime/network containment.
+Require a Ready `tsunami-lab-control-plane`, RuntimeClass handler `runsc` and policy value `always`. These configuration checks alone do not prove runtime/network containment. The shared [deployment guard](../scripts/deployment_guard.py) makes read-only prerequisite checks; it is an operator mistake guard, not authorization, an ongoing maintenance lock or fresh runtime qualification. Source `make build`, `make image` and `make tools-image` remain standalone local build commands.
 
 ### Build, deploy and seed synthetic targets
 
-The following commands mutate only the dedicated owned lab. Do not run them against an existing lab as an implicit refresh. **Never use bare `make deploy`: its legacy defaults select `kind-kind` and no runtime.** Specify the absolute dedicated kubeconfig and both context/runtime as shown.
+The following commands mutate only the dedicated owned lab. Do not run them against an existing lab as an implicit refresh. Bare `make deploy` is refused before image builds. Deployment targets and direct setup helpers require the absolute private repository kubeconfig, context `kind-tsunami-lab` and runtime `gvisor`. The guard checks the local TLS configuration, Docker Kind ownership/published API port, Ready node, RuntimeClass `runsc`, and ready Cilium in `always` mode before admitting builds or mutations. It refuses merged/ambient configs, TLS bypass/proxy/auth plugins and identity mismatches. Specify the selection as shown.
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make deploy CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make tools-deploy CONTEXT=kind-tsunami-lab
 make application-setup CONTEXT=kind-tsunami-lab
@@ -133,6 +133,7 @@ These create bounded diagnostic workloads but no engagements. Run only in your e
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make isolation-check CONTEXT=kind-tsunami-lab
 make tools-network-check CONTEXT=kind-tsunami-lab
 make showcase-check
@@ -146,6 +147,7 @@ In one terminal:
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 kubectl --context kind-tsunami-lab -n tsunami port-forward \
   --address=127.0.0.1 service/tsunami-control 8080:8080
 ```
@@ -154,6 +156,7 @@ In another terminal at the same repository root, save the tenant operator creden
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 mkdir -p .local
 chmod 700 .local
 umask 077

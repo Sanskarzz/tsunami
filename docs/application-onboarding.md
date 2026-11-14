@@ -7,6 +7,8 @@ The local UI now implements a form-first setup flow with a saved, typed conversa
 Use the existing dedicated gVisor/Cilium lab:
 
 ```sh
+export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make ui-deploy
 ```
 

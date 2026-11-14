@@ -4,15 +4,23 @@
 Secret values are held in memory and sent through stdin; never printed.
 Generated non-secret resources are retained for review.
 """
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
 import base64
+from deployment_guard import require_secured_lab
 import json
 from deploy_images import deployed_image
 import os
 from pathlib import Path
 import subprocess
-import sys
 
-context = os.environ.get("CONTEXT", "kind-tsunami-lab")
+context = os.environ.get("CONTEXT", "")
+try:
+    require_secured_lab(context)
+except RuntimeError as error:
+    raise SystemExit(str(error))
 if context != "kind-tsunami-lab":
     sys.exit("Private lab setup is restricted to kind-tsunami-lab")
 base = ["kubectl", "--context", context]

@@ -14,6 +14,7 @@ Use the dedicated cluster and its already configured gVisor/Cilium execution bou
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make tools-deploy CONTEXT=kind-tsunami-lab IMAGE=tsunami:journey-lab TOOL_IMAGE=tsunami-tools:journey-lab
 make application-setup CONTEXT=kind-tsunami-lab
 ```

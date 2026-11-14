@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """Opt-in model configuration. Key bytes travel through stdin, never argv/logs."""
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
 import argparse
+from deployment_guard import require_secured_lab
 import base64
 import json
 from deploy_images import image_from_control, with_image, manifest_json
 import re
 from pathlib import Path
 import subprocess
-import sys
 from urllib.parse import urlparse
 
 parser = argparse.ArgumentParser()
@@ -17,6 +21,10 @@ parser.add_argument("--base-url", default="https://api.openai.com/v1/")
 parser.add_argument("--key-file")
 parser.add_argument("--context", default="kind-tsunami-lab")
 args = parser.parse_args()
+try:
+    require_secured_lab(args.context)
+except RuntimeError as error:
+    raise SystemExit(str(error))
 if args.context != "kind-tsunami-lab":
     sys.exit("Model setup is restricted to the dedicated local kind-tsunami-lab cluster")
 base = ["kubectl", "--context", args.context, "-n", "tsunami"]

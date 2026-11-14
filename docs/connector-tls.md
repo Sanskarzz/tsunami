@@ -36,6 +36,7 @@ Ordinary setup preserves valid certificates. Expired or mismatched material fail
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 RENEW_PRIVATE_TLS=true make private-deploy CONTEXT=kind-tsunami-lab
 ```
 

@@ -15,8 +15,9 @@ I kept that result and did not replace networking in the existing cluster. The n
 Tested on Linux x86_64 with Docker, Kind, kubectl, Helm, Go, Python 3, curl and zstd.
 
 ```sh
-make sandbox-cluster
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
+make sandbox-cluster
 make deploy CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make isolation-check CONTEXT=kind-tsunami-lab
 make verify-k8s CONTEXT=kind-tsunami-lab
@@ -27,7 +28,7 @@ The setup pins the Kind node image digest, Cilium 1.20.4, and gVisor `release-20
 
 The trusted control plane and fixtures use ordinary containers. The deployment renderer puts the chosen worker runtime into the control plane's manifest before creation. Agent Jobs specify `runtimeClassName: gvisor`; this maps to containerd's `runsc` handler using the systrap platform. A configured runtime failure is not retried under runc.
 
-Setup adds another local cluster and uses memory and disk. Re-running it with the pinned runtime already installed leaves that node's containerd running. To remove this disposable lab, use `kind delete cluster --name tsunami-lab --kubeconfig .local/sandbox.kubeconfig`. Removing it also removes its local evidence volume; export reports first.
+Setup adds another local cluster and uses memory and disk. Fresh bootstrap now refuses existing cluster nodes or dedicated config before downloads/writes. Existing-lab changes need explicit maintenance rather than re-running bootstrap. To remove this disposable lab, use `kind delete cluster --name tsunami-lab --kubeconfig .local/sandbox.kubeconfig`. Removing it also removes its local evidence volume; export reports first.
 
 ## What the check does
 

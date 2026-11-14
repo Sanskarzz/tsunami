@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 """Owned-lab showcase: inspect, explicitly refresh disposable data, then rehearse."""
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
 import argparse
 import base64
 from contextlib import contextmanager
@@ -17,6 +21,7 @@ import urllib.request
 import urllib.error
 
 from deploy_images import image_from_control
+from deployment_guard import require_secured_lab
 
 
 CONTEXT = "kind-tsunami-lab"
@@ -264,6 +269,8 @@ def main():
     args = parser.parse_args()
     if not 120 <= args.minimum_ttl <= 3600:
         parser.error("minimum TTL must be 120–3600 seconds")
+    if args.action != "check":
+        require_secured_lab()
     lab = Lab(args.include_property, args.minimum_ttl)
     if args.action == "check":
         report = lab.check()

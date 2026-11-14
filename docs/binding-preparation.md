@@ -58,6 +58,7 @@ Raw inputs and prepared packages stay under ignored `.local/application-bindings
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 # Existing dedicated gVisor/Cilium cluster and configured application mounts:
 make tools-deploy CONTEXT=kind-tsunami-lab IMAGE=tsunami:binding-lab TOOL_IMAGE=tsunami-tools:binding-lab
 make application-setup CONTEXT=kind-tsunami-lab

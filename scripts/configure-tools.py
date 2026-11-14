@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 """Enable the single reviewed adapter only in the owned gVisor lab."""
+import sys
+if __name__ == "__main__":
+    sys.dont_write_bytecode = True
+
 import argparse
+from deployment_guard import require_secured_lab
 import json
 import subprocess
 
@@ -11,6 +16,7 @@ def main():
     parser.add_argument("--tool-image", default="tsunami-tools:dev")
     parser.add_argument("--native-image", help="already built/loaded native image; preserve other configuration")
     args = parser.parse_args()
+    require_secured_lab(args.context)
     if not args.tool_image or any(c.isspace() for c in args.tool_image):
         parser.error("explicit tool image without whitespace required")
     if args.native_image is not None and (not args.native_image or any(c.isspace() for c in args.native_image)):

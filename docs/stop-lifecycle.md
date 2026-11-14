@@ -44,6 +44,7 @@ Use the already provisioned dedicated gVisor/Cilium Kind cluster. These commands
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make tools-deploy CONTEXT=kind-tsunami-lab IMAGE=tsunami:stop-lab TOOL_IMAGE=tsunami-tools:stop-lab
 make stop-lab-setup CONTEXT=kind-tsunami-lab
 make stop-lab-verify CONTEXT=kind-tsunami-lab

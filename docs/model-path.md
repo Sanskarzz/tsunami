@@ -32,6 +32,7 @@ In the dedicated gVisor/Cilium cluster:
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make deploy CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make configure-model-fixture CONTEXT=kind-tsunami-lab
 make model-fixture-eval CONTEXT=kind-tsunami-lab

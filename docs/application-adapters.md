@@ -66,6 +66,7 @@ After [sandbox setup](sandbox-lab.md), build/deploy the current Tsunami image, t
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make application-setup CONTEXT=kind-tsunami-lab
 make application-verify CONTEXT=kind-tsunami-lab
 

@@ -37,6 +37,7 @@ Cancellation kills the fixed command's Linux process group, and a disconnected l
 
 ```sh
 export KUBECONFIG="$PWD/.local/sandbox.kubeconfig"
+export CONTEXT=kind-tsunami-lab RUNTIME_CLASS=gvisor
 make tools-deploy CONTEXT=kind-tsunami-lab
 # Reseeds disposable test databases and replaces their one-hour credentials.
 # Run between assessments, not while an agent is active.
