@@ -93,3 +93,12 @@ test('disconnect clears evidence detail and late raw responses cannot repopulate
   const raw=p.run('loadRawEvidence(state.findings.captures[4])');p.run('disconnect()');held.resolve(response(p.artifacts[4]));
   await assert.rejects(raw);assert.equal(p.run('state.rawEvidence'),null);assert.equal(p.text('capture-detail'),'');assert.equal(p.text('finding-context'),'');
 });
+
+test('expected and observed comparison uses trusted selected check metadata and preserves inconclusive outcomes',async()=>{
+  const p=fixture();await p.run('loadFindings()');
+  assert.equal(p.text('finding-verdict'),'confirmed');assert.match(p.text('finding-expected'),/must not receive/);assert.match(p.text('finding-observed'),/owner’s object.*private proof/);assert.match(p.text('finding-review'),/severity unrated/);
+  assert.match(p.text('evidence-comparison'),new RegExp(p.captures[4].id));
+  p.snapshot.assessments[0].result={verdict:'inconclusive',reason:'Incomplete owner recheck.'};await p.run('loadFindings()');
+  assert.equal(p.text('finding-verdict'),'inconclusive');assert.doesNotMatch(p.text('finding-review'),/severity unrated/);
+  assert.equal(p.calls.filter(c=>c.path.includes('/evidence/')||c.path.endsWith('/export')).length,0);
+});

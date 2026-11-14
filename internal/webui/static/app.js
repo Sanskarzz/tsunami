@@ -50,7 +50,7 @@ function page(name) {
   for (const step of document.querySelectorAll('[data-journey]')) step.classList.toggle('current', step.dataset.journey === name);
   const empty = ['plan','run','evidence'].includes(name) && !$(name + '-empty').hidden;
   const heading = document.querySelector(empty ? `#${name}-empty h2` : `[data-panel="${name}"] h1`);
-  if (heading) { heading.tabIndex = -1; heading.focus({preventScroll: true}); }
+  if (heading) { heading.tabIndex = -1; heading.focus(); }
   $('step-explanation').textContent = pages[name];
   if (name === 'evidence' && state.token && state.view) void loadFindings().catch(() => {});
   if (['plan','evidence'].includes(name) && state.view?.engagement.source_engagement_id) void loadRetestComparison().catch(() => {});
@@ -179,7 +179,7 @@ function resetEvidence() {
   $('evidence-summary').textContent = 'No evidence snapshot loaded.';
   $('draft-report').textContent = 'No report loaded.';
   $('finding-detail').hidden=true; $('finding-summary').textContent='No finding metadata snapshot loaded.';
-  for(const id of ['attempt-evidence','finding-context','finding-title','finding-observation','finding-remediation','evidence-comparison','evidence-checks','evidence-check-help'])$(id).replaceChildren();
+  for(const id of ['attempt-evidence','finding-context','finding-title','finding-observation','finding-remediation','evidence-comparison','evidence-checks','evidence-check-help','finding-expected','finding-observed','finding-review','finding-verdict'])$(id).replaceChildren();
   $('raw-evidence-status').textContent='No raw response loaded.';
 }
 function controls() {
@@ -195,6 +195,8 @@ function controls() {
   if (e?.source_engagement_id && (!state.retest || state.retestStale || state.retest.retest.engagement.scope_digest !== e.scope_digest)) $('approve').disabled = true;
   $('go-run').disabled = !e;
   const recovery = e && state.uncertainStarts.has(e.id) && state.startRequests.get(e.id)?.scope === e.scope_digest;
+  $('start-recovery').hidden = !recovery || !!state.run;
+  $('operation-state').textContent = state.busy ? 'Operator request pending · Stop remains available for selected work' : '';
   $('start').textContent = recovery ? 'Recover Start' : 'Start';
   $('start').disabled = !connected || locked || !current || !supported || e.state !== 'active' || permission !== 'active' || (!recovery && state.view?.metadata?.access?.availability !== 'configured') || e.approved_digest !== e.scope_digest || !!state.run || !!e.run_ids?.length || (state.uncertainStarts.has(e.id) && !recovery) || state.stopReceipt?.id === e.id;
   // Stop stays independent of observation/export/start requests.
@@ -236,11 +238,14 @@ function renderPlan() {
   $('plan-card').hidden = !e;
   if (!e) {
     details($('run-context'), [['Assessment', 'No assessment loaded.']]);
+    $('run-title').textContent = 'No assessment selected'; $('run-identity').textContent = '';
     $('events').textContent = 'Load an assessment to read its stored events.';
     $('run-picker-wrap').hidden = true;
     controls(); return;
   }
   $('engagement-state').textContent = e.state;
+  $('run-title').textContent = e.name || e.application.title;
+  $('run-identity').textContent = e.application.id + ' · Run: ' + (state.run || 'Not started');
   const metadata = state.view.metadata;
   const procedure = metadata?.procedures?.find(p => p.id === e.items[0]?.procedure && p.digest === e.items[0]?.definition_digest);
   const limits = procedure?.supported && Number.isInteger(procedure.max_requests) && Number.isInteger(metadata.max_run_duration_seconds)
@@ -251,7 +256,7 @@ function renderPlan() {
     displayed.dataset.scope = e.scope_digest; displayed.value = e.scope_digest;
     $('scope-reviewed').checked = false; state.reviewedScope = '';
   }
-  details($('scope-summary'), [['Target', e.target], ['Approved addresses', e.application.approved_addresses.join('\n')],
+  details($('scope-summary'), [['Application', e.application.id], ['Target', e.target], ['Test identities', e.application.identity.map(r => r.account).join(', ')], ['Approved addresses', e.application.approved_addresses.join('\n')],
     ['Intended rule', ruleText(e.application.expected_access)], ['Protected proof fields', Object.keys(e.application.baselines?.[0]?.sha256 || {}).join(', ') || 'Not returned'], ['Limits', limits], ['Minimum request interval', !procedure?.supported ? 'Unknown' : procedure.min_interval_ms ? procedure.min_interval_ms + ' ms per run' : 'No configured interval'],
     ['Permission expires', time(e.expires_at)], ['Execution', executionText(metadata?.execution_mode)], ['Scope permission', metadata?.permission || 'Unknown'], ['Access', accessText(metadata?.access)]]);
   $('scope-support').textContent = procedure?.supported ? 'Only the listed account/GET/path pairs may be requested within the allowance. Identity and owner rechecks are required by validation; the broker does not guarantee exactly-once execution or this order.' : 'This saved procedure is unsupported or its metadata is unavailable. Approval and Start are disabled; inspect the historical scope without inferring current permissions.';
@@ -295,11 +300,14 @@ function renderStatus() {
     : `${state.statusStale ? 'STALE · ' + (state.statusStaleReason || 'latest read failed') + '. ' : ''}Status snapshot: ${time(s.observed_at)} · executor check: ${s.observation_code || 'Not recorded'} at ${time(s.executor_observation_attempted_at)}. A failed check is not a worker observation; API object absence is not process-exit proof.`;
   for (const key of ['permission', 'execution', 'activity', 'cleanup']) $('status-' + key).textContent = s?.[key] || 'Not observed';
   $('verdict').textContent = s?.assessment?.verdict || 'Not assessed';
-  $('verdict').className = 'badge' + (s?.assessment?.verdict === 'confirmed' ? ' attention' : '');
+  $('verdict').className = verdictClass(s?.assessment?.verdict);
   $('result-reason').textContent = s?.assessment?.reason || (s?.permission === 'revoked' ? 'Permission was revoked. Stop is not a successful assessment; inspect any incomplete evidence.' : 'The trusted validator decides from broker-captured evidence. No supported result has been observed here.');
   const v = s?.assessment?.validation;
   const allowance = Number.isInteger(s?.target_request_limit) ? s.target_request_limit : 'unknown';
   $('validation-counts').textContent = v ? `${v.baselines_verified}/${v.baselines_required} baselines/rechecks verified · probe captured: ${v.probe_captured} · target reservations: ${s.target_requests_reserved}/${allowance}` : (s ? 'Target reservations: ' + s.target_requests_reserved + '/' + allowance + ' · uncertain operations: ' + s.uncertain_operations : '');
+  const remaining = Number.isInteger(s?.target_request_limit) && Number.isInteger(s?.target_requests_reserved) && s.target_request_limit >= s.target_requests_reserved && s.target_requests_reserved >= 0 ? s.target_request_limit - s.target_requests_reserved : null;
+  $('budget-remaining').textContent = (state.statusStale ? 'STALE · ' : '') + (remaining === null ? 'Not observed' : `${remaining} of ${s.target_request_limit} unreserved`);
+  $('budget-deadline').textContent = s ? time(s.expires_at) : 'Not observed';
   details($('run-policy'), s ? [['Attempt state', s.state || 'Not returned by server'], ['Execution mode', executionText(s.execution_mode)], ['Executor', s.executor === '' ? 'native' : (s.executor || 'Not returned by server')],
     ['Procedure', s.procedure_id || 'Not returned by server'], ['Procedure version', s.procedure_version || 'Unknown'], ['Definition digest', s.procedure_digest || 'Not recorded'],
     ['Actual run deadline', time(s.expires_at)], ['Target reservations', `${s.target_requests_reserved}/${allowance}`], ['Worker observed', time(s.worker_observed_at)], ['Exit observed', time(s.exit_observed_at)]] : [['Attempt policy', 'Not observed']]);
@@ -332,6 +340,12 @@ function resetActivity() {
     tracked: null, truncated: false, gap: false, displayTruncated: false, hasMore: false};
   renderActivity();
 }
+function activityTitle(kind) {
+  return {'run.created':'Assessment attempt recorded', 'execution.dispatch_requested':'Worker dispatch requested', 'execution.worker_observed':'Running worker observed', 'execution.failed':'Worker failure recorded',
+    'request.admitted':'Request admitted by broker', 'request.sent':'HTTP request write observed', 'request.capture_persisted':'Response capture persisted', 'request.rejected':'Out-of-scope intent rejected',
+    'validation.completed':'Trusted validation completed', 'permission.revoked':'Permission revoked', 'activity.drained_locally':'Local broker activity drained', 'execution.exit_observed':'Worker exit observed',
+    'cleanup.delete_accepted':'Kubernetes deletion accepted', 'cleanup.resources_absent':'Kubernetes resources absent'}[kind] || 'Recorded event';
+}
 function activityDetail(event) {
   const d = event.data;
   if (d.code === 'details_unavailable') return 'Recorded event; details were unavailable under the event byte limit.';
@@ -358,7 +372,7 @@ function renderActivity() {
   const top = list.scrollTop || 0, follow = !list.children.length || list.scrollHeight - top - list.clientHeight < 24;
   list.replaceChildren();
   const rejections = feed?.items.filter(event => event.kind === 'request.rejected').length || 0;
-  $('activity-rejections').textContent = 'Scope rejections in displayed records: ' + rejections;
+  $('activity-rejections').textContent = feed?.loaded ? 'Scope rejections in displayed records: ' + rejections : 'Scope rejections: activity not loaded';
   $('show-rejection').disabled = !rejections;
   const mode = state.polling ? 'Observing' : 'Observation paused';
   $('activity-observed-at').textContent = feed?.at ? `${feed.stale ? 'STALE · latest activity read failed. ' : ''}${mode} · page received ${time(feed.at)} · cursor ${feed.cursor}${feed.hasMore ? ' · more stored pages remain' : ''}.` : `${mode} · no activity page received.`;
@@ -376,10 +390,10 @@ function renderActivity() {
   for (const event of feed.items) {
     const row = element('li', undefined, 'event' + (event.kind === 'request.rejected' ? ' activity-rejected' : ''));
     row.dataset.sequence = event.sequence; row.dataset.kind = event.kind;
-    row.append(element('time', '#' + event.sequence + ' · recorded ' + time(event.recorded_at)), element('strong', event.kind), element('p', activityDetail(event)));
+    row.append(element('time', '#' + event.sequence + ' · recorded ' + time(event.recorded_at)), element('strong', activityTitle(event.kind)), element('p', activityDetail(event)));
     const refs = [`Source: ${event.source}`, event.operation_id && 'Operation: ' + event.operation_id, event.capture_id && 'Capture: ' + event.capture_id,
       event.data.observed_at && 'Fact observed: ' + time(event.data.observed_at), event.data.evidence_ids?.length && 'Evidence: ' + event.data.evidence_ids.join(', ')].filter(Boolean);
-    row.append(element('small', refs.join(' · '))); list.append(row);
+    const technical = element('details'); technical.append(element('summary', 'Source and exact event references'), element('small', event.kind + ' · ' + refs.join(' · '))); row.append(technical); list.append(row);
   }
   list.scrollTop = follow ? list.scrollHeight : top;
 }
@@ -631,7 +645,9 @@ function loadFindings() {
   if (state.findingsJob) return state.findingsJob.promise;
   if(state.rawJob){state.rawJob.controller.abort();state.rawJob=null;}
   const job={epoch:state.epoch,generation:state.generation,id:state.view.engagement.id,controller:new AbortController()};
-  state.findingsJob=job;controls();
+  state.findingsJob=job;
+  $('finding-summary').textContent=state.findings?'Refreshing metadata; previous snapshot '+time(state.findings.observed_at)+' remains displayed.':'Loading finding metadata. No security result is inferred while this read is pending.';
+  controls();
   job.promise=(async()=>{
     try {
       const snapshot=await api('GET','/v1/engagements/'+job.id+'/findings',undefined,job.controller.signal);
@@ -668,6 +684,7 @@ function renderFindings() {
     for(const id of candidate.run_ids){const button=element('button','Follow evidence and remediation · '+id,'button primary');button.dataset.evidenceRun=id;button.addEventListener('click',()=>showFindingRun(id));card.append(button);}
     const technical=element('details');technical.append(element('summary','Candidate identity and fingerprint'),element('pre',pretty({id:candidate.id,candidate_digest:candidate.candidate_digest,saved_title:candidate.title,procedure:candidate.procedure,evidence_ids:candidate.evidence_ids}),'code'));card.append(technical);$('candidates').append(card);
   }
+  $('evidence-go-run').hidden=!!snapshot.assessments.length;
   if(!snapshot.candidates.length)$('candidates').append(element('p','No confirmed candidate in this snapshot. A missing, stopped, failed or inconclusive attempt is not a clean result; no_issue_observed covers only the selected rule.','hint'));
   $('attempt-evidence').replaceChildren();
   for(const attempt of snapshot.assessments){
@@ -684,11 +701,24 @@ function renderFindings() {
   if(selected)showFindingRun(selected.run_id);
   renderRetestChooser();
 }
+function verdictClass(verdict) {
+  return 'badge' + (verdict==='confirmed'?' attention':verdict==='no_issue_observed'?' good':verdict==='inconclusive'?' info':'');
+}
+function observedProbeText(outcome) {
+  return {expected_object_and_proof_returned:'The peer received the owner’s object and the approved private proof.', known_private_value_returned:'The peer received a known owner-only field value.', configured_fields_omitted:'The configured private fields were omitted from the shared response.', configured_denial:'The peer request received a configured denial response.', response_unproven:'The response does not establish the configured authorization outcome.', missing:'No selected peer-probe capture is available.', not_evaluated:'The peer probe has not been evaluated.', blocked:'The broker blocked this request.', failed_or_interrupted:'The request failed or was interrupted; no access outcome is inferred.'}[outcome] || 'No supported peer-probe observation is available.';
+}
 function showFindingRun(id) {
   const snapshot=state.findings,attempt=snapshot?.assessments.find(a=>a.run_id===id);if(!attempt)return;
   if(state.rawJob){state.rawJob.controller.abort();state.rawJob=null;}
   state.rawEvidence=null;$('capture-detail').hidden=true;$('capture-detail').textContent='';$('raw-evidence-status').textContent='No raw response loaded. Choose a specific supporting capture.';
   $('finding-detail').hidden=false;$('finding-title').textContent=attempt.display_title;
+  const verdict=attempt.result?.verdict;
+  $('finding-verdict').textContent=verdict || 'No completed validation'; $('finding-verdict').className=verdictClass(verdict);
+  $('finding-expected').textContent=ruleText(attempt.expected_access);
+  const probe=attempt.checks.find(check=>check.role==='peer_probe');
+  $('finding-observed').textContent=observedProbeText(probe?.outcome)+(verdict?'':' This attempt has no completed trusted validation.');
+  const review=snapshot.candidates.find(candidate=>candidate.run_ids.includes(id))?.review;
+  $('finding-review').textContent=review?`Recorded review: ${review.decision} · ${review.purpose}${review.purpose==='automated_lab_test'?' · not human signoff':''}${review.severity?' · recorded severity: '+review.severity:''}.` : verdict==='confirmed'?'Evidence-supported candidate · human impact review pending · severity unrated.':'This result covers the configured rule only; it is not an application-wide security verdict or independent patch verification.';
   details($('finding-context'),[['Attempt',id],['State',attempt.state],['Read-time verdict',attempt.result?.verdict || 'No completed validation'],['Stored verdict',attempt.stored_verdict || 'Not recorded'],['Expected rule',ruleText(attempt.expected_access)],['Owner account',attempt.owner_account||'Not mapped'],['Peer account',attempt.peer_account||'Not mapped'],['Object path',attempt.object_path||'Not mapped'],['Protected field names',attempt.protected_fields.join(', ')||'Not mapped']]);
   $('finding-observation').textContent=attempt.result?.reason || 'This attempt has no completed trusted validation. Captures may be incomplete; no finding or clean result is inferred.';
   $('finding-remediation').textContent=attempt.remediation || 'No supported remediation mapping available.';
@@ -698,7 +728,10 @@ function showFindingRun(id) {
     const check=attempt.checks.find(c=>c.role===role),reference=captures.get(check?.evidence_id),card=element('article',undefined,'card comparison-card');
     card.append(element('h3',evidenceRoles[role]));
     if(check)card.append(element('p',check.account+' · GET '+check.path),element('strong',check.outcome));
-    if(reference){card.append(element('p','HTTP '+(reference.status||'not recorded')+' · '+time(reference.finished_at),'hint'),rawEvidenceButton(reference));}
+    if(reference){
+      card.append(element('p','HTTP '+(reference.status||'not recorded')+' · '+time(reference.finished_at),'hint'),element('code',reference.id,'proof-reference'),rawEvidenceButton(reference));
+      const provenance=element('details');provenance.append(element('summary','Capture provenance and hash'),element('pre',pretty({artifact:reference.id,run:reference.run_id,capture:reference.capture_id,sha256:reference.sha256,finished_at:reference.finished_at}),'code'));card.append(provenance);
+    }
     else card.append(element('p','No selected supporting capture; this comparison remains incomplete.','hint'));
     $('evidence-comparison').append(card);
   }
@@ -926,7 +959,7 @@ $('stop').addEventListener('click', () => void stopAssessment());
 $('refresh-run').addEventListener('click', () => void act(refresh));
 $('show-rejection').addEventListener('click', () => {
   const row = [...$('activity-events').children].find(node => node.dataset.kind === 'request.rejected');
-  row?.scrollIntoView({block: 'nearest'});
+  if (row) { row.tabIndex=-1; row.scrollIntoView({block: 'nearest'}); row.focus({preventScroll:true}); }
 });
 $('pause').addEventListener('click', () => {
   if (state.polling) { stopObservation(); message('Observation paused. This did not Stop the run.'); } else observe();
@@ -934,6 +967,7 @@ $('pause').addEventListener('click', () => {
 $('run-picker').addEventListener('change', () => void act(async () => {
   stopObservation(); state.generation++; state.run = $('run-picker').value; state.status = null; state.statusStale = false; resetActivity(); resetEvidence(); renderStatus(); await refresh();
 }));
+$('evidence-go-run').addEventListener('click', () => page('run'));
 $('go-evidence').addEventListener('click', () => page('evidence'));
 $('load-findings').addEventListener('click', () => { void loadFindings().catch(() => {}); void loadRetestComparison().catch(() => {}); });
 $('retest-application').addEventListener('change', retestSelection);

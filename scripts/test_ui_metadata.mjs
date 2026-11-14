@@ -71,3 +71,10 @@ test('activity client requests an explicit bounded page without starting polling
   }
   assert.equal(page.run('calls.length'), 1);
 });
+
+test('remaining allowance is derived only from recorded attempt policy and keeps stale context',()=>{
+  const p=ui();p.run('renderStatus()');assert.equal(p.text('budget-remaining'),'0 of 2 unreserved');
+  p.run('state.statusStale=true;renderStatus()');assert.match(p.text('budget-remaining'),/^STALE/);
+  p.run('delete state.status.target_request_limit;renderStatus()');assert.match(p.text('budget-remaining'),/Not observed/);
+  p.run('state.status=null;state.statusStale=false;renderStatus()');assert.equal(p.text('budget-deadline'),'Not observed');
+});

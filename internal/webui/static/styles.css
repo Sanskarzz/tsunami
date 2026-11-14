@@ -296,3 +296,45 @@ legend { font-size: 22px; font-weight: 650; margin-bottom: 12px; padding: 0; }
 @media(max-width:600px) { .setup-safety { flex-wrap: wrap; } }
 .application-list.table-wrap .application-table { min-width: 0; background: white; }
 .history-row > span:first-child, .capture-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
+/* Scope boundaries, observation, and captured findings */
+.scope-perimeter { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 24px; }
+.scope-perimeter > section { padding: 20px; background: var(--success-bg); border: 1px solid #bcd6c6; border-radius: 6px; }
+.scope-perimeter > section:last-child { background: var(--surface-muted); border-color: var(--line); }
+.scope-perimeter h3 { margin-top: 0; }
+.scope-perimeter p:last-child { margin: 0; font-size: 14px; }
+.architecture-strip { display: grid; grid-template-columns: minmax(0, 1fr) 24px minmax(0, 1.15fr) 24px minmax(0, 1fr); align-items: center; gap: 12px; }
+.architecture-strip > div { padding: 16px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+.architecture-strip .eyebrow { font-size: 10px; }
+.architecture-strip strong, .architecture-strip small { display: block; }
+.architecture-strip small { font-size: 12px; margin-top: 4px; }
+.architecture-strip .trusted-node { background: var(--success-bg); border-color: #b6d3c5; }
+.architecture-arrow { color: var(--green); font-size: 24px; text-align: center; }
+.architecture-caption { margin-bottom: 24px; font-size: 12px; }
+.recorded-budget { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 20px 0; }
+.recorded-budget > div { padding: 16px 20px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+.recorded-budget span { display: block; font-size: 12px; color: var(--muted); }
+.recorded-budget strong { display: block; font-size: 16px; margin-top: 6px; overflow-wrap: anywhere; }
+.run-result { border-left: 4px solid var(--green); }
+.recovery-callout { padding: 16px; background: var(--warning-bg); color: var(--warning); border: 1px solid #dec998; border-radius: 6px; margin-top: 16px; }
+.recovery-callout p { color: var(--warning); font-size: 14px; margin: 8px 0 0; }
+#run-identity { overflow-wrap: anywhere; }
+#run-context, #run-policy, #finding-context { margin-top: 16px; }
+.operation-state { font-size: 12px; max-width: 34ch; }
+.activity-list details { margin-top: 0; }
+.activity-list summary { font-size: 12px; padding-block: 8px; }
+.proof-reference { display: block; margin: 12px 0; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.rule-comparison .eyebrow { font-size: 12px; }
+.rule-comparison h3 { margin-top: 0; }
+.rule-comparison p:last-child { margin-bottom: 0; }
+.observed-proof { background: var(--info-bg); border-color: #c1d6e4; }
+#finding-detail > .section-heading { align-items: center; }
+#finding-detail > .section-heading .eyebrow { margin: 0; }
+#finding-title { font-size: 26px; }
+#evidence-go-run { margin-bottom: 20px; }
+@media(max-width:1100px) { .architecture-strip { gap: 6px; }.architecture-strip > div { padding: 12px; } }
+@media(max-width:600px) {
+  .scope-perimeter, .recorded-budget { grid-template-columns: 1fr; }
+  .architecture-strip { grid-template-columns: 1fr; gap: 8px; }
+  .architecture-arrow { transform: rotate(90deg); line-height: 1; }
+  .connection { flex-wrap: wrap; }
+}
