@@ -107,3 +107,17 @@ test('navigation explains absent context without clearing a selected scope or in
   p.run("state.app={id:'selected'};renderNavigation()");assert.equal(p.run("$('plan-empty').hidden"),true);assert.equal(p.run("$('evidence-empty').hidden"),false);
   p.run(`state.view=${JSON.stringify(p.view)};renderNavigation()`);assert.equal(p.run("$('evidence-workspace').hidden"),false);assert.equal(p.run('state.view.engagement.scope_digest'),p.view.engagement.scope_digest);
 });
+
+test('reviewed lab shortcut reuses returned facts without granting permission or starting traffic',async()=>{
+  const p=await loadedSetup();
+  p.run(`setupUI.lists([], [{...state.app,id:'vampi-vulnerable',title:'Reviewed VAmPI',metadata:{registration:'startup'}}]);setupUI.start('vampi-vulnerable')`);
+  assert.equal(p.run("$('setup-name').value"),'Reviewed VAmPI');assert.equal(p.run("$('setup-frontend').value"),p.view.engagement.application.origin);
+  assert.equal(p.run("$('setup-source').value"),'vampi-vulnerable');assert.equal(p.run("$('setup-synthetic').checked"),false);assert.equal(p.run("$('setup-reference').value"),'');assert.equal(p.calls.filter(c=>c.method==='POST').length,0);
+});
+
+test('protected access editor becomes visible even when no prerequisite question is pending',async()=>{
+  const p=await loadedSetup();assert.equal(p.run("$('setup-question-card').hidden"),true);
+  await p.click('update-setup-access');assert.equal(p.run("$('setup-question-card').hidden"),false);
+  assert.match(p.text('setup-question'),/Account A bearer token.*Account B bearer token/);
+  assert.equal(p.calls.filter(c=>c.method==='POST').length,0);
+});

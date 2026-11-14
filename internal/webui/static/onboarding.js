@@ -26,6 +26,7 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     $('setup-back-step').disabled=busy||stopping;
     $('setup-use-lab').disabled=!on||busy||stopping||!applications.some(app=>app.id==='vampi-vulnerable');
     $('setup-form').setAttribute('aria-busy',String(busy));
+    $('setup-lab-choice').hidden=!applications.some(app=>app.id==='vampi-vulnerable');
     $('save-setup').disabled=!on||busy||stopping;
     $('refresh-setup').disabled=!on||!current||busy||stopping;
     $('edit-setup').disabled=!on||!current||busy||stopping||current.state==='stopped'||current.state==='validating'||!!current.engagement_id;
@@ -49,6 +50,7 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
   }
   function render() {
     $('setup-current').hidden=!current;
+    $('setup-safety').hidden=!current||!!document.querySelector('[data-panel="setup"]')?.hidden;
     $('setup-form').hidden=!!current&&!editing;
     $('cancel-edit-setup').hidden=!editing;
     if(!current){showStage(formStage);$('setup-question').replaceChildren();$('setup-messages').replaceChildren();$('setup-preflight-approved').checked=false;reviewedPreflight='';renderSource();lock(connected,locked);return;}
@@ -64,7 +66,6 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     $('setup-messages').replaceChildren();
     for(const m of current.messages||[]){const row=element('div',undefined,'setup-message '+(m.role==='user'?'user':'assistant'));row.append(element('span',m.role==='user'?'You':'Setup assistant','eyebrow'),element('p',m.text),element('small',time(m.at)));$('setup-messages').append(row);}
     renderQuestion();
-    $('setup-question-card').hidden=!current.question&&!accessEditor;
     $('setup-validation-progress').textContent=`Recorded baseline activity: ${current.validation_requests} of 4 request reservations this attempt · ${current.state}. ${current.validation_code || ''}`;
     const canValidate=['ready_for_validation','validation_failed','interrupted','validating'].includes(current.state)&&!!d.api_origin&&current.access_ready;
     $('setup-validation').hidden=!canValidate;
@@ -90,7 +91,9 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
   function renderQuestion() {
     const node=$('setup-question');node.replaceChildren();
     const q=accessEditor?{field:'access',text:'Replace the two dedicated bearer test credentials. This invalidates prior readiness and makes no target requests.'}:current.question;
-    if(!q||['stopped','expired','validating','assessment_created'].includes(current.state))return;
+    const unavailable=!q||['stopped','expired','validating','assessment_created'].includes(current.state);
+    $('setup-question-card').hidden=unavailable;
+    if(unavailable)return;
     const form=element('form',undefined,'setup-answer');
     form.dataset.question=q.field;
     form.append(element('h3','Your input is needed'),element('p',q.text,'hint'));
@@ -136,13 +139,19 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     if(app)details($('setup-source-details'),[['Existing API',app.origin],['Approved addresses',app.approved_addresses.join('\n')],['Intended rule',ruleText(app.expected_access)],['Reuse','Existing lab credentials, routes and test facts are reused by the backend. A frontend URL does not change this API target. Saving creates no network permission.']]);
   }
   function clearForm() {
+    $('setup-form-errors').hidden=true;$('setup-form-errors').replaceChildren();
+    for(const error of document.querySelectorAll('.field-error'))error.remove();
+    for(const input of document.querySelectorAll('#setup-form [aria-invalid]')){input.removeAttribute('aria-invalid');input.removeAttribute('aria-describedby');}
+
+    $('setup-frontend').setAttribute('aria-describedby','setup-url-help');
     for(const id of fields)$('setup-'+id).value='';$('setup-environment').value='dev';$('setup-source').value='';$('setup-source').disabled=false;$('setup-synthetic').checked=false;
   }
   function start(source=''){
     if(!connected||locked||stopping)return;
     generation++;current=null;editing=false;accessEditor=false;clearForm();formStage=0;
     // A shortcut only chooses a returned registration. Saving/validation still require explicit action.
-    if(typeof source==='string'&&applications.some(app=>app.id===source))$('setup-source').value=source;
+    const app=typeof source==='string'&&applications.find(app=>app.id===source);
+    if(app){$('setup-source').value=source;$('setup-name').value=app.title.slice(0,120);$('setup-frontend').value=app.origin;}
     render();page('setup');
   }
   $('new-setup').addEventListener('click',start);
@@ -151,10 +160,30 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     if(!applications.some(app=>app.id==='vampi-vulnerable'))return;
     $('setup-source').value='vampi-vulnerable';renderSource();
   });
+  function validateFields(selector) {
+    const summary=$('setup-form-errors'); summary.replaceChildren(); summary.hidden=true;
+    for(const error of document.querySelectorAll('.field-error'))error.remove();
+    for(const input of document.querySelectorAll('#setup-form [aria-invalid]')) {
+      input.removeAttribute('aria-invalid');
+      const described=(input.getAttribute('aria-describedby')||'').split(' ').filter(id=>id&&id!==input.id+'-error').join(' ');
+      if(described)input.setAttribute('aria-describedby',described);else input.removeAttribute('aria-describedby');
+    }
+    const invalid=[...document.querySelectorAll(selector)].filter(input=>!input.validity.valid);
+    if(!invalid.length)return true;
+    showStage(Number(invalid[0].closest('[data-setup-stage]').dataset.setupStage));
+    summary.append(element('strong','Review the highlighted application details.'));
+    const links=element('ul');
+    for(const input of invalid) {
+      const error=element('p',input.validationMessage,'field-error');error.id=input.id+'-error';input.after(error);
+      input.setAttribute('aria-invalid','true');input.setAttribute('aria-describedby',((input.getAttribute('aria-describedby')||'')+' '+error.id).trim());
+      const link=element('a',(input.labels?.[0]?.textContent||'Field')+': '+input.validationMessage);link.href='#'+input.id;
+      link.addEventListener('click',event=>{event.preventDefault();showStage(Number(input.closest('[data-setup-stage]').dataset.setupStage));const disclosure=input.closest('details');if(disclosure)disclosure.open=true;input.focus();});
+      const row=element('li');row.append(link);links.append(row);
+    }
+    summary.append(links);summary.hidden=false;summary.focus();return false;
+  }
   $('setup-next-step').addEventListener('click',()=>{
-    const inputs=document.querySelectorAll('[data-setup-stage="0"] input');
-    for(const input of inputs)if(!input.reportValidity())return;
-    showStage(1,true);
+    if(validateFields('[data-setup-stage="0"] input'))showStage(1,true);
   });
   $('setup-back-step').addEventListener('click',()=>showStage(0,true));
   $('setup-form').addEventListener('invalid',event=>{
@@ -162,7 +191,7 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     if(panel)showStage(Number(panel.dataset.setupStage));
   },true);
   $('update-setup-access').addEventListener('click',()=>{accessEditor=true;renderQuestion();lock(connected,locked);});
-  $('setup-form').addEventListener('submit',event=>{event.preventDefault();void act(async()=>{
+  $('setup-form').addEventListener('submit',event=>{event.preventDefault();if(!validateFields('#setup-form input, #setup-form select'))return;void act(async()=>{
     const d=formDetails(),g=generation;
     const data=editing?await api('POST','/v1/onboarding/'+current.id+'/details',{revision:current.revision,details:d}):await api('POST','/v1/onboarding',d);
     editing=false;current=null;apply(data,g);message('Setup saved. Review the assistant questions; no security assessment has started.');

@@ -292,7 +292,6 @@ legend { font-size: 22px; font-weight: 650; margin-bottom: 12px; padding: 0; }
 .setup-safety { position: sticky; top: 12px; z-index: 2; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; border-color: #cfaaa0; box-shadow: 0 4px 16px #17332d14; }
 .setup-safety p { font-size: 12px; margin: 4px 0 0; }
 .setup-safety .button { flex-shrink: 0; }
-.journey:has(#assessment-safety:not([hidden])) .setup-safety { top: 160px; }
 @media(max-width:600px) { .setup-safety { flex-wrap: wrap; } }
 .application-list.table-wrap .application-table { min-width: 0; background: white; }
 .history-row > span:first-child, .capture-row > span:first-child { min-width: 0; overflow-wrap: anywhere; }
@@ -338,3 +337,18 @@ legend { font-size: 22px; font-weight: 650; margin-bottom: 12px; padding: 0; }
   .architecture-arrow { transform: rotate(90deg); line-height: 1; }
   .connection { flex-wrap: wrap; }
 }
+.field-error { color: var(--danger); font-size: 14px; margin: -8px 0 16px; }
+[aria-invalid=true] { border: 2px solid var(--danger) !important; }
+#setup-form-errors ul { padding-left: 20px; margin: 12px 0 0; }
+#setup-form-errors a { color: var(--danger); }
+/* Keep persistent chrome compact enough for a laptop recording. */
+.journey-map { margin-bottom: 20px; }
+.journey-map li { padding-block: 8px; }
+.journey-map strong { font-size: 13px; }
+.safety-bar .hint { max-width: 120ch; }
+/* Stack both revocation controls in one dock when setup and saved work coexist. */
+.permission-dock { position: sticky; top: 12px; z-index: 3; display: flex; flex-direction: column; gap: 8px; }
+.permission-dock:has(> :not([hidden])) { margin-bottom: 24px; }
+.permission-dock > .safety-bar, .permission-dock > .setup-safety { position: static; margin-bottom: 0; }
+
+.comparison-verdict { display: inline-block; font-size: 20px; padding: 8px 12px; margin-bottom: 16px; }

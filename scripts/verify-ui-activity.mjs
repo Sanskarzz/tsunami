@@ -48,13 +48,61 @@ async function runID(id){const view=await operator('/v1/engagements/'+id);return
 async function heldRequest(id){await wait(async()=>{const run=await runID(id);if(!run)return false;const status=await operator('/v1/runs/'+run+'/status');return status.activity==='active_locally'&&status.target_requests_reserved===5;},'real held broker request',6000);}
 async function drain(){await wait(async()=>await text('status-activity')==='drained_locally','observed local drain',6000);check(await text('status-execution')==='dispatch_intent','local test invented Kubernetes worker/exit observation');}
 
+// Visual/a11y checks inspect only the disposable local frontend; no target work is started.
+async function key(key,code){
+  await cdp('Input.dispatchKeyEvent',{type:'keyDown',key,code:key,windowsVirtualKeyCode:code,...(key==='Enter'?{text:'\r',unmodifiedText:'\r'}:{})});
+  await cdp('Input.dispatchKeyEvent',{type:'keyUp',key,windowsVirtualKeyCode:code});
+}
+async function keyboardAndEmptyQA(){
+  await key('Tab',9);
+  check(await evaluate(`document.activeElement.classList.contains('skip-link')`),'skip link is not first keyboard destination');
+  check(await evaluate(`getComputedStyle(document.activeElement).outlineStyle!=='none'`),'keyboard focus indicator missing');
+  await key('Enter',13);check(await evaluate(`document.activeElement.id==='main-content'`),'skip link did not reach workspace');
+  await evaluate(`document.querySelector('[data-page="plan"]').focus()`);await key('Tab',9);await key('Enter',13);
+  check(await evaluate(`!document.getElementById('run-empty').hidden&&document.getElementById('run-workspace').hidden`),'unselected monitor showed unexplained content');
+  check(await evaluate(`document.activeElement===document.querySelector('#run-empty h2')`),'route focus did not reach context explanation: '+await evaluate(`document.activeElement.outerHTML.slice(0,250)`));
+  await evaluate(`document.querySelector('#run-empty button').focus()`);await key('Enter',13);
+  check(await evaluate(`document.querySelector('[data-page="applications"]').getAttribute('aria-current')==='page'`),'current navigation semantics missing');
+  summary.checks.push('keyboard skip, Tab/Enter navigation, visible focus and unselected-context recovery');
+}
+async function screenshotMatrix(label){
+  const beforePosts=network.filter(r=>r.method==='POST').length;
+  await cdp('Emulation.setEmulatedMedia',{features:[{name:'prefers-reduced-motion',value:'reduce'}]});
+  for(const [width,height] of [[1920,1080],[1440,900],[1280,720],[390,844],[375,667],[844,390]]){
+    await cdp('Emulation.setDeviceMetricsOverride',{width,height,deviceScaleFactor:1,mobile:false});
+    await evaluate(`document.activeElement?.blur();window.scrollTo(0,0)`);
+    const overflow=await evaluate(`document.documentElement.scrollWidth>innerWidth?[...document.querySelectorAll('body *')].filter(n=>n.getBoundingClientRect().right>innerWidth+1).slice(0,8).map(n=>n.id||n.className||n.tagName):[]`);
+    check(!overflow.length,'layout overflow at '+width+': '+overflow.join(', '));
+    check(await evaluate(`matchMedia('(prefers-reduced-motion: reduce)').matches`),'reduced motion not applied');
+    const shot=await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});
+    await writeFile(path.join(out,label+'-'+width+'x'+height+'.png'),Buffer.from(shot.data,'base64'),{mode:0o600});
+    if(await evaluate(`!document.getElementById('assessment-safety').hidden`)){
+      await evaluate(`window.scrollTo(0,document.body.scrollHeight)`);
+      check(await evaluate(`(()=>{const r=document.getElementById('stop').getBoundingClientRect();return r.top>=0&&r.bottom<=innerHeight&&!document.getElementById('stop').disabled})()`),'Stop not immediately reachable at '+width);
+    }
+  }
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
+  await evaluate(`document.activeElement?.blur();window.scrollTo(0,0)`);
+  check(network.filter(r=>r.method==='POST').length===beforePosts,'visual checks triggered a mutation');
+  summary.checks.push(label+': 1920×1080, 1440×900, 1280×720, 390×844, 375×667, 844×390 landscape; reduced motion, overflow and sticky Stop');
+}
+async function contrastQA(){
+  const pairs=await evaluate(`(()=>{const s=getComputedStyle(document.documentElement);return [['--ink','--surface'],['--muted','--surface'],['--muted','--canvas'],['--green','--surface'],['--success','--success-bg'],['--warning','--warning-bg'],['--danger','--danger-bg'],['--info','--info-bg']].map(([a,b])=>[a,s.getPropertyValue(a).trim(),s.getPropertyValue(b).trim()])})()`);
+  function luminance(hex){let value=hex.replace('#','');if(value.length===3)value=[...value].map(c=>c+c).join('');const values=value.match(/../g).map(c=>parseInt(c,16)/255).map(v=>v<=.04045?v/12.92:((v+.055)/1.055)**2.4);return values[0]*.2126+values[1]*.7152+values[2]*.0722;}
+  for(const [name,fg,bg] of pairs){const a=luminance(fg),b=luminance(bg);check((Math.max(a,b)+.05)/(Math.min(a,b)+.05)>=4.5,'text contrast below 4.5:1: '+name);}
+  summary.checks.push('semantic text/surface contrast pairs meet 4.5:1');
+}
+
 async function onboardingJourney(){
   const applications=await operator('/v1/applications'),app=applications.find(a=>a.id==='browser-vulnerable');
   const observations=()=>operator('/test/observations');
   check((await observations()).requests===0,'connection made target requests');
   check(await evaluate(`!document.getElementById('api-inspector').open`),'technical inspector expanded by default');
   async function save(name,auth='',source=''){
-    await click('new-setup');await fill('setup-name',name);await fill('setup-environment','dev');await fill('setup-frontend','https://owned-frontend.example.test');await fill('setup-reference','owned-local-ui-onboarding');
+    await click('new-setup');
+    await click('setup-next-step');
+    check(await evaluate(`!document.getElementById('setup-form-errors').hidden&&document.getElementById('setup-name').getAttribute('aria-invalid')==='true'&&document.activeElement.id==='setup-form-errors'`),'invalid setup lacks linked focused summary');
+    await fill('setup-name',name);await fill('setup-environment','dev');await fill('setup-frontend','https://owned-frontend.example.test');await fill('setup-reference','owned-local-ui-onboarding');
     await click('setup-next-step');
     check(await evaluate(`!document.querySelector('[data-setup-stage="1"]').hidden`),'integration stage did not open');
     if(auth){await fill('setup-api',app.origin);await fill('setup-auth',auth);}
@@ -78,6 +126,7 @@ async function onboardingJourney(){
   await wait(async()=>await text('setup-state')==='ready_for_validation','reused facts');
   check((await observations()).requests===0,'saving reused facts granted target traffic');
   await click('update-setup-access');
+  check(await evaluate(`!document.getElementById('setup-question-card').hidden&&document.querySelector('#setup-question input[type="password"]').getClientRects().length>0`),'protected access editor is not visibly reachable');
   await evaluate(`(()=>{const fields=document.querySelectorAll('#setup-question input[type="password"]');fields[0].value=${JSON.stringify('a'.repeat(48))};fields[1].value=${JSON.stringify('b'.repeat(48))};document.querySelector('#setup-question button[type="submit"]').click()})()`);
   await wait(()=>evaluate(`!document.querySelector('#setup-question input[type="password"]') && !document.getElementById('edit-setup').disabled`),'protected access saved');
   const old=await operator('/v1/onboarding/'+id);
@@ -90,6 +139,8 @@ async function onboardingJourney(){
   check(stale.status===409,'stale grant accepted');check((await observations()).requests===0,'stale grant caused target traffic');
   check(await evaluate(`document.querySelectorAll('#setup-preflight-actions tbody tr').length===4`),'four-read review table missing');
   check(await evaluate(`!document.querySelector('img[src="x"]') && document.getElementById('setup-title').textContent.includes('<img')`),'setup text was interpreted as HTML');
+  await evaluate(`document.getElementById('setup-validation').scrollIntoView()`);
+  await screenshotMatrix('baseline-review');
   await evaluate(`document.getElementById('setup-validation').scrollIntoView()`);
   const preflightShot=await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(out,'preflight-review.png'),Buffer.from(preflightShot.data,'base64'),{mode:0o600});
   await evaluate(`document.getElementById('setup-preflight-approved').checked=true;document.getElementById('setup-preflight-approved').dispatchEvent(new Event('input'))`);await click('validate-setup');
@@ -114,9 +165,26 @@ async function onboardingJourney(){
   await evaluate(`document.querySelector('[data-page="applications"]').click()`);await click('reload');await wait(()=>evaluate(`!document.getElementById('reload').disabled`),'dashboard history');
   check(await evaluate(`(()=>{const row=document.querySelector('[data-engagement="${eID}"]');return row?.textContent.includes('Scope: active')&&row.textContent.includes('Latest attempt: completed · confirmed')})()`),'dashboard confused completed result and approval');
   check(await evaluate(`!document.querySelector('img[src="x"]')`),'dashboard rendered target text as HTML');
+  const filterPosts=network.filter(r=>r.method==='POST').length,filterRequests=(await observations()).requests;
+  await evaluate(`document.getElementById('application-search').focus()`);
+  await cdp('Input.insertText',{text:'browser-vulnerable'});
+  check(await evaluate(`document.querySelectorAll('#application-list .choose-app').length===1&&document.querySelector('#application-list .choose-app').dataset.application==='browser-vulnerable'&&document.activeElement.id==='application-search'`),'search lost focus or merged application IDs');
+  await fill('application-filter','onboarding');await evaluate(`document.getElementById('application-filter').dispatchEvent(new Event('change'))`);
+  check((await text('application-list')).includes('No applications match'),'registration filter did not combine with search');
+  await fill('application-search','');await fill('application-filter','all');await evaluate(`document.getElementById('application-filter').dispatchEvent(new Event('change'))`);
+  check(await evaluate(`!!document.querySelector('[data-engagement="${eID}"]')`),'filtering deleted history');
+  check(network.filter(r=>r.method==='POST').length===filterPosts&&(await observations()).requests===filterRequests,'filtering made target requests or mutations');
+  summary.checks.push('keyboard text entry preserves search focus; exact ID and registration filters preserve history without traffic');
+
+  await evaluate(`document.querySelector('[data-page="setup"]').click()`);
+  await cdp('Emulation.setDeviceMetricsOverride',{width:375,height:667,deviceScaleFactor:1,mobile:false});
+  await evaluate(`window.scrollTo(0,document.body.scrollHeight)`);
+  check(await evaluate(`['stop','stop-setup'].every(id=>{const n=document.getElementById(id),r=n.getBoundingClientRect();return !n.disabled&&r.top>=0&&r.bottom<=innerHeight})`),'coexisting setup/assessment Stop controls overlap or leave the viewport');
+  await evaluate(`document.querySelector('[data-page="applications"]').click()`);
+  await cdp('Emulation.setDeviceMetricsOverride',{width:1440,height:900,deviceScaleFactor:1,mobile:false});
   const shot=await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(out,'onboarding-dashboard.png'),Buffer.from(shot.data,'base64'),{mode:0o600});
   summary.cases.push({setup_id:id,engagement_id:eID,run_id:await runID(eID),case:'owned_add_to_assessment',validation_requests:4,assessment_requests:7,verdict:'confirmed',stale_grant_rejected:true});
-  summary.checks=['invalid operator token rejected','missing API facts asked','password/SSO unavailable without traffic','lab reuse target explicit','protected access omitted from UI inspection','changed setup clears review; stale grant rejected without traffic','four legitimate preflight reads; zero probes before separate scope approval/Start','readable account/action matrix matches stored scope','approve exact scope without JSON/digest typing','one real scripted Mecatl assessment','dashboard scope and stored result separate','injection rendered as text','narrow scope layout'];
+  summary.checks.push('invalid operator token rejected','missing API facts asked','password/SSO unavailable without traffic','lab reuse target explicit','protected access omitted from UI inspection','changed setup clears review; stale grant rejected without traffic','four legitimate preflight reads; zero probes before separate scope approval/Start','readable account/action matrix matches stored scope','approve exact scope without JSON/digest typing','one real scripted Mecatl assessment','dashboard scope and stored result separate','injection rendered as text','narrow scope layout');
 }
 
 async function findingsJourney(){
@@ -132,6 +200,11 @@ async function findingsJourney(){
     check(!(await evaluate(`document.body.textContent`)).includes('synthetic-private-proof-'),'ordinary metadata streamed proof body');
     check(await evaluate(`document.getElementById('capture-detail').hidden`),'raw body visible before explicit inspection');
     const expected=verdict==='confirmed'?1:0;check(snapshot.candidates.length===expected&&await evaluate(`document.querySelectorAll('#candidates [data-candidate]').length`)===expected,'candidate count diverged from validator');
+    if(application==='browser-vulnerable'){
+      await screenshotMatrix('confirmed-finding');
+      await evaluate(`document.getElementById('evidence-comparison').scrollIntoView({block:'center'})`);
+      const proofShot=await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(out,'selected-proof.png'),Buffer.from(proofShot.data,'base64'),{mode:0o600});
+    }
     if(verdict==='confirmed'){
       const title=await text('finding-title');check(application==='browser-property'?title.includes('property'):title.includes('Cross-user'),'failure-specific title missing');
       check((await text('candidates')).includes('severity unrated'),'candidate acquired an invented rating');
@@ -160,7 +233,7 @@ async function findingsJourney(){
     }
     summary.cases.push({application,engagement_id:id,run_id:attempt.run_id,verdict,candidates:expected,evidence_roles:attempt.checks.map(c=>({role:c.role,capture_id:c.capture_id,evidence_id:c.evidence_id,outcome:c.outcome}))});
   }
-  summary.checks=['metadata-only finding navigation without automatic exports/raw reads','five real object/property controls','failure-specific titles and deterministic profile remediation','selected baseline/probe/recheck references from trusted validation','explicit owner/probe proof correspondence','single artifact byte-hash/download integrity','candidate/evidence identity matches full exports','no automatic review or severity','inconclusive and no-issue retained','ordinary metadata excludes body/proof values'];
+  summary.checks.push('metadata-only finding navigation without automatic exports/raw reads','five real object/property controls','failure-specific titles and deterministic profile remediation','selected baseline/probe/recheck references from trusted validation','explicit owner/probe proof correspondence','single artifact byte-hash/download integrity','candidate/evidence identity matches full exports','no automatic review or severity','inconclusive and no-issue retained','ordinary metadata excludes body/proof values');
 }
 
 async function retestJourney(){
@@ -215,7 +288,7 @@ async function retestJourney(){
   await click('go-evidence');await wait(async()=>(await text('retest-comparison')).includes('no_issue_observed'),'recovered linked comparison');
   check((await operator('/test/observations')).requests===14&&startCount()===starts+1,'inspection/recovery replayed execution');
   summary.cases=[{source_engagement_id:source,source_run_id:sourceRun,retest_engagement_id:id,retest_run_id:fixedRun,source_verdict:'confirmed',retest_verdict:'no_issue_observed',compatibility:completed.compatibility,changed_fields:completed.differences.map(d=>d.field),source_evidence_ids:completed.source.latest_attempt.evidence_ids,retest_evidence_ids:completed.retest.latest_attempt.evidence_ids},{engagement_id:incompatible,case:'incompatible_profile_draft',state:'stopped',target_requests:0}];
-  summary.checks=['two real native Mecatl attempts across distinct owned origins','stopped source remains history without granting authority','linked draft performs no target reads','changed scope shown and separate approval required','confirmed/no_issue_observed results and exact evidence references','original candidate/artifact bytes unchanged','metadata-only source/evidence/history navigation','incompatible profile labeled without inferred fix','history recovery preserves link without replay','narrow layout and independent Stop'];
+  summary.checks.push('two real native Mecatl attempts across distinct owned origins','stopped source remains history without granting authority','linked draft performs no target reads','changed scope shown and separate approval required','confirmed/no_issue_observed results and exact evidence references','original candidate/artifact bytes unchanged','metadata-only source/evidence/history navigation','incompatible profile labeled without inferred fix','history recovery preserves link without replay','narrow layout and independent Stop');
 }
 
 try{
@@ -233,6 +306,7 @@ try{
   await cdp('Runtime.enable');await cdp('Page.enable');await cdp('Network.enable');
   await cdp('Emulation.setDeviceMetricsOverride',{width:1360,height:1050,deviceScaleFactor:1,mobile:false});
   await cdp('Page.navigate',{url:origin+'/ui/'});await wait(()=>evaluate(`document.getElementById('stop-receipt')?.textContent.includes('Closing or pausing')`),'UI module ready');
+  await keyboardAndEmptyQA();await contrastQA();
   if(onboarding){await fill('operator-token','invalid-local-operator-token');await evaluate(`document.getElementById('connect-form').requestSubmit()`);await wait(async()=> (await text('message')).includes('401'),'invalid operator token');}
   await fill('operator-token',token);await evaluate(`document.getElementById('connect-form').requestSubmit()`);
   await wait(()=>evaluate(`document.getElementById('connection-state').textContent==='Operator connected'`),'operator connection');
@@ -256,6 +330,9 @@ try{
     check(startCount()===before+(application==='browser-fixed'?2:1),'Unexpected Start requests outside explicit same-key recovery');
     const raw=await operator('/v1/runs/'+await runID(id)+'/events?after=0&limit=100');
     check(await evaluate(`JSON.stringify([...document.querySelectorAll('#activity-events [data-sequence]')].map(n=>Number(n.dataset.sequence)))`)===JSON.stringify(raw.items.map(e=>e.sequence)),'UI event sequence differs from stored journal');
+    await evaluate(`document.querySelector('#activity-events details').open=true`);await click('refresh-run');
+    await wait(()=>evaluate(`!document.getElementById('refresh-run').disabled`),'timeline refresh');
+    check(await evaluate(`document.querySelector('#activity-events details').open`),'observation refresh closed the inspected event');
     summary.cases.push({application,engagement_id:id,run_id:await runID(id),verdict,event_sequences:raw.items.map(e=>e.sequence)});
   }
 
@@ -290,7 +367,8 @@ try{
     summary.cases.push({application:'browser-held',engagement_id:id,run_id:await runID(id),verdict:'stopped',failure_injection:failure});
   }
   }
-  await evaluate(`document.getElementById(${JSON.stringify(retest?'retest-comparison':'activity-heading')}).scrollIntoView()`);
+  await screenshotMatrix(onboarding?'applications':retest?'retest-comparison':findings?'inconclusive-finding':'stopped-monitor');
+  await evaluate(`document.getElementById(${JSON.stringify(retest?'retest-comparison':'activity-heading')}).scrollIntoView({block:'center'})`);
   const wide=await cdp('Page.captureScreenshot',{format:'png',captureBeyondViewport:false});await writeFile(path.join(out,retest?'retest-desktop.png':findings?'finding-desktop.png':'activity-desktop.png'),Buffer.from(wide.data,'base64'),{mode:0o600});
   await cdp('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:false});
   check(await evaluate(`document.documentElement.scrollWidth<=innerWidth`),'narrow layout overflow');
@@ -301,7 +379,7 @@ try{
   await click('disconnect');check((await text('message')).includes('did not Stop'),'disconnect implication incorrect');
   check(network.filter(r=>r.method==='POST').length===postsBefore,'disconnect sent mutation');
   check(exceptions.length===0,'browser runtime exception');check(network.every(r=>r.same_origin),'browser made target/external request');
-  if(!onboarding&&!findings&&!retest)summary.checks=['real persisted rejection/validation sequence matches UI','lost Start recovered by explicit same-key request; no automatic retry','Stop during real held target request and pending export/Start','lost Stop response distinguished from observed durable revocation','no invented worker exit or completed validation on Stop','narrow layout','ordinary UI excludes raw proofs/credentials','same-origin browser requests','disconnect sends no Stop'];
+  if(!onboarding&&!findings&&!retest)summary.checks.push('real persisted rejection/validation sequence matches UI','lost Start recovered by explicit same-key request; no automatic retry','Stop during real held target request and pending export/Start','lost Stop response distinguished from observed durable revocation','no invented worker exit or completed validation on Stop','narrow layout','ordinary UI excludes raw proofs/credentials','same-origin browser requests','disconnect sends no Stop');
   summary.passed=true;
   const source=await readFile('internal/webui/static/app.js');summary.app_js_sha256=createHash('sha256').update(source).digest('hex');
 }catch(error){summary.error=error.message;if(socket?.readyState===WebSocket.OPEN){try{summary.failure_snapshot=await evaluate(`({message:document.getElementById('message')?.textContent,receipt:document.getElementById('stop-receipt')?.textContent,permission:document.getElementById('status-permission')?.textContent})`);}catch{}}console.error('FAIL local activity browser: '+error.message);process.exitCode=1;}

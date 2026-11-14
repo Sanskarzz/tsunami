@@ -26,14 +26,12 @@
   <div class="workspace">
     <header class="topbar"><span>Local lab <span class="slash">/</span> Operator workspace</span><div class="connection"><span id="operation-state" class="operation-state" role="status"></span><span id="connection-state" class="badge">Disconnected</span><button id="disconnect" class="button subtle" disabled>Disconnect</button></div></header>
     <main id="main-content" tabindex="-1">
-      <div class="notice">Owned synthetic lab · Scripted Mecatl assessments · Explicit permission at every boundary.</div>
+      <div id="prototype-notice" class="notice">Owned synthetic lab · Scripted Mecatl assessments · Explicit permission at every boundary.</div>
       <section id="connect-panel" class="card connection-card">
         <div><p class="eyebrow">PRIVATE OPERATOR CONNECTION</p><h1>Your assessment workspace.</h1><p>Use the tenant operator token from your private local file. It stays in page memory; this is not an application user's password.</p></div>
         <form id="connect-form"><label for="operator-token">Operator token</label><div class="input-row"><input id="operator-token" type="password" autocomplete="off" spellcheck="false" required placeholder="Paste locally; never share on screen"><button class="button primary" id="connect">Connect</button></div><small>Same-origin API only. Nothing is saved to browser storage. Disconnecting does not Stop work.</small></form>
       </section>
       <div id="message" class="message" role="status" aria-live="polite" hidden></div>
-      <div class="main-grid">
-        <div class="journey">
           <ol class="journey-map" aria-label="Product workflow">
             <li data-journey="applications" class="current">01<strong>Application</strong></li>
             <li data-journey="setup">02<strong>Baseline access</strong></li>
@@ -41,16 +39,22 @@
             <li data-journey="run">04<strong>Assessment</strong></li>
             <li data-journey="evidence">05<strong>Findings &amp; retest</strong></li>
           </ol>
+          <div class="permission-dock">
           <section id="assessment-safety" class="card safety-bar" aria-label="Assessment revocation" hidden>
             <div class="section-heading"><div><strong>Assessment permission</strong><p id="stop-context" class="hint"></p></div><button id="stop" class="button danger" disabled>Stop assessment</button></div>
             <p id="stop-receipt" class="hint" role="status" aria-live="polite">No Stop request acknowledged in this viewer.</p>
           </section>
+          <div id="setup-safety" class="card setup-safety" hidden><div><strong>Baseline permission</strong><p>Stop setup revokes baseline checks and any linked assessment.</p></div><button id="stop-setup" type="button" class="button danger" disabled>Stop setup / assessment</button></div>
+          </div>
+      <div class="main-grid">
+        <div class="journey">
           <section data-panel="setup" hidden>
             <div class="page-heading"><div><p class="eyebrow">ADD AN OWNED APPLICATION</p><h1>Add an application</h1><p>Save details → validate legitimate access → review scope → approve → Start.</p></div><button id="new-setup" class="button" disabled>New setup</button></div>
             <ol id="setup-stages" class="setup-stages" aria-label="Application setup stages">
               <li data-setup-stage-label="0" aria-current="step">1. Application</li><li data-setup-stage-label="1">2. Integration</li><li data-setup-stage-label="2">3. Test resources</li><li data-setup-stage-label="3">4. Baseline access</li><li data-setup-stage-label="4">5. Scope review</li>
             </ol>
-            <form id="setup-form" class="card section-card">
+            <form id="setup-form" class="card section-card" novalidate>
+              <div id="setup-form-errors" class="message error" role="alert" tabindex="-1" hidden></div>
               <p id="setup-stage-caption" class="eyebrow">STEP 1 OF 5 / APPLICATION</p>
               <fieldset data-setup-stage="0">
                 <legend>Identify your owned application</legend><p class="hint">Save application facts first. No target traffic is authorized by saving.</p>
@@ -62,7 +66,7 @@
               </fieldset>
               <fieldset data-setup-stage="1" hidden>
                 <legend>Choose a supported integration</legend>
-                <div class="integration-choice"><strong>Preferred demo path</strong><p>Use reviewed synthetic lab application. Reuse exact registered routes and trusted-side access; no credentials are copied to this browser.</p><button id="setup-use-lab" type="button" class="button">Use reviewed VAmPI lab</button></div>
+                <div id="setup-lab-choice" class="integration-choice" hidden><strong>Preferred demo path</strong><p>Use reviewed synthetic lab application. Reuse exact registered routes and trusted-side access; no credentials are copied to this browser.</p><button id="setup-use-lab" type="button" class="button">Use reviewed VAmPI lab</button></div>
                 <label for="setup-source">Integration source</label><select id="setup-source"><option value="">New supported integration · supply missing facts</option></select>
                 <div id="setup-source-info" class="integration-note" hidden><h3>Reuse an existing reviewed lab integration</h3><dl id="setup-source-details" class="details"></dl></div>
                 <p class="hint">New integrations support public HTTPS APIs, two bearer test identities and synthetic JSON records. Private targets require an exact registered lab integration. Password/SSO, automated discovery and general penetration testing are unavailable.</p>
@@ -75,11 +79,12 @@
                   <label for="setup-fields">Private synthetic proof field(s)</label><input id="setup-fields" placeholder="secret or /private_note · field names only">
                 </details>
                 <label class="check"><input id="setup-synthetic" type="checkbox"> These accounts/records contain only disposable synthetic test data.</label>
-                <div class="actions"><button id="setup-back-step" type="button" class="button">← Application details</button><button id="save-setup" class="button primary" disabled>Save details &amp; review prerequisites</button><button id="cancel-edit-setup" type="button" class="button subtle" hidden>Cancel edit</button></div>
+                <div class="actions"><button id="setup-back-step" type="button" class="button">← Application details</button><button id="save-setup" class="button primary" disabled>Save details &amp; review prerequisites</button></div>
               </fieldset>
+              <button id="cancel-edit-setup" type="button" class="button subtle" hidden>Cancel edit</button>
             </form>
             <div id="setup-current" hidden>
-              <div class="card setup-safety"><div><strong>Baseline permission</strong><p>Stop setup revokes baseline checks and any linked assessment.</p></div><button id="stop-setup" type="button" class="button danger" disabled>Stop setup / assessment</button></div>
+
               <div class="card section-card"><div class="section-heading"><h2 id="setup-title">Application setup</h2><span id="setup-state" class="badge"></span></div><p id="setup-next"></p><dl id="setup-summary" class="details"></dl><div class="actions"><button id="refresh-setup" class="button" disabled>Refresh setup</button><button id="edit-setup" class="button" disabled>Edit details</button><button id="update-setup-access" class="button" disabled>Update protected access</button></div><details><summary>Setup identifiers and observations</summary><dl id="setup-facts" class="details"></dl></details><p class="hint">Setup advisor: checked rules, no live model calls. Saving facts or credentials grants no network testing permission. Protected inputs are omitted from conversation and API inspection.</p></div>
               <div id="setup-question-card" class="card section-card"><h2>Test identities and resources</h2><div id="setup-question"></div><details><summary>Checked setup conversation</summary><div id="setup-messages" class="setup-messages"></div></details></div>
               <div id="setup-validation" class="card section-card" hidden><h2>Allow four legitimate access checks</h2><p class="hint">This permission permits only the four GETs below. It includes no cross-user security probe, redirects or model calls. An assessment needs a separate reviewed approval afterward.</p><dl id="setup-preflight-summary" class="details"></dl><p id="setup-validation-progress" class="hint" role="status">No baseline attempt observed.</p><div id="setup-preflight-actions" class="table-wrap"></div><details><summary>Exact validation grant and digest</summary><pre id="setup-preflight" class="code"></pre></details><label class="check"><input id="setup-preflight-approved" type="checkbox"> I approve these API destinations, identities and four reads for prerequisite validation.</label><button id="validate-setup" class="button primary" disabled>Validate four legitimate reads</button></div>
@@ -139,16 +144,15 @@
           <section data-panel="evidence" hidden>
             <div id="evidence-empty" class="card empty context-empty"><p class="eyebrow">SELECTION REQUIRED</p><h2>Select an assessment to inspect</h2><p>Open a saved assessment to read its actual result and evidence references. No result is inferred here.</p><button type="button" data-select-application class="button primary">Open applications &amp; saved assessments →</button></div>
             <div id="evidence-workspace" hidden>
-            <div class="page-heading"><div><p class="eyebrow">04 / FINDING → EVIDENCE → REMEDIATION</p><h1>Findings &amp; evidence</h1><p>Normal viewing loads metadata only. A validator-supported candidate still needs impact and severity review.</p></div><button id="load-findings" class="button" disabled>Refresh findings metadata</button></div>
+            <div class="page-heading"><div><p class="eyebrow">04 / FINDING → EVIDENCE → REMEDIATION</p><h1>Findings &amp; evidence</h1><p>Captured proof, trusted validation and a separately approved retest.</p></div><button id="load-findings" class="button" disabled>Refresh findings metadata</button></div>
             <p id="finding-summary" class="hint" role="status">No finding metadata snapshot loaded.</p>
             <button id="evidence-go-run" type="button" class="button" hidden>Open assessment monitor · Start is separate →</button>
-            <div id="candidates" class="candidate-list"></div>
-            <div id="attempt-evidence" class="history-list" aria-label="Assessment attempts"></div>
             <section id="finding-detail" class="card section-card" hidden><div class="section-heading"><p class="eyebrow">TRUSTED VALIDATION</p><span id="finding-verdict" class="badge">No completed validation</span></div><h2 id="finding-title"></h2><p id="finding-observation"></p><div class="evidence-comparison rule-comparison"><article class="comparison-card"><p class="eyebrow">EXPECTED</p><h3>Reviewed authorization rule</h3><p id="finding-expected"></p></article><article class="comparison-card observed-proof"><p class="eyebrow">OBSERVED</p><h3>Captured peer behavior</h3><p id="finding-observed"></p></article></div><p id="finding-review" class="hint"></p><details><summary>Assessment facts, tested resource and stored verdict</summary><dl id="finding-context" class="details"></dl></details>
               <h3>Captured proof</h3><div id="evidence-comparison" class="evidence-comparison"></div>
               <h3>Identities, legitimate reads and follow-up checks</h3><p id="evidence-check-help" class="hint"></p><div id="evidence-checks" class="table-wrap"></div>
               <h3>Remediation</h3><p id="finding-remediation"></p><p class="hint">Apply the procedure-specific correction on the server. A linked retest below creates new work with its own reviewed scope and approval. A no_issue_observed result covers only the tested rule.</p>
             </section>
+            <details class="card section-card"><summary>Candidate review records and assessment attempts</summary><div id="candidates" class="candidate-list"></div><div id="attempt-evidence" class="history-list" aria-label="Assessment attempts"></div></details>
             <section id="retest-comparison" class="card section-card" hidden></section>
             <form id="retest-form" class="card section-card" hidden><p class="eyebrow">FINDING → NEW SCOPE → APPROVAL → COMPARISON</p><h2>Retest with a registered application</h2><p class="hint">Select the application containing your correction. Registration does not prove it is fixed. This creates an unapproved draft linked to this assessment; it copies no credentials or permission. Stopped/expired sources remain history.</p><label for="retest-application">Application to assess</label><select id="retest-application"><option value="">Select an owned application</option></select><p id="retest-selection" class="hint"></p><label for="retest-name">Retest name</label><input id="retest-name" required maxlength="120" autocomplete="off"><label for="retest-authorization">New authorization reference</label><input id="retest-authorization" required maxlength="256" autocomplete="off"><label for="retest-executor">Executor</label><select id="retest-executor"><option value="">Native broker client</option><option value="curl-http/v1">Fixed curl adapter through the broker</option></select><button id="create-retest" class="button primary" disabled>Create retest draft · review new scope →</button></form>
             <section class="card section-card"><h2>Explicit raw evidence inspection</h2><p class="hint">Each Inspect action reads only its selected artifact. Raw bodies and rejected URLs can contain sensitive values. No target request is replayed. Hashes identify bytes; they do not independently authenticate evidence.</p><p id="raw-evidence-status" class="hint" role="status">No raw response loaded.</p><button id="download-capture" class="button" disabled>Download inspected artifact bytes</button><pre id="capture-detail" class="code" tabindex="0" hidden></pre></section>

@@ -41,6 +41,7 @@ function page(name) {
   if (state.currentPage === 'evidence' && name !== 'evidence') cancelFindingReads();
   if (!['plan','evidence'].includes(name)) cancelRetestRead();
   state.currentPage = name;
+  $('setup-safety').hidden = name !== 'setup' || $('setup-current').hidden;
   for (const panel of document.querySelectorAll('[data-panel]')) panel.hidden = panel.dataset.panel !== name;
   for (const button of document.querySelectorAll('[data-page]')) {
     const selected = button.dataset.page === name;
@@ -184,6 +185,7 @@ function resetEvidence() {
 }
 function controls() {
   const connected = !!state.token, e = state.view?.engagement, locked = state.busy || state.stopping;
+  $('prototype-notice').hidden = connected;
   $('connect').disabled = locked; $('disconnect').disabled = !connected;
   $('reload').disabled = !connected || locked;
   $('add-application').disabled = !connected || locked;
@@ -370,6 +372,8 @@ function activityDetail(event) {
 function renderActivity() {
   const feed = state.activity, list = $('activity-events');
   const top = list.scrollTop || 0, follow = !list.children.length || list.scrollHeight - top - list.clientHeight < 24;
+  const expanded = new Set([...list.children].filter(row => [...row.children].some(node => node.tagName === 'DETAILS' && node.open)).map(row => row.dataset.sequence));
+  const focusedSequence = document.activeElement?.tagName === 'SUMMARY' ? document.activeElement.closest('[data-sequence]')?.dataset.sequence : null;
   list.replaceChildren();
   const rejections = feed?.items.filter(event => event.kind === 'request.rejected').length || 0;
   $('activity-rejections').textContent = feed?.loaded ? 'Scope rejections in displayed records: ' + rejections : 'Scope rejections: activity not loaded';
@@ -393,9 +397,10 @@ function renderActivity() {
     row.append(element('time', '#' + event.sequence + ' · recorded ' + time(event.recorded_at)), element('strong', activityTitle(event.kind)), element('p', activityDetail(event)));
     const refs = [`Source: ${event.source}`, event.operation_id && 'Operation: ' + event.operation_id, event.capture_id && 'Capture: ' + event.capture_id,
       event.data.observed_at && 'Fact observed: ' + time(event.data.observed_at), event.data.evidence_ids?.length && 'Evidence: ' + event.data.evidence_ids.join(', ')].filter(Boolean);
-    const technical = element('details'); technical.append(element('summary', 'Source and exact event references'), element('small', event.kind + ' · ' + refs.join(' · '))); row.append(technical); list.append(row);
+    const technical = element('details'); technical.open = expanded.has(String(event.sequence)); technical.append(element('summary', 'Source and exact event references'), element('small', event.kind + ' · ' + refs.join(' · '))); row.append(technical); list.append(row);
   }
   list.scrollTop = follow ? list.scrollHeight : top;
+  if (focusedSequence) [...list.children].find(row => row.dataset.sequence === focusedSequence)?.querySelector('summary')?.focus({preventScroll:true});
 }
 function validateActivityPage(data, run, after) {
   const integer = n => Number.isSafeInteger(n) && n >= 0;
@@ -673,7 +678,7 @@ function rawEvidenceButton(reference,label='Inspect raw capture') {
 }
 function renderFindings() {
   const snapshot=state.findings;if(!snapshot)return;
-  $('finding-summary').textContent=`Metadata snapshot: ${time(snapshot.observed_at)} · ${snapshot.candidates.length} evidence-supported candidates · ${snapshot.assessments.length} attempts. Completed attempts are revalidated from captured evidence; no target requests or human reviews are created.`;
+  $('finding-summary').textContent=`Metadata snapshot: ${time(snapshot.observed_at)} · ${snapshot.candidates.length} evidence-supported candidates · ${snapshot.assessments.length} attempts. Captures require explicit inspection; this metadata read sends no target requests.`;
   $('candidates').replaceChildren();$('finding-detail').hidden=true;
   for(const candidate of snapshot.candidates){
     const card=element('article',undefined,'card candidate');card.dataset.candidate=candidate.id;
@@ -814,7 +819,11 @@ function renderRetest() {
         ['Scope expiry', time(side.engagement.expires_at)], ['Procedure', side.procedure.id], ['Profile/version', side.procedure.version], ['Definition digest', side.procedure.digest],
         ['Latest reserved run', a?.run_id || 'Not started'], ['Attempt state', a?.state || side.attempt_status],
         ['Read-time verdict', a?.result?.verdict || 'No completed validation'], ['Stored verdict', a?.stored_verdict || 'Not recorded']]);
-      card.append(facts, element('p', a?.result?.reason || 'Unfinished, stopped or failed work supplies no clean result.'));
+      const primary = element('dl', undefined, 'details');
+      details(primary, [['Target', side.engagement.target], ['Attempt', a?.state || side.attempt_status], ['Scope permission record', side.engagement.state]]);
+      card.append(element('span', a?.result?.verdict || 'No completed validation', verdictClass(a?.result?.verdict) + ' comparison-verdict'),
+        element('p', a?.result?.reason || 'Unfinished, stopped or failed work supplies no clean result.'), primary);
+      const provenance = element('details'); provenance.append(element('summary', 'Scope, procedure and attempt provenance'), facts); card.append(provenance);
       const refs = element('details'); refs.append(element('summary', 'Selected evidence references'), element('pre', pretty(a?.evidence_ids || []), 'code')); card.append(refs);
       const open = element('button', 'Open ' + label.toLowerCase() + ' evidence', 'button'); open.type = 'button';
       open.addEventListener('click', () => void act(async () => { await openEngagement(side.engagement.id); page('evidence'); })); card.append(open); sides.append(card);
