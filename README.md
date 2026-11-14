@@ -8,7 +8,7 @@ The supported demo tests owned synthetic applications. It uses the real Mecatl e
 
 ### Path A — verify the source locally
 
-Prerequisites: Linux amd64, Git, make, a C compiler for Go race tests, Go **1.27.3** (see [go.mod](go.mod)), Python **3.13** with venv/pip, Node **22**, `/bin/sh` and `/usr/bin/curl`. These are tested versions, not a compatibility matrix. Docker, Kubernetes and model API keys are unnecessary for this path.
+Prerequisites: Linux amd64, Git, make, a C compiler for Go race tests, Go **1.27.4** (see [go.mod](go.mod)), Python **3.13** with venv/pip, Node **22**, `/bin/sh` and `/usr/bin/curl`. These are tested versions, not a compatibility matrix. Docker, Kubernetes and model API keys are unnecessary for this path.
 
 ```sh
 git clone https://github.com/Sanskarzz/tsunami.git
@@ -48,13 +48,11 @@ The worker has only `http_request` and `finish_assessment`. The broker checks ap
 
 The gVisor/Cilium lab has selected runtime/network evidence, including retained failures. It is not a proven hostile-agent sandbox or production tenant-isolation platform. General discovery/login, customer accounts, complete secret/evidence lifecycle controls and production failure/scale guarantees remain unfinished.
 
-The pinned Go toolchain has a reported vulnerability awaiting a separate update; see [security scan status](docs/verification.md#security-scan-status).
-
-## Read, inspect and contribute
+## Documentation and verification
 
 - [Documentation index](docs/README.md), [architecture](docs/design.md) and [security boundaries](docs/security.md).
 - [Verification and historical evidence](docs/verification.md); results qualify their recorded builds only.
 - [Prepared-environment demo script](docs/demo-walkthrough.md) and [Mecatl integration](docs/mecatl-harness.md).
-- [Contributing](CONTRIBUTING.md) and [security reporting](SECURITY.md).
+- [Security reporting](SECURITY.md).
 
 Repository licensing is pending the owner's final decision. No project-wide open-source license has been granted yet; dependencies retain their own licenses. See [ownership and attribution review](docs/current-status.md#licensing-and-attribution).

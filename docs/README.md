@@ -18,7 +18,7 @@ Start with [Getting Started](getting-started.md), [current functionality](curren
 
 ## Developer and operator guides
 
-- [Contributing](../CONTRIBUTING.md), [local UI](local-ui.md), [operator CLI](operator-cli.md).
+- [Local UI](local-ui.md) and [operator CLI](operator-cli.md).
 - [Application onboarding](application-onboarding.md), [configured applications](application-adapters.md), [binding preparation](binding-preparation.md).
 - [Engagement/API contracts](engagements.md), [property authorization](property-access.md).
 - [Sandbox lab](sandbox-lab.md), [fixed curl adapter](tool-execution.md).

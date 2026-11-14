@@ -8,7 +8,29 @@ Install the [source prerequisites and Python requirements](getting-started.md#pa
 
 `make verify` runs Go race tests with `-count=1`, vet, Python tests and `scripts/check-examples.py`. The evidence gate checks 38 materialized bundles, 286 artifacts and 20 original trial hashes, plus retained browser/showcase indexes. Optional `make verify-toolkit TOOLKIT_PATH=...` additionally validates separately obtained local schemas with remote retrieval disabled. The toolkit is not downloaded, vendored or executed.
 
-## Release preparation
+## Current source verification
+
+Verified on 2026-11-14 after the focused security/defaults cleanup. Source changes are `61077cf` (Go security floor) and `e814765a2f4fc295f28e3cb4893a678c338c6870` (deployment admission and regressions). Final README/link/report edits do not change application source. Go dependencies and `go.sum` are unchanged; `go.mod` now requires Go 1.27.4 rather than recommending an older patch through a separate toolchain directive.
+
+| Check | New observed result |
+|---|---|
+| `go test -race -count=1 ./...`, `go vet ./...` | PASS with Go 1.27.4 |
+| `go mod verify`, `go mod tidy -diff` | PASS; no dependency/checksum changes |
+| `make verify` | PASS, including a separate clean source clone: race/vet, **34 Python tests**, 38 bundles / 286 artifacts / 20 historical trial hashes |
+| `make verify-ui-retest` | PASS: 38 frontend tests |
+| Four local Chrome targets | PASS: activity/Stop, onboarding, findings/property controls and linked retest; disposable local targets, not Kubernetes |
+| `make build` | PASS on clean `e814765`, Go 1.27.4, `vcs.modified=false`; binary SHA-256 `5617d22f196dd9d3d19838e3d33eaed5a109bc944466ca76fd58a450f2e354dc` |
+| Govulncheck v1.9.0, source and built binary | PASS: **No vulnerabilities found**. The earlier GO-2026-6859 finding is resolved for these new builds, not the unchanged deployed images. |
+| Explicit Go 1.27.3 / older local fallback | Refused by the minimum version before building, as expected |
+| Markdown paths/anchors and contribution-guide removal | PASS; no maintained references to the removed guide |
+| Original evidence | The examples Git tree is unchanged from `2a54157`; historical qualification retains its original build meaning |
+| New Kubernetes/runtime/network/assessment campaigns | NOT RUN; no cluster adoption/mutation, credentials rotated, Stop gates changed or slots consumed |
+
+The **11 new deployment-guard tests** use only temporary files, synthetic metadata and stubbed commands. They check default/parallel Make entry points, direct setup helpers, refusal before builds/downloads/generated files, config identity/TLS/proxy/plugins, Kind ownership/API-port matching, Ready node, runsc/Cilium prerequisites and fresh-bootstrap adoption refusal. They do not qualify real runtime/network behavior. The [guard](../scripts/deployment_guard.py) is an operator mistake check, not an authorization boundary or distributed maintenance lock; trusted operator tools can still be invoked manually. [Getting Started](getting-started.md#build-deploy-and-seed-synthetic-targets) documents the explicit selection. Source builds, unit/evidence checks and local fixtures remain available without a lab; infrastructure diagnostics retain their separate prerequisites.
+
+Existing native/tools/VAmPI image findings below were **not rescanned, rebuilt or deployed** in this pass. Their old Go standard-library and package findings remain relevant to those exact images. Licensing/publication rights remain an explicit owner decision; no project-wide license was added. Fresh-cluster bootstrap remains unqualified.
+
+## Earlier cleanup verification
 
 The documentation cleanup starts from public commit `44d20cb63cde7d3c5f0fde20113404222f185d5d`. Before cleanup, a temporary clean clone passed Go race/vet, 23 Python tests, 38 frontend tests, build, module verification/tidy checks, four real local Chrome campaigns, both historical SHA manifests and Markdown links/anchors. A fresh Python venv also passed the source gate. It inherited toolchains/module caches, but no `.local/`, kubeconfig, credentials, workloads or databases. This was not a fresh OS or fresh Kubernetes bootstrap.
 
@@ -32,26 +54,26 @@ Later verification-documentation edits do not change the qualified application s
 
 ### Security scan status
 
-Scans completed with default detections intact; no broad allowlist, skipped security test or edited historical result was used to obtain a clean appearance.
+The following are retained earlier-cleanup scan results, before the Go update. Current Go 1.27.4 results are recorded above; the unchanged lab images still carry their old findings. No broad allowlist, skipped security test or edited historical result was used.
 
 | Scanner / scope | Outcome |
 |---|---|
 | Gitleaks module v8.30.1, Git `--all`, redaction 100%, through `4c29ffe` | Raw exit 1: **308 generic-key detections**, all triaged. 113 public credential-binding hashes, 153 synthetic proof hashes, 2 key-data hashes, 38 source/artifact hashes and 2 natural-language matches. No credential value established. |
 | Gitleaks tracked/new publication-tree snapshot | Raw exit 1: **307 detections**, same hash categories plus one prose match. Ignored runtime secrets/artifacts are intentionally excluded from publication, not copied into the scanned public tree. |
-| Govulncheck v1.9.0, Go 1.27.3, symbol-level source scan | **FINDING:** GO-2026-6859 / CVE-2026-97054 in stdlib `net/http`, fixed in Go 1.27.4. One advisory with multiple call traces, not multiple independent defects. |
+| Govulncheck v1.9.0, Go 1.27.3, symbol-level source scan | **Historical finding, fixed in current source:** GO-2026-6859 / CVE-2026-97054 in stdlib `net/http`, fixed in Go 1.27.4. One advisory with multiple call traces, not multiple independent defects. |
 | Trivy v0.75.0 source manifest scan | No listed Go-module vulnerabilities; this does not include the standard-library result or prove vulnerability-free code. |
 | pip-audit v2.10.1, resolved test requirements | No reported vulnerabilities across five resolved Python test packages. This is separate from VAmPI's dependencies. |
 | Trivy native image, ID `53467dc1e2689f57791f9f84345954b4762ba89aa0e4015a9411a164a1b4ca5b` | One standard-library finding, CVE-2026-97054. |
 | Trivy tools image, ID `3504e567e16465b625a38d8b0289e570ece62c4c205d45f862d19d384243582f` | 395 OS package/advisory entries (110 high, 133 medium, 147 low, 5 unknown), plus the Go finding. |
 | Trivy VAmPI image, ID `8ffa773d316c0e2095e428118c856662815a4aae1e497d1385d20d7d3eb3213a` | 211 OS entries (51 high, 90 medium, 65 low, 5 unknown) and 33 Python entries (1 critical, 9 high, 19 medium, 4 low). The critical entry is PyJWT 2.6.0 / CVE-2026-102268, scanner fix version 2.14.0. |
 
-The Go advisory describes an HTTP/1 MaxBytesReader header race when body reading and response-header writing occur concurrently. The project uses MaxBytesReader; the broad call-graph result is not a demonstrated exploit. The pinned toolchain remains unchanged pending a separately reviewed update. See the [Go vulnerability record](https://pkg.go.dev/vuln/GO-2026-6859).
+The earlier Go advisory describes an HTTP/1 MaxBytesReader header race when body reading and response-header writing occur concurrently. The call-graph result was not a demonstrated exploit. That scan used Go 1.27.3; current source requires the fixed Go 1.27.4. The image results below retain their original build meaning. See the [Go vulnerability record](https://pkg.go.dev/vuln/GO-2026-6859).
 
 Trivy's DB snapshot was updated 2026-11-14T07:01:20Z. Counts are package/advisory entries, including duplicates across related packages, not proven reachable exploits. Container reachability/impact has not been fully triaged. The existing images were scanned read-only, not rebuilt or deployed. VAmPI deliberately contains application defects, but that does not excuse or hide dependency findings. Keep it confined to the owned lab. Do not distribute these images as hardened release artifacts.
 
 The source/module/test-dependency scans do not cover every host tool, Kind/Cilium/gVisor binary, upstream component or dependency-license obligation. Repeated scans can differ as databases change. SHA checks establish byte identity, not absence of secrets or vulnerabilities.
 
-**Release hold:** the final project license/publication-rights decision, Go security update and container-finding disposition remain open. The unsafe legacy `make deploy` defaults remain documented; a separate proposed guard has not been applied. No clean security-release or fresh-cluster qualification is claimed.
+**Remaining decisions:** project licensing/publication rights and container-finding disposition remain open. The source Go update and pre-build deployment guard are implemented and tested. Existing images have not been rebuilt, and no fresh-cluster qualification is claimed.
 
 ## Recorded deployment and qualification
 
