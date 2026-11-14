@@ -19,7 +19,8 @@ export function ui(options = {}) {
     getElementById(id) { if (!nodes.has(id)) nodes.set(id, new Element()); return nodes.get(id); },
     createElement(tag) { return new Element(tag); },
     createTextNode(text) { const node=new Element('text');node.textContent=text;return node; },
-    querySelectorAll() { return []; }
+    querySelectorAll() { return []; },
+    querySelector() { return null; }
   };
   const context = vm.createContext({document, window: {addEventListener() {}},
     createOnboardingUI: () => ({lock() {},reset() {}}), setTimeout: options.setTimeout || setTimeout, clearTimeout: options.clearTimeout || clearTimeout, AbortController,

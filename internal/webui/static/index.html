@@ -9,36 +9,44 @@
   <script src="/ui/app.js" type="module"></script>
 </head>
 <body>
+  <a class="skip-link" href="#main-content">Skip to workspace</a>
   <aside class="sidebar">
     <a class="brand" href="/ui/"><span class="brand-mark">≈</span> tsunami<span class="local-label">LOCAL</span></a>
     <p class="nav-label">ASSESSMENT WORKSPACE</p>
     <nav aria-label="Assessment steps">
       <button data-page="setup" class="nav-item"><span>＋</span> Add application</button>
-      <button data-page="applications" class="nav-item selected"><span>01</span> Dashboard</button>
+      <button data-page="applications" class="nav-item selected" aria-current="page"><span>01</span> Applications</button>
       <button data-page="plan" class="nav-item"><span>02</span> Scope &amp; approval</button>
-      <button data-page="run" class="nav-item"><span>03</span> Run &amp; Stop</button>
-      <button data-page="evidence" class="nav-item"><span>04</span> Evidence &amp; findings</button>
+      <button data-page="run" class="nav-item"><span>03</span> Assessment</button>
+      <button data-page="evidence" class="nav-item"><span>04</span> Findings &amp; retest</button>
     </nav>
     <div class="sidebar-note"><span class="tiny-tag">EXECUTION BOUNDARY</span><p>Worker → broker → target</p><small>The worker requests an action. The service owns permission, credentials and evidence.</small></div>
     <div class="sidebar-bottom">Owned synthetic HTTP lab<br><span>Scripted Mecatl · Kubernetes Jobs</span></div>
   </aside>
   <div class="workspace">
     <header class="topbar"><span>Local lab <span class="slash">/</span> Operator workspace</span><div class="connection"><span id="connection-state" class="badge">Disconnected</span><button id="disconnect" class="button subtle" disabled>Disconnect</button></div></header>
-    <main>
-      <div class="notice">Local HTTP lab · form-first setup and checked questions · bearer/JSON integrations with synthetic data. Password/SSO login and autonomous discovery are not supported.</div>
+    <main id="main-content" tabindex="-1">
+      <div class="notice">Owned synthetic lab · Scripted Mecatl assessments · Explicit permission at every boundary.</div>
       <section id="connect-panel" class="card connection-card">
-        <div><p class="eyebrow">CONNECT TO YOUR LOCAL CONTROL API</p><h1>Make the testing boundary visible.</h1><p>Use the tenant operator token from your private local file. It stays in page memory; this is not an application user's password.</p></div>
+        <div><p class="eyebrow">PRIVATE OPERATOR CONNECTION</p><h1>Your assessment workspace.</h1><p>Use the tenant operator token from your private local file. It stays in page memory; this is not an application user's password.</p></div>
         <form id="connect-form"><label for="operator-token">Operator token</label><div class="input-row"><input id="operator-token" type="password" autocomplete="off" spellcheck="false" required placeholder="Paste locally; never share on screen"><button class="button primary" id="connect">Connect</button></div><small>Same-origin API only. Nothing is saved to browser storage. Disconnecting does not Stop work.</small></form>
       </section>
       <div id="message" class="message" role="status" aria-live="polite" hidden></div>
       <div class="main-grid">
         <div class="journey">
+          <ol class="journey-map" aria-label="Product workflow">
+            <li data-journey="applications" class="current">01<strong>Application</strong></li>
+            <li data-journey="setup">02<strong>Baseline access</strong></li>
+            <li data-journey="plan">03<strong>Scope approval</strong></li>
+            <li data-journey="run">04<strong>Assessment</strong></li>
+            <li data-journey="evidence">05<strong>Findings &amp; retest</strong></li>
+          </ol>
           <section id="assessment-safety" class="card safety-bar" aria-label="Assessment revocation" hidden>
             <div class="section-heading"><div><strong>Assessment permission</strong><p id="stop-context" class="hint"></p></div><button id="stop" class="button danger" disabled>Stop assessment</button></div>
             <p id="stop-receipt" class="hint" role="status" aria-live="polite">No Stop request acknowledged in this viewer.</p>
           </section>
           <section data-panel="setup" hidden>
-            <div class="page-heading"><div><p class="eyebrow">ADD AN OWNED APPLICATION</p><h1>Supply the facts. Review each permission.</h1><p>Save details → validate legitimate access → review scope → approve → Start.</p></div><button id="new-setup" class="button" disabled>New setup</button></div>
+            <div class="page-heading"><div><p class="eyebrow">ADD AN OWNED APPLICATION</p><h1>Add an application</h1><p>Save details → validate legitimate access → review scope → approve → Start.</p></div><button id="new-setup" class="button" disabled>New setup</button></div>
             <form id="setup-form" class="card section-card">
               <h2>Application details</h2><p class="hint">Backend details may be unknown. Use disposable test identities and records. Passwords/tokens do not belong in names, URLs, documentation or the conversation.</p>
               <div class="field-grid"><div><label for="setup-name">Application name</label><input id="setup-name" maxlength="120" required placeholder="My development application"></div><div><label for="setup-environment">Environment</label><input id="setup-environment" maxlength="40" value="dev" required></div></div>
@@ -67,13 +75,13 @@
             <div class="card section-card"><h2>Saved application setups</h2><p class="hint">Recover questions and IDs after a refresh or lost response. Nothing is replayed automatically.</p><div id="setup-history">Connect to load saved setups.</div></div>
           </section>
           <section data-panel="applications">
-            <div class="page-heading"><div><p class="eyebrow">01 / DASHBOARD</p><h1>Owned applications and assessment history.</h1><p>Review registered targets or add an integration. Each assessment needs its own approval.</p></div><div class="actions"><button id="add-application" class="button primary" disabled>Add application</button><button id="reload" class="button" disabled>Refresh lists</button></div></div>
+            <div class="page-heading"><div><p class="eyebrow">01 / APPLICATIONS</p><h1>Applications</h1><p>Select an exact registered target, resume saved work, or set up an owned application.</p></div><div class="actions"><button id="add-application" class="button primary" disabled>Add application</button><button id="reload" class="button" disabled>Refresh lists</button></div></div>
             <p id="dashboard-observed-at" class="hint" role="status">Connect to read registered applications and saved attempts.</p>
             <div id="application-list" class="app-grid"><div class="empty card">Connect to load real application plans. No sample results are shown here.</div></div>
             <div class="card section-card"><div class="section-heading"><h2>Recent saved assessments</h2><span class="muted">Scope approval and latest attempt are separate</span></div><div id="engagement-list" class="history-list">Not connected.</div></div>
           </section>
           <section data-panel="plan" hidden>
-            <div class="page-heading"><div><p class="eyebrow">02 / SCOPE &amp; APPROVAL</p><h1>Review before running.</h1><p>A draft makes no target requests. Approval and execution are separate.</p></div></div>
+            <div class="page-heading"><div><p class="eyebrow">02 / SCOPE &amp; APPROVAL</p><h1>Review the assessment scope.</h1><p>A draft makes no target requests. Approval and execution are separate.</p></div></div>
             <div id="selected-application" class="card section-card empty">Choose a configured application first.</div>
             <form id="draft-form" class="card section-card" hidden>
               <div class="field-grid"><div><label for="assessment-name">Assessment name</label><input id="assessment-name" maxlength="120" value="Web/API authorization assessment" required></div><div><label for="authorization-ref">Authorization reference</label><input id="authorization-ref" maxlength="240" placeholder="Your permission reference, e.g. owned-lab/demo" required></div></div>
@@ -93,7 +101,7 @@
             </div>
           </section>
           <section data-panel="run" hidden>
-            <div class="page-heading"><div><p class="eyebrow">03 / EXECUTION</p><h1>Observe work. Revoke permission.</h1><p>Observation, authorization and workload cleanup are different facts.</p></div></div>
+            <div class="page-heading"><div><p class="eyebrow">03 / EXECUTION</p><h1>Assessment monitor</h1><p>Observation, authorization and workload cleanup are different facts.</p></div></div>
             <div class="card section-card"><dl id="run-context" class="details"><dt>Assessment</dt><dd>No assessment loaded.</dd></dl><div class="actions"><button id="start" class="button primary" disabled>Start one scripted run</button><button id="refresh-run" class="button" disabled>Refresh status &amp; activity</button><button id="pause" class="button subtle" disabled>Resume observation</button></div><p id="run-help" class="hint">A Kubernetes Job executes the approved procedure. Closing this page does not Stop it. Start is never automatically retried. Leaving this screen pauses observation; use Resume to continue reads.</p></div>
             <div id="run-picker-wrap" class="run-picker" hidden><label for="run-picker">Stored child runs</label><select id="run-picker"></select></div>
             <div class="status-grid" id="status-grid"><div class="card status-card"><span>Permission</span><strong id="status-permission">Not observed</strong></div><div class="card status-card"><span>Execution</span><strong id="status-execution">Not observed</strong></div><div class="card status-card"><span>Broker activity</span><strong id="status-activity">Not observed</strong></div><div class="card status-card"><span>Kubernetes cleanup</span><strong id="status-cleanup">Not observed</strong></div></div>
@@ -105,7 +113,7 @@
             <details class="card section-card"><summary>Scope and approval history</summary><div id="events" class="event-list">Load an assessment to read its stored events.</div></details>
           </section>
           <section data-panel="evidence" hidden>
-            <div class="page-heading"><div><p class="eyebrow">04 / FINDING → EVIDENCE → REMEDIATION</p><h1>Follow the captured support.</h1><p>Normal viewing loads metadata only. A validator-supported candidate still needs impact and severity review.</p></div><button id="load-findings" class="button" disabled>Refresh findings metadata</button></div>
+            <div class="page-heading"><div><p class="eyebrow">04 / FINDING → EVIDENCE → REMEDIATION</p><h1>Findings &amp; evidence</h1><p>Normal viewing loads metadata only. A validator-supported candidate still needs impact and severity review.</p></div><button id="load-findings" class="button" disabled>Refresh findings metadata</button></div>
             <p id="finding-summary" class="hint" role="status">No finding metadata snapshot loaded.</p>
             <div id="candidates" class="candidate-list"></div>
             <div id="attempt-evidence" class="history-list" aria-label="Assessment attempts"></div>

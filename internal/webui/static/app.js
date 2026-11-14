@@ -34,7 +34,14 @@ function page(name) {
   if (!['plan','evidence'].includes(name)) cancelRetestRead();
   state.currentPage = name;
   for (const panel of document.querySelectorAll('[data-panel]')) panel.hidden = panel.dataset.panel !== name;
-  for (const button of document.querySelectorAll('[data-page]')) button.classList.toggle('selected', button.dataset.page === name);
+  for (const button of document.querySelectorAll('[data-page]')) {
+    const selected = button.dataset.page === name;
+    button.classList.toggle('selected', selected);
+    if (selected) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
+  }
+  for (const step of document.querySelectorAll('[data-journey]')) step.classList.toggle('current', step.dataset.journey === name);
+  const heading = document.querySelector(`[data-panel="${name}"] h1`);
+  if (heading) { heading.tabIndex = -1; heading.focus({preventScroll: true}); }
   $('step-explanation').textContent = pages[name];
   if (name === 'evidence' && state.token && state.view) void loadFindings().catch(() => {});
   if (['plan','evidence'].includes(name) && state.view?.engagement.source_engagement_id) void loadRetestComparison().catch(() => {});
