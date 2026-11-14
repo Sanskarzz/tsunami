@@ -539,23 +539,6 @@ func (s *Server) beginFor(id string, timeout time.Duration) (context.Context, co
 	return ctx, cancel, op, nil
 }
 
-func (s *Server) reserve(id string) error {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	return s.Store.Update(id, func(r *Run) error {
-		if r.State != Running || time.Now().After(r.Deadline) {
-			return errors.New("run permission revoked")
-		}
-		if r.RequestCount >= r.MaxRequests {
-			return errors.New("request budget exceeded")
-		}
-		r.RequestCount++
-		now := time.Now().UTC()
-		tracked(r).LastAdmittedAt = &now
-		return nil
-	})
-}
-
 func (s *Server) Execute(parent context.Context, id string, in Request) ([]Capture, error) {
 	ctx, cancel, op, err := s.begin(id)
 	if err != nil {
