@@ -1,6 +1,6 @@
 # Current trust boundaries
 
-This document describes what exists, not the complete take-home architecture.
+This document describes enforced boundaries and trusted assumptions. [Current functionality](current-status.md), [verification](verification.md) and [security reporting](../SECURITY.md) are separate references. The default path supports owned synthetic data only.
 
 ## Trusted components
 
@@ -44,7 +44,7 @@ The separate `tsunami-lab` cluster uses Cilium's `always` enforcement mode and g
 
 gVisor is installed only inside the dedicated Kind node. A diagnostic checks a running pod's CRI handler/type, no mounted API token, denied raw socket creation, and denied root filesystem writes. The actual assessment Jobs also select gVisor. Non-root containers, read-only filesystems, dropped capabilities, and Pod Security admission remain useful but do not establish escape resistance. The trusted services and worker share one node and one namespace in this lab.
 
-IPv6, metadata routes, arbitrary UDP/ICMP, alternate interfaces, CNI failure, and cross-node behavior remain unqualified. The trusted broker is still the HTTP scope boundary. A broker compromise or a sandbox/network escape is outside the demonstrated guarantee. See [the sandbox experiment](sandbox-lab.md).
+IPv6, metadata routes, arbitrary UDP/ICMP, alternate interfaces, CNI failure, and cross-node behavior remain unqualified. The trusted broker is still the HTTP scope boundary. A broker compromise or a sandbox/network escape is outside the demonstrated guarantee. See [the sandbox experiment](sandbox-lab.md) and [the retained original failure logs](../examples/isolation/README.md).
 
 The default scratch image contains no shell. The optional [reviewed curl adapter](tool-execution.md) uses a separate gVisor image, one fixed command and the existing broker boundary. No general shell tool is registered. Installing tooling or setting a proxy variable alone does not enforce scope.
 
@@ -84,6 +84,10 @@ When prerequisite captures are missing, completion can return up to two persiste
 
 Catalog live inference is limited to offline `fixture` or `openrouter-free`; evaluation additionally requires the provider/price policy atomically when creating each run. External trials are opt-in and restricted to at most two procedures and one repetition. Model/provider attempt limits still apply. The initial engineering definitions need independent security review, and these guided fixtures do not establish general discovery quality. See [procedure and evaluation limits](assessment-catalog.md).
 
+## Approval and Start recovery
+
+Approval atomically compares the caller's reviewed `scope_digest` with the canonical immutable saved scope. Empty, wrong/stale and unauthorized approvals grant no permission. Start requires a tenant/engagement-bound action key; its request fingerprint and child/credential record commit together. Conflicting reuse fails. Known-action recovery may identify stopped/expired work after restart without renewing permission, deadlines, budgets or credentials. Recovery responses contain launch metadata/public scope, not captured bodies. No remote exactly-once execution guarantee follows. See [Start contract](engagements.md#start-recovery).
+
 ## Engagement boundary
 
 An operator approves a pinned lab target/procedure selection before child-run creation. Parent reservation, child record and credential creation commit atomically. Engagement Stop revokes all active child states in one transaction and then cancels local contexts; restart cannot reopen the engagement. New scopes require new engagements. Current expiry/run/concurrency limits are fixed lab bounds, not customer-wide budgets.
@@ -109,3 +113,7 @@ The optional `/ui/` handler serves embedded assets only for loopback Host values
 ## Protected onboarding preflight
 
 Authenticated operator setup APIs now hold durable typed facts/questions/revisions and an explicit bounded preflight grant. Secrets and raw preflight responses are encrypted with a control-only key and tenant/session/purpose binding; no token goes into conversation or worker configuration. The final assessment evidence retains its documented local lab storage limits. Preflight uses the existing validated-address/hostname/TLS policy, exact own-account GETs, no redirects and persistent reservations; setup/global Stop cancel it and late responses cannot grant readiness. Interrupted attempts stay uncertain, not automatically replayed. New public targets are HTTPS-only with address filtering and trusted infrastructure exclusions; private exceptions remain exact registered lab integrations. These are not complete customer identity, secret/evidence lifecycle, all-provider infrastructure exclusions or production failure/scale qualification. See [the implementation limits](application-onboarding.md).
+
+## Release qualification and dependencies
+
+The pinned Go 1.27.3 toolchain has a reported standard-library vulnerability pending review/update; see [scanner findings](verification.md#security-scan-status). Passing race tests and module checksums do not establish vulnerability-free dependencies. Container packages, upstream target dependencies and the host CA bundle need their own release review. A source release does not qualify production deployment or grant third-party redistribution rights.

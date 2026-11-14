@@ -1,112 +1,74 @@
-# Tsunami: demo architecture and product journey
+# Architecture and state model
 
-Updated: 2026-11-09. Scope: [project goal](project-goal.md). Current implementation: [tracker](track.md). Ordered changes: [roadmap](roadmap.md).
-
-D3 metadata, D4 activity events, D5 activity/Stop, D6 Dashboard/onboarding/scope, D7 finding/evidence/remediation and D8 linked retest are implemented. [D9](../examples/demo-journey/README.md) deployed matching images and qualified the connected owned-lab journey, including a paced five-minute browser dry run. D2's older build remains historical. This qualification does not establish customer readiness or independent human review.
-
-## Current architecture and authority
+Tsunami keeps authorization and evidence authority in the trusted Go control plane. The default configured-application workflow is scripted Mecatl. [Current status](current-status.md) defines supported capabilities; [verification](verification.md) identifies qualified builds and omissions.
 
 ```mermaid
 flowchart LR
-    UI[Local UI / CLI] --> CP[Go control API + bbolt]
-    CP --> JOB[Kubernetes Job]
-    JOB --> W[Mecatl worker]
-    W -->|Run-authenticated request intent| B[Trusted HTTP broker]
+    UI[Local UI / CLI] --> CP[Go API + bbolt]
+    CP --> J[Kubernetes Job]
+    J --> W[Mecatl worker]
+    W -->|Run-authenticated typed intent| B[Trusted HTTP broker]
     B --> T[Approved owned application]
-    B --> E[Captured responses]
+    B --> E[Captures + hashes]
     E --> V[Deterministic validator]
-    V --> R[Result + candidate + evidence export]
+    V --> R[Candidate / evidence / draft report]
     CP -->|Durable revocation| B
 ```
 
-The control API, broker, validator and optional model gateway share one trusted process. Workers, targets and optional private connectors run separately. Reuse these boundaries; the diagram is not a request for new microservices.
+## Authority and implementation
 
-| Component | Authority and current limits |
-|---|---|
-| Operator | Supplies application facts and intended access rules; approves scope and starts/stops work. Local tenant bearer authentication exists; customer sign-in/roles do not. |
-| Control plane | Stores immutable scope, approvals, run identity, reservations and Stop. Worker input cannot select another tenant or grant permission. |
-| Scheduler | Reconciles Jobs and credential Secrets. Dispatch intent is not proof of worker startup; uncertain dispatched work is not automatically replayed. |
-| Worker | Real Mecatl with `http_request` and `finish_assessment`; scripted for configured applications. No general shell or unrestricted target fetch. |
-| Broker | Holds target credentials, authorizes each account/path and actual destination, reserves work, captures responses and cancels contexts. |
-| Validator | Uses captured evidence plus approved facts; model output cannot confirm a result. D1 preserves earlier supported object exposure across repeated probes; source checks and D2's selected owned deployment qualification pass. |
-| UI | Reads operator-authorized metadata and explicitly requested evidence; it has no target networking authority. |
+The API, broker, validator, store and optional model gateway share one trusted process. Workers, targets and optional connectors run separately. There is no custom Kubernetes CRD or distributed workflow engine.
 
-The scratch worker is the default native image. The existing fixed curl adapter uses a separate gVisor tools image and submits intents through a private Unix bridge. The broker performs target GETs. Preserve DNS/IP pinning, redirect validation, TLS verification, proxy exclusion, exact account/path permissions, deadlines and budgets.
-
-The dedicated gVisor/Cilium lab has selected recorded runtime/network tests. Ordinary container deployment or a RuntimeClass object alone is not equivalent qualification. Trusted services and workers still share lab infrastructure; full hostile-process containment and production tenant isolation are not established. See [security](security.md), [sandbox qualification](sandbox-lab.md), and [Stop lifecycle](stop-lifecycle.md).
-
-## Terms used by the interface
-
-- **Application:** registered target and supported account/object/access-rule bindings. Registration is not assessment authorization.
-- **Plan/procedure:** versioned bounded test and the application facts it uses. Different owners alone do not establish forbidden access.
-- **Engagement:** saved draft or approved scope containing child runs and limits. The UI may call it an assessment.
-- **Run:** one attempt; permission, execution observations, activity, cleanup and result are distinct facts.
-- **Finding candidate:** evidence-supported observation awaiting human impact/severity review. `confirmed` is a validator verdict, not human signoff.
-
-## Current API path
-
-All operator routes require tenant operator authentication. Worker credentials are bound to one run and cannot approve/review other work.
-
-| Action | Existing API and behavior |
-|---|---|
-| Setup | `POST /v1/onboarding`; saved typed facts/questions, no target requests. |
-| Access and prerequisites | Setup `/answers`, `/details`, `/resolve`, `/access`, `/validate`; current revision/digest and explicit permissions apply. See [full contract](application-onboarding.md). |
-| Register and prepare | Setup `/prepare` atomically saves supported application plus unapproved engagement. It does not Start. |
-| List | `GET /v1/applications`, `GET /v1/engagements`; tenant-bound plans/history. D3 adds application metadata; D6 adds stored latest-attempt metadata to engagement-list rows. No plan digests change. |
-| Draft | `POST /v1/engagements`; select an existing supported application. |
-| Approve | `POST /v1/engagements/{id}/approve` requires `scope_digest`, atomically compared with the saved canonical scope. The UI binds its checkbox to the displayed digest without typing; the CLI submits the explicitly reviewed digest. Approval starts no agent. |
-| Start | `POST /v1/engagements/{id}/runs` requires an action key; atomically reserve child/credential/key or recover the same run. Conflicting key reuse fails; recovery never renews permission. |
-| Observe | `GET /v1/engagements/{id}`, `GET /v1/runs/{id}/status`; D3 adds authoritative policy/access/snapshot metadata, separately from lifecycle observations and assessment result. See [contract](engagements.md#read-only-assessment-metadata-d3). |
-| Stop | Run `/stop`, engagement `/stop`, tenant `/v1/stop-tenant`, separate global `/v1/stop-all`. Durable revocation precedes acknowledgement. |
-| Findings/evidence/report | Engagement `/findings` returns body-free candidate/check/capture metadata. Explicit `/evidence/{E-sha256}` reads one exact artifact; `/export` and run `/report` retain full evidence/draft exports. See [D7 contract](engagements.md#finding-and-evidence-reads-d7). |
-| Review | Engagement `/reviews`; requires stopped engagement and matching evidence/revision. Current UI does not submit human reviews. |
-| Retest | Existing draft creation accepts tenant-checked `source_engagement_id` for a selected registered application. Engagement `/retest` reads scope differences and actual latest outcomes/evidence. Fresh approval/Start required; [D8 contract](engagements.md#linked-fixed-app-retest-d8). |
-
-There is no general `POST /v1/applications`, automatic discovery/profile-planner endpoint, customer portal or live-model configured-application mode. Dynamic registration uses validated onboarding. Preserve these boundaries rather than adding a second setup API.
-
-## Target screens and backend states
-
-D3-D8 improve the current embedded UI. Finding, Evidence and Remediation can be tabs/panels within assessment detail; no additional routing framework is required.
-
-| Screen/action | Required presentation | Backend source or transition |
+| Component | Responsibility | Code |
 |---|---|---|
-| Dashboard | Registered owned applications, recent attempts, actual latest outcomes, access availability and observation times. No synthetic usage/coverage cards. | D3 application metadata plus D6's stored latest-attempt list projection and Dashboard; locally browser-tested. |
-| Add Application | Name/environment, frontend/API details, two test identities and intended rule. Offer the existing owned integration explicitly; ask only for missing facts. | Saved setup; current checked-rule advisor. Unsupported auth stays unavailable. |
-| Prerequisite validation | Exact four legitimate reads, addresses, identities and limits; separate explicit permission. | `ready_for_validation -> validating -> ready_for_approval`, or failure/uncertainty. No cross-user probe. |
-| Scope Review | Origin/addresses, account/GET/path matrix, expected rule, proof-field names, exclusions, budgets, expiry, scripted mode and data handling. Raw assertions/digest optional. | D6 tables/summary and bound review checkbox; atomic prepare creates `assessment_created` setup plus engagement `draft`. |
-| Approve | Explicitly approve displayed immutable scope; no automatic Start. | Engagement `draft -> active`, approval time/digest recorded. |
-| Assessment | Queued, dispatch intent, observed worker, actual request activity, rejection, validation and stale/error states. Stop always accessible during active work. | Run/lifecycle/status plus D4 events and D5 presentation; source/local checks plus selected D9 Kubernetes/browser qualification. |
-| Finding | Failure-specific title, affected account/object/field, expected versus observed rule, confirmed observation with human review pending. | D7 body-free metadata reuses trusted validation/candidates and matching existing reviews; no automatic review/rating. |
-| Evidence | Owner baseline and peer probe side by side; identities/rechecks and exact capture references. Raw bodies only on explicit inspection. | D7 maps actual validator-selected captures to existing export IDs/hashes; explicit single-artifact reads verify bytes before display/download. |
-| Remediation | Object authorization or property projection correction and explicit registered-application retest selection. No fabricated patch or severity. | D7 displays deterministic remediation; D8 saves only a fresh unapproved linked draft. |
-| Stop | Acknowledgement or uncertainty, then permission, local drain, worker observations and cleanup separately. | Durable engagement/run revocation and current lifecycle fields. |
-| Retest | Select fixed registered target; review changed bindings/scope; approve fresh work; compare version, outcome and evidence. | D8 tenant-checked immutable source link, body-free comparison and ordinary draft/approval/run transitions. Original history/evidence preserved; deployed and qualified in D9. |
+| Operator API/store | Tenant bearer authorization, immutable scope, reviewed-digest approval, atomic keyed Start, durable Stop | [platform](../internal/platform/) |
+| Scheduler | Per-run Secret and Job, configured runtime, no API token in worker, no automatic replay of uncertain dispatch | [scheduler](../internal/kube/scheduler.go) |
+| Worker | Real Mecatl engine, exactly `http_request` and `finish_assessment`, bounded turns/calls | [worker](../internal/worker/worker.go), [harness contract](mecatl-harness.md) |
+| Broker | Credential custody, exact account/path scope, numeric-IP dialing after DNS checks, redirects/TLS/budgets, captures/cancellation | [scope](../internal/platform/scope.go), [requests](../internal/platform/server.go) |
+| Validator/reporting | Captured evidence plus approved facts; no worker-authored verdict or automatic severity | [application validation](../internal/platform/application.go), [finding views](../internal/platform/finding_view.go) |
+| UI/CLI | Operator-authorized real metadata and explicit evidence reads; stale/uncertain observations remain visible | [UI](local-ui.md), [CLI](operator-cli.md) |
 
-### Existing state meanings
+The scratch native worker and optional fixed curl adapter use the same broker boundary. Curl submits typed intents through a private Unix bridge; the broker opens target connections. No arbitrary shell or unrestricted networking is exposed as an agent tool. Cilium/gVisor have separate selected-path qualification; configuration alone is insufficient. See [security](security.md).
 
-Setup commonly proceeds through `needs_input` / `unsupported`, `ready_for_validation`, `validating`, `ready_for_approval`, and `assessment_created`. Preserve `validation_failed`, `interrupted`, `expired`, and `stopped` observations. The complete implementation contract is in [onboarding](application-onboarding.md).
+## Product terms
 
-Engagement authorization is `draft -> active -> stopped`, with expiry enforced separately. A completed child does not automatically complete/close the engagement. Derive “latest attempt completed” without inventing a stored engagement `completed` state.
+An **application** supplies registered target/account/object facts. A **procedure** is a versioned bounded test. An **engagement** is an immutable saved approval scope with child runs; the UI calls it an assessment. A **run** is one attempt. A **finding candidate** is an evidence-supported observation awaiting human impact/severity review. Different object owners alone do not establish forbidden access.
 
-Runs are `pending -> running -> completed | failed | stopped`. At dispatch, `running` is not process proof. Keep separate observations from `/status`:
+## Journey and backend transitions
+
+All operator routes are tenant-authorized. Run tokens cannot approve, create siblings, inspect engagement evidence or review findings. [Engagement contracts](engagements.md) and [onboarding](application-onboarding.md) describe full request/response behavior.
+
+| Screen/action | Backend source or transition |
+|---|---|
+| Dashboard | `GET /v1/applications`, `/v1/engagements`, `/v1/onboarding`; saved scope and latest-attempt metadata, no synthetic counters |
+| Add Application | `POST /v1/onboarding`, typed answers/details/access; saves facts without target traffic |
+| Prerequisite review | Explicit revision/digest-bound `/validate`; only four legitimate reads; `ready_for_validation → validating → ready_for_approval`, or failed/interrupted/expired/stopped |
+| Prepare / Scope Review | `/prepare` atomically registers a supported application and an engagement `draft`; show target/addresses/account/GET/path/rule/budget/expiry/executor |
+| Approve | Engagement `/approve` compares reviewed `scope_digest` with canonical saved scope; `draft → active`, no dispatch |
+| Start | `/runs` atomically reserves child/credential/action key; run `pending`, then reconciliation commits dispatch intent and moves it to `running` |
+| Assessment | `/status` and cursor `/events`; actual admission/send/capture/rejection/validation and lifecycle observations |
+| Finding / Evidence | `/findings` returns body-free selected proof metadata; explicit `/evidence/{E-sha256}` returns one exact artifact, verified before display; full `/export` is separate |
+| Remediation | Deterministic procedure-specific guidance; no invented patch, review or severity |
+| Stop | Run/engagement/tenant/global routes persist revocation before acknowledgement and cancel tracked work; cleanup follows independently |
+| Retest | New draft via `source_engagement_id` and an explicitly selected registration; fresh scope review/approval/Start; `/retest` compares actual outcomes and compatibility |
+
+Setup can also be `needs_input`, `unsupported`, `validation_failed`, `interrupted`, `expired`, `stopped` or `assessment_created`. Registration and approval remain separate. New public onboarding supports only reviewed HTTPS bearer/JSON contracts with synthetic data; private exceptions are exact registered lab integrations.
+
+Engagement authorization is `draft → active → stopped`, with expiry checked separately. A completed child does not invent an engagement `completed` state. Runs are `pending → running → completed | failed | stopped`; `running` at dispatch is not process proof. Status separates:
 
 - Permission: active, revoked, expired, closed or not active.
-- Execution: queued, dispatch intent, worker observed, exit observed, or unknown after resource removal.
-- Activity: active locally, no local work, drained locally, or uncertain prior/unpersisted completion.
-- Cleanup: not requested, pending, delete accepted, API resources absent.
+- Execution: queued, dispatch intent, observed worker/exit, or unknown.
+- Activity: active locally, no local work, drained locally, or prior-process uncertainty.
+- Cleanup: not requested, pending, deletion accepted or API resources absent.
 - Assessment: `confirmed`, `no_issue_observed`, `inconclusive`, or no completed result.
 
-Retain API values and observation timestamps even when the UI uses readable labels. An unavailable response leaves the last observation stale; it does not supply a new successful state. A reserved/waiting operation is not necessarily a target request in flight.
+A stored request reservation is not necessarily a target request in flight. A missing response leaves a stale/unknown observation, not a new successful state. A lost Start response is recovered through child IDs or the exact original action key; recovery returns current stored state without replacement work, renewed deadlines or refunded budget. New attempts need new keys and normal admission. See [Start recovery](engagements.md#start-recovery).
 
-### Stop and retest branches
+Stop is a branch from active work. A separately approved held-request fixture makes cancellation observable; stopping already completed work does not demonstrate active cancellation. Stop cannot undo a remote effect or infer exit from resource absence. Changed target/access requires fresh scope approval. A retest preserves source evidence and labels incompatible rules; a clean configured check is not whole-application security.
 
-Stop is a branch from active work, not a required step after a completed finding. Use a separately approved held-request fixture to demonstrate actual cancellation. Click Stop inside the broker request timeout; explain the distinction before starting the held probe. Closing the completed engagement can prevent further attempts but does not prove active cancellation.
+## Activity events
 
-A stopped run never resumes. Retest creates new work, including after Stop. A different fixed-app origin needs fresh approval and its own credentials/bindings. Compare procedure semantics/version and show changed scopes; do not claim equal digests for different bindings. Missing or incompatible evidence stays explicit. A clean completed check does not establish application-wide security.
-
-## Activity events (D4)
-
-**Implemented in source, not qualified on the D2 deployment.** A typed `activity` journal shares each run's bbolt record. Legacy free-text `events` remain compatible and are never copied into the activity feed. D5 connects this journal to the observed activity panel; scope/approval history remains separate.
+A typed `activity` journal shares each run's bbolt record. Legacy free-text `events` remain compatible and are never copied into the activity feed. The UI connects this journal to the observed activity panel; scope/approval history remains separate.
 
 The operator endpoint requires the run's tenant credential; worker/run credentials cannot read or write it. Reads perform no target or executor observation:
 
@@ -149,7 +111,7 @@ Use approved operation references and account slots rather than arbitrary tool a
 
 Keep Stop independent of polling and telemetry delivery. Do not delay revocation for an event consumer. Local drain must not be labeled target-observed cancellation; the owned fixture's separate counters/qualification supply that evidence when actually collected.
 
-## Activity presentation and independent Stop (D5)
+## Activity presentation and independent Stop
 
 The assessment screen renders only returned records, their trusted source, sequence, persistence/observation times and bounded request/evidence references. It distinguishes reservation, observed write, persisted capture, rejection and trusted validation. A count of scope rejections in displayed records and **Show scope rejection** make the actual rejected intent inspectable without loading raw evidence. It displays at most 256 received records and explains both server retention gaps and local display truncation. Unknown historical tracking remains unknown; incompatible pages are not promoted.
 
@@ -161,10 +123,6 @@ The contextual Stop control remains visible across assessment/evidence screens. 
 
 Permission, broker activity, execution and cleanup remain separate status cards, with actual lifecycle timestamps/uncertain-operation counts. Local drain is not target-observed cancellation. Deletion acceptance and API resource absence are not worker-exit proof. A confirmed finding still requires trusted captured evidence, and Stop is not a successful assessment.
 
-## Verification and presentation boundary
+## Verification boundary
 
-The [roadmap](roadmap.md) defines tests and completion gates. Preserve invalid-scope, DNS/IP/redirect/TLS, tenant, Stop/restart and missing-evidence checks while making the presentation simpler. D1 fixes the repeated-object-probe defect; D2 explicitly refreshed and qualified the selected owned deployment. [The demo configuration](demo-configuration.md) and [fresh records](../examples/demo-configuration/README.md) define that build and its limits. Credentials expire and changed builds need new qualification; see [current status](track.md).
-
-The existing [UI guide](local-ui.md), [onboarding guide](application-onboarding.md), [API walkthrough](demo-walkthrough.md) and [showcase guide](showcase.md) describe current operation. Update the timed presenter journey after the relevant tasks land. Show retained evidence only with its recorded build/date; never substitute it for a claimed live result.
-
-Private connector/model experiments remain frozen supporting work. Customer identity, secret/evidence lifecycle, general redaction, broader isolation/failure qualification and scale remain separate release decisions. No new execution profile, external customer assessment or production guarantee is implied by these screens.
+Use [source and browser checks](verification.md) for code changes and separate runtime/network/assessment campaigns for a selected deployment. Historical evidence retains its original build/date, including failed isolation and model results. Never substitute it for a claimed live observation. [Getting Started](getting-started.md) owns setup; [the demo walkthrough](demo-walkthrough.md) owns the prepared presentation.

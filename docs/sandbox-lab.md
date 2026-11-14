@@ -1,6 +1,6 @@
 # Testing the execution boundary
 
-The dedicated `tsunami-lab` Kind cluster adds a real gVisor runtime and Cilium networking. It is separate from the original `kind-kind` cluster. General agent-controlled shell execution remains disabled. The fixed curl adapter has its own [reviewed boundary](tool-execution.md); the native checks here cover selected paths, not complete hostile-process containment. [D2's fresh qualification](../examples/demo-configuration/README.md) records both native and curl checks on the selected demo build.
+The dedicated `tsunami-lab` Kind cluster adds a real gVisor runtime and Cilium networking. It is separate from the original `kind-kind` cluster. General agent-controlled shell execution remains disabled. The fixed curl adapter has its own [reviewed boundary](tool-execution.md); the native checks here cover selected paths, not complete hostile-process containment. [Historical selected-build qualification](../examples/demo-configuration/README.md) records both native and curl checks on the selected demo build.
 
 ## Why a separate cluster
 
@@ -54,7 +54,7 @@ The scripts save logs and JSON under `artifacts/isolation/<context>/`. A refusal
 - No guarantee that target-side work already accepted before cancellation has stopped.
 - No distributed permission lease or independent emergency cutoff yet.
 
-Additional shell/scanner capabilities are deferred by the [current roadmap](roadmap.md). Any later selection needs its own reviewed adapter and containment/bypass tests. A proxy environment variable is insufficient. Existing live-model paths use constrained HTTP tools and do not require unrestricted shell access.
+Additional shell/scanner capabilities are deferred by the [current limitations](current-status.md#unimplemented-or-unqualified). Any later selection needs its own reviewed adapter and containment/bypass tests. A proxy environment variable is insufficient. Existing live-model paths use constrained HTTP tools and do not require unrestricted shell access.
 
 ## Sources used for setup
 

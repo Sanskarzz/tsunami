@@ -1,12 +1,6 @@
-# Selected owned-lab demo configuration
+# Selected owned-lab configuration
 
-Updated: 2026-11-10. This operating contract began in D2 and defines the [five-minute product demo](project-goal.md). Status belongs in [the tracker](track.md). [D9's retained record](../examples/demo-journey/README.md) qualifies the connected D1–D8 journey; [D2](../examples/demo-configuration/README.md) remains a historical build record.
-
-The historical full D9 images are `tsunami:showcase-20261109t144510z` and `tsunami-tools:showcase-20261109t144510z`. The 2026-11-09 campaign passed actual runtime/native/curl network checks, six browser assessments and a paced 300.000-second dry run. It preserved all original history and ended with eight engagement slots. Readiness is time-limited; recheck before presenting. This was automated browser operation with a supplied script, not recorded human narration.
-
-The subsequent Stop-patch build uses `tsunami:showcase-20261109t182656z` and matching `tsunami-tools:showcase-20261109t182656z`. Its [dated verification](archive/stabilization-2026-11-09.md) records source/runtime/network/local browser checks and a separate three-assessment 300-second rehearsal, leaving five slots. It does not repeat the full six-case Kubernetes/property campaign. Use current source/build identities and readiness, rather than reusing historical image qualification.
-
-Current D10/D11 deployment: `tsunami:showcase-20261109t191623z` and `tsunami-tools:showcase-20261109t191623z`, built from clean commit `8119802`. [Matching-build verification](track.md#d10d11-matching-deployment) records actual runtime/network and asset checks, source/local browser coverage, refreshed core credentials and five preserved slots. It makes no fresh Kubernetes assessment/rehearsal claim. Use matching clients: approval requires `scope_digest`; Start requires `idempotency_key`.
+This is the target/procedure contract. [Getting Started](getting-started.md) owns setup/recovery, [verification](verification.md#recorded-deployment-and-qualification) owns dated build results, and [the walkthrough](demo-walkthrough.md) owns the prepared presentation.
 
 ## Fixed environment and entry point
 
@@ -38,14 +32,4 @@ VAmPI is a pinned upstream owned lab deployment with its vulnerable/fixed switch
 
 ## Operation and qualification
 
-Use the [canonical demo guide](demo-walkthrough.md) for readiness, explicit credential refresh, matching build qualification, private UI connection and the timed presentation. [UI internals](local-ui.md) document authentication, API reads and local browser checks. This file records the selected environment and procedure contract, not a second setup sequence.
-
-## Readiness window and recovery
-
-VAmPI setup issues one-hour credentials. Preflight requires at least 900 seconds of hinted remaining lifetime by default. This is a readiness threshold, not permanent certification or verified session lifetime. Recheck immediately before D9/presentation; if it fails, explicitly refresh between assessments, create new bindings/drafts and repeat the relevant qualification. Do not lower the threshold to hide expired access.
-
-Keep the preflight timestamp and build identities with every qualification record. A source/image mismatch, changed Service address, invalid identity, failed positive network control or unavailable observation invalidates the corresponding claim. Investigate and record the failure; do not replace it with a simulated success.
-
-A failed/lost Start response requires reading saved child IDs before another attempt. An unacknowledged Stop remains uncertain. If the control API is unavailable, use trusted platform inspection and acknowledge that normal Stop is unavailable; there is no independent external egress cutoff in this package. Preserve/export history before separately planned capacity maintenance; never wipe the lab database to free engagement slots.
-
-Local artifacts may contain raw synthetic evidence and private setup material. Share only a reviewed selected subset. General redaction, production identity/isolation, hostile-process containment, broader partitions/load, capacity and a production Stop guarantee remain outside this qualification.
+Use [Getting Started](getting-started.md) for readiness, explicit maintenance, loopback access and qualification commands. The [UI reference](local-ui.md) explains authentication and observations. [Verification](verification.md) preserves historical build identities, failed controls and unqualified paths. Readiness is time-limited; do not infer current credential health from a historical pass.

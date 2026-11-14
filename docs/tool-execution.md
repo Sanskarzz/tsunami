@@ -57,4 +57,4 @@ These checks cover selected IPv4/TCP destinations. UDP DNS has its separate Go d
 
 The next tool needs its own reviewed intent contract and evidence rules. Browser/authentication flows, arbitrary headers/bodies, scanners, raw network/mobile/VM execution and remote MCP tools remain separate work. Unmodified toolkit scripts usually make direct requests and are still disabled. Toolkit licensing and procedure review are still open.
 
-See [recorded results](../examples/tool-execution/README.md) and [the remaining product stages](product-roadmap.md).
+See [recorded results](../examples/tool-execution/README.md) and [current limitations](current-status.md#unimplemented-or-unqualified).

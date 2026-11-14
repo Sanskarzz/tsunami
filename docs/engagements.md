@@ -1,6 +1,6 @@
 # Engagement foundation
 
-An engagement groups an approved target and procedure selection, child runs, evidence and checklist progress. This is the first step toward using more of the toolkit workflow. The later [application adapter](application-adapters.md) adds registered owned applications and reviewed exports. Arbitrary customer URLs, shell commands, scanners, MCP tools and a multi-agent scheduler are still not enabled.
+An engagement groups an approved target and procedure selection, child runs, evidence and checklist progress. The [application adapter](application-adapters.md) adds registered owned applications and reviewed exports. Arbitrary customer URLs, shell commands, scanners, MCP tools and a multi-agent scheduler are still not enabled.
 
 ## Authority and lifecycle
 
@@ -22,7 +22,7 @@ Progress is derived from linked runs and trusted validation of broker captures. 
 
 Completed means the selected procedure captured its legitimate baselines and probe. The probe can still be inconclusive, for example the intentional missing-object control. Completion never means the whole application passed a security assessment. Only the selected Tsunami procedures or configured application plan contribute to this progress; importing 26 checklist files does not execute their tests.
 
-The export recomputes finding candidates using the synthetic validator. Repeated confirmed observations of one pinned procedure are grouped and retain their evidence links. A later clean run does not silently erase an earlier candidate. Candidates remain `needs_human_review`, with no invented severity or CVSS score. The subsequent application milestone adds an explicit review API and finding/evidence schema export. Individual reviewer identity, remediation workflows and customer impact assessment still need further work.
+The export recomputes finding candidates using the synthetic validator. Repeated confirmed observations of one pinned procedure are grouped and retain their evidence links. A later clean run does not silently erase an earlier candidate. Candidates remain `needs_human_review`, with no invented severity or CVSS score. The configured application API provides an explicit review API and finding/evidence schema export. Individual reviewer identity, remediation workflows and customer impact assessment still need further work.
 
 ## Evidence and toolkit compatibility
 
@@ -30,7 +30,7 @@ An export contains the engagement view, a toolkit-shaped engagement projection, 
 
 Hashes are not signatures, immutable storage or proof against a compromised broker. Current evidence includes synthetic response bodies; general customer redaction, storage authorization, encryption, retention and deletion remain product work. Provider/operator/run credentials are omitted from public run representations and exports.
 
-The optional local checker validates the engagement projection against the friend's actual schema, checks artifact hashes and candidate evidence references, and records the schema hash and validator version. It does not execute toolkit code. Remote schema references are refused. The subsequent application milestone extends this checker to finding/evidence contracts, review consistency and materialized files. Legacy records here retain their original format and qualification claims. See [jsonschema validation behavior](https://python-jsonschema.readthedocs.io/en/stable/validate/).
+The optional local checker validates the engagement projection against the separately obtained local schema, checks artifact hashes and candidate evidence references, and records the schema hash and validator version. It does not execute toolkit code. Remote schema references are refused. The configured application checker extends this checker to finding/evidence contracts, review consistency and materialized files. Legacy records here retain their original format and qualification claims. See [jsonschema validation behavior](https://python-jsonschema.readthedocs.io/en/stable/validate/).
 
 ## Routes
 
@@ -54,9 +54,9 @@ All routes require the authenticated tenant operator, never a worker token.
 
 Run creation defaults to scripted. Live engagement runs require the exact `fixture` or `openrouter-free` provider policy; the latter additionally requires the existing free price policy. Private model execution is still disabled. Existing lab run routes remain for regression tests and are outside the engagement allowance; that allowance is not an account-wide budget.
 
-## Read-only assessment metadata (D3)
+## Read-only assessment metadata
 
-D3 adds projections to existing operator responses, without changing stored plans, scope digests, approval bodies, execution authority or export snapshots:
+Read-only projections extend operator responses without changing stored scope, execution authority or export snapshots. Approval separately requires the reviewed digest:
 
 | Response | Added metadata |
 |---|---|
@@ -74,25 +74,25 @@ Application arrays retain their existing shape with additive fields. Go clients 
 
 Focused checks: `go test -race ./internal/platform -run 'TestMetadata|TestOnboardedMetadata'` and `make verify-ui-metadata` (Node). The latter exercises actual frontend presentation code with isolated fixtures; those fixtures never appear in the running product.
 
-## Dashboard list metadata (D6)
+## Dashboard list metadata
 
 `GET /v1/engagements` preserves its array of scope-shaped objects and adds `observed_at`, `latest_attempt_status` and optional `latest_attempt`. These are read-only response projections, not part of stored engagements, approval digests or exports. Existing clients decoding `Engagement` ignore the additions.
 
-`latest_attempt_status` is `not_started` when no child is reserved, `recorded` when the last reserved child's identity/tenant/parent matches, or `unavailable` when that child cannot be projected safely. `latest_attempt` uses D3's ID, stored state, creation/deadline timestamps and optional **stored** verdict. Reservation order comes from the engagement's durable child list; it is not inferred from random run IDs. Missing/foreign/invalid child metadata does not become “not started” or a clean result.
+`latest_attempt_status` is `not_started` when no child is reserved, `recorded` when the last reserved child's identity/tenant/parent matches, or `unavailable` when that child cannot be projected safely. `latest_attempt` uses ID, stored state, creation/deadline timestamps and optional **stored** verdict. Reservation order comes from the engagement's durable child list; it is not inferred from random run IDs. Missing/foreign/invalid child metadata does not become “not started” or a clean result.
 
 The list reads metadata only from the child JSON, excluding captures, result reasons, legacy event text and model call contents. It does not contact targets, validate credentials, revalidate historical findings, mutate scopes or close an active approval because an attempt completed. The Dashboard labels approval separately from the latest attempt and retains an explicitly stale list if refreshing fails. Focused checks: `go test -race ./internal/platform -run TestDashboard` and `make verify-ui-onboarding`.
 
-D6's UI approval checkbox binds to the displayed immutable scope digest without manual typing; changed scope clears review. D10 requires that reviewed digest at the API and compares it with the saved canonical scope in the approval transaction. Empty or mismatched approvals cannot grant permission.
+UI approval checkbox binds to the displayed immutable scope digest without manual typing; changed scope clears review. requires that reviewed digest at the API and compares it with the saved canonical scope in the approval transaction. Empty or mismatched approvals cannot grant permission.
 
-## Durable activity reads (D4)
+## Durable activity reads
 
-`GET /v1/runs/{id}/events?after=0&limit=50` returns a tenant-authorized, bounded metadata page from the run's typed activity journal. It exposes broker admission/send/capture/rejection, trusted validation and durable lifecycle transitions without raw bodies, credentials, account aliases or arbitrary URL/error text. It performs no target or executor probe. See the [complete schema, cursor/retention contract and observation limits](design.md#activity-events-d4).
+`GET /v1/runs/{id}/events?after=0&limit=50` returns a tenant-authorized, bounded metadata page from the run's typed activity journal. It exposes broker admission/send/capture/rejection, trusted validation and durable lifecycle transitions without raw bodies, credentials, account aliases or arbitrary URL/error text. It performs no target or executor probe. See the [complete schema, cursor/retention contract and observation limits](design.md#activity-events).
 
-The journal is additive to new run records and raw run snapshots; it is separate from legacy free-text `events` and D3's ephemeral metadata. Older runs are not backfilled. An admitted reservation without a send/completion observation remains uncertain. Reading or pausing observation never revokes permission; existing Stop endpoints remain authoritative.
+The journal is additive to new run records and raw run snapshots; it is separate from legacy free-text `events` and ephemeral metadata. Older runs are not backfilled. An admitted reservation without a send/completion observation remains uncertain. Reading or pausing observation never revokes permission; existing Stop endpoints remain authoritative.
 
-Focused checks: `go test -race ./internal/platform -run TestActivity` and `make verify-ui-activity`. D5 connects the journal to the UI with independent Stop receipts and bounded cursor polling. The [UI qualification guide](local-ui.md#qualification) separates the optional disposable local browser test from Kubernetes deployment qualification.
+Focused checks: `go test -race ./internal/platform -run TestActivity` and `make verify-ui-activity`. connects the journal to the UI with independent Stop receipts and bounded cursor polling. The [UI qualification guide](local-ui.md#qualification) separates the optional disposable local browser test from Kubernetes deployment qualification.
 
-## Finding and evidence reads (D7)
+## Finding and evidence reads
 
 `GET /v1/engagements/{id}/findings` returns a `schema_version: 1` snapshot with `engagement_id`, `observed_at`, `scope_digest`, `candidates`, `assessments` and `captures`. This is metadata for normal finding navigation, separate from the existing full inline export. It internally reads stored evidence to validate/hash it, but returns no capture bodies, raw rejected URLs/accounts, arbitrary capture errors or review narratives. It makes no target/model request and writes no state.
 
@@ -110,7 +110,7 @@ The UI performs one metadata read on Evidence navigation or explicit refresh, no
 
 Checks: `go test -race ./internal/platform -run 'TestFinding'`, `make verify-ui-findings` and the optional `make verify-ui-findings-browser`. See [local qualification boundaries](local-ui.md#qualification).
 
-## Linked fixed-app retest (D8)
+## Linked fixed-app retest
 
 Create a retest through the existing `POST /v1/engagements` configured-application API, adding optional `source_engagement_id`. The operator still explicitly selects `application`, `name`, `authorization_ref` and optional reviewed `executor`. The service resolves that registered application and its own access binding. It does not inherit the source's target, credentials, execution settings, approval or child runs.
 
@@ -120,15 +120,15 @@ The source reference is checked against the authenticated tenant in the same bbo
 
 `GET /v1/engagements/{retest-id}/retest` returns `schema_version: 1`, `observed_at`, `source`, `retest`, `compatibility`, `reason` and `differences`. It reads both scopes and their latest durably reserved attempts in one read transaction, validates scope/procedure and child tenant/parent/target/executor bindings, and returns no capture bodies. It sends no target/model traffic and creates no review or stored result.
 
-- Each side includes its saved public engagement, supported procedure ID/profile version/definition digest and `attempt_status: not_started|recorded`. A recorded `latest_attempt` includes run ID/state, optional original `stored_verdict`, current trusted `result` only for a completed attempt, and exact selected export artifact IDs. Pending/running/failed/stopped attempts have no completed result. Missing/corrupt linked state makes the comparison unavailable, never clean. The last reserved attempt is used even if an earlier attempt was clean; original candidates remain inspectable through D7.
+- Each side includes its saved public engagement, supported procedure ID/profile version/definition digest and `attempt_status: not_started|recorded`. A recorded `latest_attempt` includes run ID/state, optional original `stored_verdict`, current trusted `result` only for a completed attempt, and exact selected export artifact IDs. Pending/running/failed/stopped attempts have no completed result. Missing/corrupt linked state makes the comparison unavailable, never clean. The last reserved attempt is used even if an earlier attempt was clean; original candidates remain inspectable through .
 - `compatibility: comparable` means the supported profile, intended access rule, ownership pointer, protected proof-field names and denial policy match. Application IDs, origins, record/account bindings and definition digests can differ. This is a comparison of configured checks, not independent verification of a deployed code fix or equivalent application coverage. Any mismatch in those semantic criteria is `incompatible`; outcomes remain individually visible without inferring remediation success.
 - `differences` lists changed application/origin/addresses, profile/rule, ownership pointer, reviewed reads/assertions, denial policy, rate, credential binding digest (never credentials), definition digest, executor, authorization reference, expiry, child/concurrency allowances and scope digest. Values are serialized public-scope values rendered as text. The new full scope remains authoritative for approval.
 
 The comparison route requires tenant operator authentication; worker/unauthed access is refused. Unknown/foreign assessments or absent/foreign source links return 404. Only GET is accepted (otherwise 405); queries are rejected (400), and responses use `Cache-Control: no-store`. Invalid stored scope/bindings return an unavailable comparison; existing Stop remains separately available.
 
-In the UI, Evidence offers an explicit destination selector and new authorization reference. Saving opens Scope Review with changed bindings shown and a fresh unchecked approval checkbox. Linked approval waits for a valid current-scope comparison in this client; backend approval requires the reviewed `scope_digest`. Approval never starts work. On Evidence entry/manual refresh the comparison shows actual outcomes, versions and evidence references; source/retest evidence buttons navigate to their own D7 views. No raw body/export is automatically fetched or polled. Dashboard retains the source link for recovery. Failed reads leave an explicitly stale comparison; obsolete reads are cancelled on navigation/selection/Stop/disconnect, and Stop does not wait for them. Lost draft responses require read-only history recovery, not automatic mutation retries.
+In the UI, Evidence offers an explicit destination selector and new authorization reference. Saving opens Scope Review with changed bindings shown and a fresh unchecked approval checkbox. Linked approval waits for a valid current-scope comparison in this client; backend approval requires the reviewed `scope_digest`. Approval never starts work. On Evidence entry/manual refresh the comparison shows actual outcomes, versions and evidence references; source/retest evidence buttons navigate to their own views. No raw body/export is automatically fetched or polled. Dashboard retains the source link for recovery. Failed reads leave an explicitly stale comparison; obsolete reads are cancelled on navigation/selection/Stop/disconnect, and Stop does not wait for them. Lost draft responses require read-only history recovery, not automatic mutation retries.
 
-Checks: `go test -race ./internal/platform -run TestRetest`, `make verify-ui-retest` (36 frontend tests including D3–D7 regressions) and optional `make verify-ui-retest-browser`. The latter uses two owned loopback origins and real native Mecatl, with fourteen target reads/two probes, a separate unexecuted incompatible draft, and original artifact/candidate preservation. It does not qualify Kubernetes isolation or a selected deployment.
+Checks: `go test -race ./internal/platform -run TestRetest`, `make verify-ui-retest` (frontend tests including prior regressions) and optional `make verify-ui-retest-browser`. The latter uses two owned loopback origins and real native Mecatl, with fourteen target reads/two probes, a separate unexecuted incompatible draft, and original artifact/candidate preservation. It does not qualify Kubernetes isolation or a selected deployment.
 
 ## Reproduce
 
@@ -152,15 +152,15 @@ Local execution uses real Mecatl/Responses code with loopback fixtures; it does 
 
 Each campaign preserves a fresh output directory. The local demo exports before Stop; the Kubernetes collector retrieves the later stopped snapshot. Their authorization/status fields reflect those different snapshot times. The verifier checks draft/after-Stop dispatch refusal, all five procedures on vulnerable/fixed apps, progress, and three versus zero candidates. Active-request Stop, racing creation, tenant isolation and restart behavior are covered by native tests. Neither campaign measures production scale or independent discovery.
 
-See [the expanded product plan](product-roadmap.md) for the remaining work and required evidence.
+See [current limitations](current-status.md#unimplemented-or-unqualified) and [verification](verification.md).
 
-## Start recovery (D11)
+## Start recovery
 
 `POST /v1/engagements/{id}/runs` requires a client-generated `idempotency_key` of 32 lowercase hexadecimal characters. Generate a new key only for a new explicit attempt; retain and reuse the same key and request fields to recover an uncertain Start. An omitted execution mode normalizes to `scripted`. Assessment, execution, required provider/price policy and the saved scope digest form the request fingerprint. A conflicting reuse returns 409. Missing/invalid keys return 400; failed admission does not consume the key.
 
 A successful response is HTTP 201 for both reservation and same-action recovery, identifying the original run with its current stored state and deadline. It is launch metadata/public scope only: captures, events, model traces, results and lifecycle data require their existing explicit read APIs. A 201 response does not imply a new worker or renewed permission.
 
-The private `engagement_starts` bbolt bucket binds tenant, engagement and key to a request digest/run ID. Its write shares the transaction with child reservation, run state and worker credential creation. Successful records are bounded by the engagement run allowance and are retained with history; no retry refunds budgets or creates another credential. Existing databases get an empty bucket without rewriting old runs or granting old attempts new keys. Pre-D11 attempts without keys are recovered by reading their saved IDs.
+The private `engagement_starts` bbolt bucket binds tenant, engagement and key to a request digest/run ID. Its write shares the transaction with child reservation, run state and worker credential creation. Successful records are bounded by the engagement run allowance and are retained with history; no retry refunds budgets or creates another credential. Existing databases get an empty bucket without rewriting old runs or granting old attempts new keys. Pre-attempts without keys are recovered by reading their saved IDs.
 
 Known-action lookup precedes current route/admission checks. It can identify the same stopped/expired/completed/failed run after restart or route failure, without reactivating it or replaying target operations. Unknown keys still require all normal approval, current configuration, expiry, concurrency, budgets and Stop checks. The transaction rechecks the key to coalesce concurrent submissions. Corrupt/conflicting records fail closed. This deduplicates engagement Start actions; it is not a claim of exactly-once remote effects or global idempotency for every mutation.
 

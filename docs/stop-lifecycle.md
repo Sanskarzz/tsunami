@@ -20,11 +20,11 @@ If a process dies before persisting completion, the next process keeps the recor
 
 The journal bounds unfinished operations at 32 per run. Existing action, request, model and concurrency limits still apply. This is additional local durable bookkeeping, not a distributed worker lease protocol. It adds database writes, and the controller still scans stored history; neither is qualified at production scale.
 
-## Local UI revocation (D5)
+## Local UI revocation
 
 The source UI keeps the existing engagement Stop endpoint separate from Start/export/observation reads and visible across assessment/evidence screens. Pending, acknowledged and unacknowledged Stop receipts do not wait for follow-up reads. Later stored revocation can be observed after a lost response without pretending that response was acknowledged. Old viewer responses cannot clear that receipt, and no mutation is automatically replayed.
 
-The run activity panel consumes the [typed event journal](design.md#activity-events-d4), separately from the permission/activity/execution/cleanup status cards and lifecycle timestamps. Missing history, retention gaps, read errors and prior-process uncertainty stay explicit. Pause, navigation and disconnect cancel only viewer reads; they never send Stop. See [source and optional browser checks](local-ui.md#qualification). D5's loopback Mecatl test does not replace the recorded gVisor campaign or qualify a new deployed build.
+The run activity panel consumes the [typed event journal](design.md#activity-events), separately from the permission/activity/execution/cleanup status cards and lifecycle timestamps. Missing history, retention gaps, read errors and prior-process uncertainty stay explicit. Pause, navigation and disconnect cancel only viewer reads; they never send Stop. See [source and optional browser checks](local-ui.md#qualification). loopback Mecatl test does not replace the recorded gVisor campaign or qualify a new deployed build.
 
 ## Keep revocation available when optional routes fail
 

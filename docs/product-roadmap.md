@@ -1,7 +1,3 @@
-# Superseded product roadmap
+# Scope reference
 
-Updated: 2026-11-07.
-
-The former multi-profile stage plan has been replaced by the [five-minute demo roadmap](roadmap.md). Use [project-goal.md](project-goal.md) for scope and [track.md](track.md) for current status. VM/MCP, network/mobile/cloud, specialist agents and customer-platform expansion are deferred; they are not the next implementation stages.
-
-This compatibility page preserves links from historical records. Their recorded builds, outcomes and limitations retain their original meaning. Customer-release prerequisites are retained in the current roadmap; a local demo does not satisfy them.
+Compatibility page for historical evidence links. [Current functionality and limitations](current-status.md) is authoritative; [verification](verification.md) separates recorded success from unqualified work. There is no scheduled multi-profile expansion plan. Production customer controls and broader executors remain outside this owned-lab release. The [original planning reference](https://github.com/Sanskarzz/tsunami/blob/44d20cb63cde7d3c5f0fde20113404222f185d5d/docs/product-roadmap.md) remains in public history.
