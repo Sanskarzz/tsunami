@@ -3,13 +3,29 @@
 export function createOnboardingUI({api,act,message,page,openEngagement,element,details,time,pretty,actionTable,ruleText}) {
   const $=id=>document.getElementById(id);
   let current=null, editing=false, accessEditor=false, connected=false, locked=false, stopping=false, generation=0;
-  let applications=[], reviewedPreflight='';
+  let applications=[], reviewedPreflight='', formStage=0;
   const reviewKey=()=>current?current.id+'/'+current.revision+'/'+current.preflight_digest:'';
   const fields=['name','environment','frontend','reference','api','auth','identity','owner','peer','rule','fields'];
   const privateFields=value=>value.split(',').map(x=>x.trim()).filter(Boolean).map(x=>x.startsWith('/')?x:'/'+x.replaceAll('~','~0').replaceAll('/','~1'));
+  function showStage(stage, focus=false) {
+    formStage=stage;
+    for(const panel of document.querySelectorAll('[data-setup-stage]')) panel.hidden=Number(panel.dataset.setupStage)!==stage;
+    $('setup-stage-caption').textContent=stage===0?'STEP 1 OF 5 / APPLICATION':'STEP 2 OF 5 / INTEGRATION';
+    markStage(stage);
+    if(focus) document.querySelector(`[data-setup-stage="${stage}"] input, [data-setup-stage="${stage}"] select`)?.focus();
+  }
+  function markStage(stage) {
+    for(const step of document.querySelectorAll('[data-setup-stage-label]')) {
+      if(Number(step.dataset.setupStageLabel)===stage) step.setAttribute('aria-current','step'); else step.removeAttribute('aria-current');
+    }
+  }
   function lock(on,busy) {
     connected=on;locked=busy;
     $('new-setup').disabled=!on||busy||stopping;
+    $('setup-next-step').disabled=!on||busy||stopping;
+    $('setup-back-step').disabled=busy||stopping;
+    $('setup-use-lab').disabled=!on||busy||stopping||!applications.some(app=>app.id==='vampi-vulnerable');
+    $('setup-form').setAttribute('aria-busy',String(busy));
     $('save-setup').disabled=!on||busy||stopping;
     $('refresh-setup').disabled=!on||!current||busy||stopping;
     $('edit-setup').disabled=!on||!current||busy||stopping||current.state==='stopped'||current.state==='validating'||!!current.engagement_id;
@@ -35,8 +51,10 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     $('setup-current').hidden=!current;
     $('setup-form').hidden=!!current&&!editing;
     $('cancel-edit-setup').hidden=!editing;
-    if(!current){$('setup-question').replaceChildren();$('setup-messages').replaceChildren();$('setup-preflight-approved').checked=false;reviewedPreflight='';renderSource();lock(connected,locked);return;}
+    if(!current){showStage(formStage);$('setup-question').replaceChildren();$('setup-messages').replaceChildren();$('setup-preflight-approved').checked=false;reviewedPreflight='';renderSource();lock(connected,locked);return;}
     const d=current.details;
+    const stage=['ready_for_approval','assessment_created'].includes(current.state)?4:['ready_for_validation','validation_failed','interrupted','validating'].includes(current.state)?3:2;
+    if(!editing) markStage(stage);
     $('setup-title').textContent=d.name;
     $('setup-state').textContent=current.state;
     const next={needs_input:'Supply the missing prerequisites below. Saving answers makes no target request.',unsupported:'This authentication adapter is unavailable. No validation or assessment can start.',ready_for_validation:'Review and explicitly allow the four legitimate reads below. This is separate from assessment approval.',validating:'Prerequisite validation is active. Stop remains a separate action.',ready_for_approval:'Four legitimate reads passed. Review a separate assessment scope before approving any security probe.',assessment_created:'A saved assessment draft exists. Open its scope; approval and Start remain separate.',validation_failed:'Readiness was not established. Inspect the recorded reason, correct access/details and explicitly review another validation.',interrupted:'A previous validation is uncertain. Nothing was replayed. Inspect state before approving another attempt.',expired:'Setup permission expired. No readiness or execution permission is inferred.',stopped:'Setup permission is revoked. Cancellation and assessment cleanup are separate observations.'};
@@ -46,6 +64,8 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     $('setup-messages').replaceChildren();
     for(const m of current.messages||[]){const row=element('div',undefined,'setup-message '+(m.role==='user'?'user':'assistant'));row.append(element('span',m.role==='user'?'You':'Setup assistant','eyebrow'),element('p',m.text),element('small',time(m.at)));$('setup-messages').append(row);}
     renderQuestion();
+    $('setup-question-card').hidden=!current.question&&!accessEditor;
+    $('setup-validation-progress').textContent=`Recorded baseline activity: ${current.validation_requests} of 4 request reservations this attempt · ${current.state}. ${current.validation_code || ''}`;
     const canValidate=['ready_for_validation','validation_failed','interrupted','validating'].includes(current.state)&&!!d.api_origin&&current.access_ready;
     $('setup-validation').hidden=!canValidate;
     details($('setup-preflight-summary'),[['Target',d.api_origin],['Approved addresses',(d.approved_addresses||[]).join('\n')],['Permission expires',time(current.expires_at)],['Grant','Four GETs; at most 15 seconds; at least 1 second between reads; no redirects or cross-user probe'],['Current attempt',current.validation_requests+' recorded target requests · '+current.validation_attempts+' of 3 attempts used']]);
@@ -63,6 +83,7 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
   }
   function select(form,label,options) {
     const l=element('label',label),i=element('select');
+    i.id='setup-q-'+form.children.length; l.htmlFor=i.id;
     for(const [value,text] of options){const option=element('option',text);option.value=value;i.append(option);}
     form.append(l,i);return i;
   }
@@ -117,9 +138,29 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
   function clearForm() {
     for(const id of fields)$('setup-'+id).value='';$('setup-environment').value='dev';$('setup-source').value='';$('setup-source').disabled=false;$('setup-synthetic').checked=false;
   }
-  function start(){if(!connected||locked||stopping)return;generation++;current=null;editing=false;accessEditor=false;clearForm();render();page('setup');}
+  function start(source=''){
+    if(!connected||locked||stopping)return;
+    generation++;current=null;editing=false;accessEditor=false;clearForm();formStage=0;
+    // A shortcut only chooses a returned registration. Saving/validation still require explicit action.
+    if(typeof source==='string'&&applications.some(app=>app.id===source))$('setup-source').value=source;
+    render();page('setup');
+  }
   $('new-setup').addEventListener('click',start);
   $('setup-source').addEventListener('change',renderSource);
+  $('setup-use-lab').addEventListener('click',()=>{
+    if(!applications.some(app=>app.id==='vampi-vulnerable'))return;
+    $('setup-source').value='vampi-vulnerable';renderSource();
+  });
+  $('setup-next-step').addEventListener('click',()=>{
+    const inputs=document.querySelectorAll('[data-setup-stage="0"] input');
+    for(const input of inputs)if(!input.reportValidity())return;
+    showStage(1,true);
+  });
+  $('setup-back-step').addEventListener('click',()=>showStage(0,true));
+  $('setup-form').addEventListener('invalid',event=>{
+    const panel=event.target.closest('[data-setup-stage]');
+    if(panel)showStage(Number(panel.dataset.setupStage));
+  },true);
   $('update-setup-access').addEventListener('click',()=>{accessEditor=true;renderQuestion();lock(connected,locked);});
   $('setup-form').addEventListener('submit',event=>{event.preventDefault();void act(async()=>{
     const d=formDetails(),g=generation;
@@ -127,7 +168,7 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
     editing=false;current=null;apply(data,g);message('Setup saved. Review the assistant questions; no security assessment has started.');
   });});
   $('edit-setup').addEventListener('click',()=>{
-    if(!current)return;editing=true;const d=current.details;
+    if(!current)return;editing=true;showStage(0);const d=current.details;
     for(const [id,key] of [['name','name'],['environment','environment'],['frontend','frontend_url'],['reference','authorization_ref'],['api','api_origin'],['auth','auth_method'],['identity','identity_path'],['owner','owner_path'],['peer','peer_path'],['rule','expected_access']])$('setup-'+id).value=d[key]||'';
     $('setup-source').value=d.source_application||'';$('setup-source').disabled=true;$('setup-fields').value=(d.protected_fields||[]).join(', ');$('setup-synthetic').checked=d.synthetic_only;render();
   });
@@ -165,6 +206,6 @@ export function createOnboardingUI({api,act,message,page,openEngagement,element,
       for(const item of sessions.sort((a,b)=>b.created_at.localeCompare(a.created_at))){const b=element('button',undefined,'history-row setup-open');b.type='button';b.dataset.setup=item.id;const text=element('span',item.details.name);text.append(element('small',item.id));b.append(text,element('span',item.state,'badge'));b.addEventListener('click',()=>void act(()=>load(item.id)));$('setup-history').append(b);}
       if(!sessions.length)$('setup-history').textContent='No saved setups.';lock(connected,locked);
     },
-    reset(){generation++;current=null;editing=false;accessEditor=false;stopping=false;clearForm();$('setup-history').textContent='Not connected.';$('setup-messages').replaceChildren();$('setup-question').replaceChildren();$('setup-preflight').textContent='';$('setup-preflight-approved').checked=false;render();}
+    reset(){generation++;formStage=0;current=null;editing=false;accessEditor=false;stopping=false;clearForm();$('setup-history').textContent='Not connected.';$('setup-messages').replaceChildren();$('setup-question').replaceChildren();$('setup-preflight').textContent='';$('setup-preflight-approved').checked=false;render();}
   };
 }

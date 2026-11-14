@@ -55,6 +55,8 @@ async function onboardingJourney(){
   check(await evaluate(`!document.getElementById('api-inspector').open`),'technical inspector expanded by default');
   async function save(name,auth='',source=''){
     await click('new-setup');await fill('setup-name',name);await fill('setup-environment','dev');await fill('setup-frontend','https://owned-frontend.example.test');await fill('setup-reference','owned-local-ui-onboarding');
+    await click('setup-next-step');
+    check(await evaluate(`!document.querySelector('[data-setup-stage="1"]').hidden`),'integration stage did not open');
     if(auth){await fill('setup-api',app.origin);await fill('setup-auth',auth);}
     if(source){await fill('setup-source',source);await evaluate(`document.getElementById('setup-source').dispatchEvent(new Event('change'))`);check((await text('setup-source-details')).includes(app.origin),'lab reuse target missing');}
     await evaluate(`document.getElementById('setup-synthetic').checked=true`);await click('save-setup');
@@ -81,7 +83,7 @@ async function onboardingJourney(){
   const old=await operator('/v1/onboarding/'+id);
   await evaluate(`document.getElementById('setup-preflight-approved').checked=true;document.getElementById('setup-preflight-approved').dispatchEvent(new Event('input'))`);
   check(await evaluate(`!document.getElementById('validate-setup').disabled`),'current grant cannot be reviewed');
-  await click('edit-setup');await fill('setup-name','Owned <img src=x onerror=alert(1)>');await click('save-setup');
+  await click('edit-setup');await fill('setup-name','Owned <img src=x onerror=alert(1)>');await click('setup-next-step');await click('save-setup');
   await wait(()=>evaluate(`!document.getElementById('edit-setup').disabled && document.getElementById('setup-form').hidden`),'revised setup');
   check(await evaluate(`!document.getElementById('setup-preflight-approved').checked && document.getElementById('validate-setup').disabled`),'changed setup retained preflight approval');
   const stale=await fetch(origin+'/v1/onboarding/'+id+'/validate',{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({revision:old.revision,digest:old.preflight_digest,confirm:true})});

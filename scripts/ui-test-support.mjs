@@ -10,6 +10,9 @@ class Element {
   append(...children) { this.children.push(...children); }
   replaceChildren(...children) { this.text = ''; this.children = [...children]; }
   addEventListener(name, fn) { (this.listeners[name] ||= []).push(fn); }
+  setAttribute(name, value) { (this.attributes ||= {})[name] = String(value); }
+  removeAttribute(name) { delete (this.attributes ||= {})[name]; }
+  focus() {}
   get options() { return this.children; }
 }
 

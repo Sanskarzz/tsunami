@@ -28,7 +28,15 @@ function message(text, error = false) {
   $('message').className = 'message' + (error ? ' error' : '');
   $('message').hidden = !text;
 }
+function renderNavigation() {
+  for (const name of ['plan','run','evidence']) {
+    const available = name === 'plan' ? !!state.app : !!state.view;
+    $(name + '-empty').hidden = available;
+    $(name + '-workspace').hidden = !available;
+  }
+}
 function page(name) {
+  renderNavigation();
   if (state.currentPage === 'run' && name !== 'run') stopObservation();
   if (state.currentPage === 'evidence' && name !== 'evidence') cancelFindingReads();
   if (!['plan','evidence'].includes(name)) cancelRetestRead();
@@ -40,7 +48,8 @@ function page(name) {
     if (selected) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
   }
   for (const step of document.querySelectorAll('[data-journey]')) step.classList.toggle('current', step.dataset.journey === name);
-  const heading = document.querySelector(`[data-panel="${name}"] h1`);
+  const empty = ['plan','run','evidence'].includes(name) && !$(name + '-empty').hidden;
+  const heading = document.querySelector(empty ? `#${name}-empty h2` : `[data-panel="${name}"] h1`);
   if (heading) { heading.tabIndex = -1; heading.focus({preventScroll: true}); }
   $('step-explanation').textContent = pages[name];
   if (name === 'evidence' && state.token && state.view) void loadFindings().catch(() => {});
@@ -203,10 +212,13 @@ function controls() {
   for (const b of document.querySelectorAll('.choose-app,.open-engagement')) b.disabled = locked;
   setupUI.lock(connected,locked);
   renderStopReceipt();
+  renderNavigation();
+  $('use-reviewed-lab').disabled = !connected || locked;
 }
 function selectedApplication() {
   const app = state.app;
   $('selected-application').replaceChildren();
+  $('selected-application').classList?.toggle('empty', !app);
   $('draft-form').hidden = !app || !!state.view;
   if (!app) { $('selected-application').textContent = 'Choose a configured application first.'; return; }
   if (state.view) {
@@ -423,19 +435,42 @@ function attemptText(e) {
   return 'Latest attempt metadata unavailable';
 }
 function renderDashboard() {
-  $('application-list').replaceChildren();
-  for (const app of state.apps) {
-    const card = element('article', undefined, 'card app-card');
+  const list = $('application-list'); list.replaceChildren(); list.className = 'application-list table-wrap';
+  const lab = state.apps.find(app => app.id === 'vampi-vulnerable' && app.metadata?.registration === 'startup');
+  $('lab-shortcut').hidden = !lab;
+  const query = $('application-search').value.trim().toLowerCase(), filter = $('application-filter').value || 'all';
+  const apps = state.apps.filter(app => (filter === 'all' || app.metadata?.registration === filter) &&
+    [app.title, app.id, app.origin].some(text => String(text).toLowerCase().includes(query)));
+  $('application-count').textContent = state.listsAt ? `${apps.length} of ${state.apps.length} registered applications shown` : 'Application snapshot not loaded.';
+  const table = element('table', undefined, 'application-table'), head = element('thead'), headers = element('tr'), body = element('tbody');
+  table.setAttribute('aria-label', 'Registered applications and latest saved assessments');
+  for (const label of ['Application / exact target', 'Assessment & access', 'Latest saved assessment', 'Next action']) { const th = element('th', label); th.scope = 'col'; headers.append(th); }
+  head.append(headers);
+  for (const app of apps) {
+    const row = element('tr');
     const registration = {startup:'Reviewed lab integration',onboarding:'Added through onboarding'}[app.metadata?.registration] || 'Registration source unknown';
     const readiness = !app.metadata?.procedure?.supported ? 'Procedure support unknown or unavailable' : app.metadata?.access?.availability !== 'configured' ? 'Access unavailable for assessment' : 'Scope review required before testing';
+    const identity = element('td'); identity.dataset.label = 'Application';
+    identity.append(element('span', registration, 'badge'), element('h2', app.title), element('code', app.id), element('small', app.origin));
+    const access = element('td'); access.dataset.label = 'Assessment & access';
+    access.append(element('strong', app.version === 'http-property-access/v1' ? 'Private-field exposure' : app.version === 'http-object-access/v2' ? 'Object authorization' : app.version), element('p', {configured:'Credentials configured',unavailable:'Access unavailable',configuration_changed:'Access configuration changed'}[app.metadata?.access?.availability] || 'Access availability unknown', 'hint'));
     const inspection = element('details'); inspection.append(element('summary', 'Access configuration and observations'),
-      element('p', accessText(app.metadata?.access), 'hint'), element('small', app.id + ' · ' + app.version), element('small', 'Metadata observed: ' + time(app.metadata?.observed_at)));
-    card.append(element('span', registration, 'badge'), element('h2', app.title), element('code', app.origin), element('p', ruleText(app.expected_access)),
-      element('strong', readiness), inspection);
-    const b = element('button', 'Review this application →', 'button choose-app'); b.type = 'button'; b.dataset.application = app.id;
-    b.addEventListener('click', () => choose(app)); card.append(b); $('application-list').append(card);
+      element('p', readiness, 'hint'), element('p', accessText(app.metadata?.access), 'hint'), element('small', ruleText(app.expected_access)), element('small', 'Metadata observed: ' + time(app.metadata?.observed_at)));
+    access.append(inspection);
+    // Join only exact application IDs. Distinct registered scopes/history are never merged.
+    const saved = state.engagements.filter(e => e.application?.id === app.id).sort((a,b) => Date.parse(b.latest_attempt?.created_at || b.created_at) - Date.parse(a.latest_attempt?.created_at || a.created_at));
+    const latest = saved[0], assessment = element('td'); assessment.dataset.label = 'Latest saved assessment';
+    if (latest) assessment.append(element('span', attemptText(latest), 'badge'), element('small', 'Scope: ' + latest.state), element('small', latest.id), element('small', 'Attempt created: ' + time(latest.latest_attempt?.created_at)));
+    else assessment.append(element('span', 'No saved assessment'), element('small', 'No security result is inferred.'));
+    const action = element('td'); action.dataset.label = 'Next action';
+    const b = element('button', 'Review scope →', 'button choose-app'); b.type = 'button'; b.dataset.application = app.id;
+    b.addEventListener('click', () => choose(app)); action.append(b);
+    if (latest) { const resume = element('button', 'Resume saved assessment', 'button subtle open-engagement'); resume.type = 'button'; resume.addEventListener('click', () => void act(() => openEngagement(latest.id))); action.append(resume); }
+    row.append(identity, access, assessment, action); body.append(row);
   }
-  if (!state.apps.length) $('application-list').append(element('div', 'No applications registered. Add an owned application to supply prerequisites; saving details starts no tests.', 'card empty'));
+  table.append(head, body);
+  if (apps.length) list.append(table);
+  else list.append(element('div', state.apps.length ? 'No applications match these filters. Clear the search or choose All registrations; saved history below is unchanged.' : 'No applications registered. Add an owned application to supply prerequisites; saving details starts no tests.', 'card empty'));
   $('engagement-list').replaceChildren();
   for (const e of [...state.engagements].sort((a, b) => Date.parse(b.latest_attempt?.created_at || b.created_at) - Date.parse(a.latest_attempt?.created_at || a.created_at))) {
     const button = element('button', undefined, 'history-row open-engagement'); button.type = 'button'; button.dataset.engagement = e.id;
@@ -446,6 +481,7 @@ function renderDashboard() {
     button.addEventListener('click', () => act(() => openEngagement(e.id))); $('engagement-list').append(button);
   }
   if (!state.engagements.length) $('engagement-list').textContent = 'No saved assessments for this operator. Draft, approval and Start are separate actions.';
+  controls();
 }
 function choose(app) {
   if (state.busy || state.stopping) return;
@@ -801,6 +837,7 @@ function disconnect() {
   state.startRequests.clear(); state.uncertainStarts.clear();
   setupUI.reset();
   $('application-list').replaceChildren(element('div', 'Disconnected. Reconnect to read saved state.', 'card empty'));
+  $('lab-shortcut').hidden = true; $('application-count').textContent = 'Applications not loaded.';
   $('engagement-list').textContent = 'Not connected.'; $('api-log').replaceChildren(); $('api-detail').textContent = 'Disconnected.';
   $('dashboard-observed-at').textContent = 'Connect to read registered applications and saved attempts.';
   $('connect-panel').hidden = false; $('connection-state').textContent = 'Disconnected'; $('connection-state').className = 'badge';
@@ -809,6 +846,10 @@ function disconnect() {
   message('Disconnected from the viewer. This did not Stop any assessment. Reconnect to inspect or revoke work.');
 }
 $('disconnect').addEventListener('click', disconnect);
+$('application-search').addEventListener('input', renderDashboard);
+$('application-filter').addEventListener('change', renderDashboard);
+$('use-reviewed-lab').addEventListener('click', () => setupUI.start('vampi-vulnerable'));
+for (const button of document.querySelectorAll('[data-select-application]')) button.addEventListener('click', () => page('applications'));
 $('reload').addEventListener('click', () => void act(lists));
 $('add-application').addEventListener('click', () => setupUI.start());
 $('draft-form').addEventListener('submit', event => { event.preventDefault(); void act(async () => {

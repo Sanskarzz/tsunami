@@ -89,3 +89,21 @@ test('unsupported authentication stays unavailable and lab reuse explains its fi
   assert.equal(p.run("$('setup-extra').hidden"),true);
   assert.equal(p.calls.filter(c=>c.method==='POST').length,0);
 });
+
+test('application filters preserve distinct registrations and join latest history by exact ID',()=>{
+  const p=ui();p.run(`state.listsAt='2030-01-01T00:00:00Z';state.apps=[{...state.app,id:'owned-a',metadata:{registration:'startup',procedure:{supported:true},access:{availability:'configured'}}},{...state.app,id:'owned-b',metadata:{registration:'onboarding',procedure:{supported:true}}}];
+    state.engagements=[{...state.view.engagement,application:{id:'owned-b'},name:'B history',latest_attempt_status:'recorded',latest_attempt:{state:'completed',verdict:'confirmed',created_at:'2030-01-01T00:00:00Z'}}];
+    $('application-filter').value='startup';renderDashboard()`);
+  assert.match(p.text('application-list'),/owned-a/);assert.doesNotMatch(p.text('application-list'),/owned-b|Latest attempt: completed/);
+  assert.match(p.text('application-count'),/1 of 2/);assert.match(p.text('engagement-list'),/B history/);
+  p.run("$('application-filter').value='all';$('application-search').value='owned-b';renderDashboard()");
+  assert.match(p.text('application-list'),/confirmed/);assert.doesNotMatch(p.text('application-list'),/owned-a/);
+  p.run("$('application-search').value='missing';renderDashboard()");assert.match(p.text('application-list'),/No applications match/);assert.match(p.text('engagement-list'),/B history/);
+});
+
+test('navigation explains absent context without clearing a selected scope or inventing results',()=>{
+  const p=ui();p.run("state.app=null;state.view=null;page('run')");
+  assert.equal(p.run("$('run-empty').hidden"),false);assert.equal(p.run("$('run-workspace').hidden"),true);
+  p.run("state.app={id:'selected'};renderNavigation()");assert.equal(p.run("$('plan-empty').hidden"),true);assert.equal(p.run("$('evidence-empty').hidden"),false);
+  p.run(`state.view=${JSON.stringify(p.view)};renderNavigation()`);assert.equal(p.run("$('evidence-workspace').hidden"),false);assert.equal(p.run('state.view.engagement.scope_digest'),p.view.engagement.scope_digest);
+});
