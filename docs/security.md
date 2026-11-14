@@ -116,4 +116,4 @@ Authenticated operator setup APIs now hold durable typed facts/questions/revisio
 
 ## Release qualification and dependencies
 
-The pinned Go 1.27.3 toolchain has a reported standard-library vulnerability pending review/update; see [scanner findings](verification.md#security-scan-status). Passing race tests and module checksums do not establish vulnerability-free dependencies. Container packages, upstream target dependencies and the host CA bundle need their own release review. A source release does not qualify production deployment or grant third-party redistribution rights.
+Source builds require Go 1.27.4, fixing the previously reported GO-2026-6859 advisory. Existing lab images retain their separately recorded build versions; see [scanner findings](verification.md#security-scan-status). Passing race tests and module checksums do not establish vulnerability-free dependencies. Container packages, upstream target dependencies and the host CA bundle need their own release review. A source release does not qualify production deployment or grant third-party redistribution rights.

@@ -1,8 +1,6 @@
 module github.com/Sanskarzz/tsunami
 
-go 1.27.2
-
-toolchain go1.27.3
+go 1.27.4
 
 require (
 	github.com/openai/openai-go/v3 v3.61.0
