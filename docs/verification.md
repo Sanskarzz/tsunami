@@ -12,13 +12,46 @@ Install the [source prerequisites and Python requirements](getting-started.md#pa
 
 The documentation cleanup starts from public commit `44d20cb63cde7d3c5f0fde20113404222f185d5d`. Before cleanup, a temporary clean clone passed Go race/vet, 23 Python tests, 38 frontend tests, build, module verification/tidy checks, four real local Chrome campaigns, both historical SHA manifests and Markdown links/anchors. A fresh Python venv also passed the source gate. It inherited toolchains/module caches, but no `.local/`, kubeconfig, credentials, workloads or databases. This was not a fresh OS or fresh Kubernetes bootstrap.
 
-Post-cleanup release checks and dedicated scanner findings are recorded below after verification. No existing-lab assessment, credential rotation, state reset, Stop-gate change or cluster rebuild is authorized by source verification.
+Post-cleanup checks used a separate clean clone at `4c29ffe6c8f7737855cb16dfb0483792166d0b88`, after documentation commit `bdade1b` and the isolated 17-line unused `Server.reserve` removal. The helper had no caller/interface/generated-code reference; the actual request path retains `reserveTarget`. No test was weakened or historical artifact changed.
+
+| Check on 2026-11-14 | Observed result |
+|---|---|
+| Path A dependency setup | PASS: new `.local/test-venv`, requirements installed from the documented file; no copied local configuration |
+| `KUBECONFIG=/dev/null make verify` | PASS: all Go race packages, vet, 23 Python tests and retained evidence gate (38 bundles / 286 artifacts / 20 trial hashes) |
+| `make verify-ui-retest` | PASS: 38 frontend tests |
+| Four local Chrome targets | PASS sequentially: activity/Stop, onboarding, findings/property controls, linked retest; real local backend/Mecatl, no Kubernetes |
+| `make build` | PASS: clean source revision `4c29ffe`, Go 1.27.3, `vcs.modified=false`; binary SHA-256 `481d34d628ac7e70e04bcff27befd232a0e59dc6e3d58e98830b1ed14ac2b2c2` |
+| `go mod verify`, `go mod tidy -diff` | PASS: checksums verified; no module-file changes |
+| Markdown checks | PASS: 167 Markdown files, 587 local links and 33 anchors; no missing targets at this checkpoint |
+| External archive | PASS: all 15 originals match source commit `44d20cb`, sizes and SHA-256; no overwrites |
+| Original evidence | PASS: entire examples Git tree identical to `44d20cb`; original 171-entry and 125-entry SHA manifests pass |
+| Fresh Kubernetes/runtime/network/assessment campaigns | NOT RUN; no lab adoption, new engagement, credential rotation, state reset or Stop-gate change |
+| External toolkit schemas / provider inference | NOT RUN; optional external inputs are not needed for Path A |
+
+Later verification-documentation edits do not change the qualified application source. The binary above is a source build, not a new deployed image or a byte-reproducibility guarantee. The clean clone reused installed system toolchains/module caches but created its own test venv/state. Local raw logs and redacted scanner reports are in a private temporary audit directory, not committed evidence. Only the reviewed summaries are public.
 
 ### Security scan status
 
-An initial Govulncheck run reports Go 1.27.3 affected by **GO-2026-6859 / CVE-2026-97054**, fixed in Go 1.27.4. The advisory describes an HTTP/1 MaxBytesReader header race when body reading and response-header writing occur concurrently. The project uses MaxBytesReader; the broad call-graph report is not a demonstrated exploit. The pinned toolchain remains unchanged pending a separately reviewed update. See the [Go vulnerability record](https://pkg.go.dev/vuln/GO-2026-6859).
+Scans completed with default detections intact; no broad allowlist, skipped security test or edited historical result was used to obtain a clean appearance.
 
-The initial Trivy source scan reports no listed Go-module vulnerabilities; it does not replace the Go standard-library finding or container scans. Dedicated secret-scanner detections require triage rather than suppression or a fabricated PASS. Final scanner versions, outcomes and limits belong in this section.
+| Scanner / scope | Outcome |
+|---|---|
+| Gitleaks module v8.30.1, Git `--all`, redaction 100%, through `4c29ffe` | Raw exit 1: **308 generic-key detections**, all triaged. 113 public credential-binding hashes, 153 synthetic proof hashes, 2 key-data hashes, 38 source/artifact hashes and 2 natural-language matches. No credential value established. |
+| Gitleaks tracked/new publication-tree snapshot | Raw exit 1: **307 detections**, same hash categories plus one prose match. Ignored runtime secrets/artifacts are intentionally excluded from publication, not copied into the scanned public tree. |
+| Govulncheck v1.9.0, Go 1.27.3, symbol-level source scan | **FINDING:** GO-2026-6859 / CVE-2026-97054 in stdlib `net/http`, fixed in Go 1.27.4. One advisory with multiple call traces, not multiple independent defects. |
+| Trivy v0.75.0 source manifest scan | No listed Go-module vulnerabilities; this does not include the standard-library result or prove vulnerability-free code. |
+| pip-audit v2.10.1, resolved test requirements | No reported vulnerabilities across five resolved Python test packages. This is separate from VAmPI's dependencies. |
+| Trivy native image, ID `53467dc1e2689f57791f9f84345954b4762ba89aa0e4015a9411a164a1b4ca5b` | One standard-library finding, CVE-2026-97054. |
+| Trivy tools image, ID `3504e567e16465b625a38d8b0289e570ece62c4c205d45f862d19d384243582f` | 395 OS package/advisory entries (110 high, 133 medium, 147 low, 5 unknown), plus the Go finding. |
+| Trivy VAmPI image, ID `8ffa773d316c0e2095e428118c856662815a4aae1e497d1385d20d7d3eb3213a` | 211 OS entries (51 high, 90 medium, 65 low, 5 unknown) and 33 Python entries (1 critical, 9 high, 19 medium, 4 low). The critical entry is PyJWT 2.6.0 / CVE-2026-102268, scanner fix version 2.14.0. |
+
+The Go advisory describes an HTTP/1 MaxBytesReader header race when body reading and response-header writing occur concurrently. The project uses MaxBytesReader; the broad call-graph result is not a demonstrated exploit. The pinned toolchain remains unchanged pending a separately reviewed update. See the [Go vulnerability record](https://pkg.go.dev/vuln/GO-2026-6859).
+
+Trivy's DB snapshot was updated 2026-11-14T07:01:20Z. Counts are package/advisory entries, including duplicates across related packages, not proven reachable exploits. Container reachability/impact has not been fully triaged. The existing images were scanned read-only, not rebuilt or deployed. VAmPI deliberately contains application defects, but that does not excuse or hide dependency findings. Keep it confined to the owned lab. Do not distribute these images as hardened release artifacts.
+
+The source/module/test-dependency scans do not cover every host tool, Kind/Cilium/gVisor binary, upstream component or dependency-license obligation. Repeated scans can differ as databases change. SHA checks establish byte identity, not absence of secrets or vulnerabilities.
+
+**Release hold:** the final project license/publication-rights decision, Go security update and container-finding disposition remain open. The unsafe legacy `make deploy` defaults remain documented; a separate proposed guard has not been applied. No clean security-release or fresh-cluster qualification is claimed.
 
 ## Recorded deployment and qualification
 
@@ -28,7 +61,7 @@ The initial Trivy source scan reports no listed Go-module vulnerabilities; it do
 | Stop-patch qualification | Build `tsunami[:tools]:showcase-20261109t182656z`, binary `fd9f5870a1f1d06106e42d1e77cd9243ffe03c427bfdcc41cd74eafffea187f0`, built from `92576c2` with a dirty documentation/tooling tree. Actual runtime/native/curl checks and a separate three-assessment 300.000881-second core rehearsal passed. Outcomes: confirmed, stopped, linked fixed no_issue_observed. Property controls passed locally; full Kubernetes property campaign was not repeated. [Original dated report](https://github.com/Sanskarzz/tsunami/blob/44d20cb63cde7d3c5f0fde20113404222f185d5d/docs/archive/stabilization-2026-11-09.md). |
 | Reviewed approval / keyed Start deployment | Observed 2026-11-09T19:26:32Z. Clean source `81198026d8337361559df4e2a35aee6f8b3e31ef`; native/tools tags `showcase-20261109t191623z`. Both binaries SHA-256 `fba9a6660759cce42125da8fc4909b52b26aa06b68dc0a6fd1dfbc9f4f089533`. Actual runsc/native/curl checks and matching assets passed; zero assessments created. A fresh Kubernetes assessment/rehearsal was NOT RUN. Private records remain under ignored `artifacts/hardening/d10-d11/`; they are not included in a clone. [Original public summary](https://github.com/Sanskarzz/tsunami/blob/44d20cb63cde7d3c5f0fde20113404222f185d5d/docs/track.md#d10d11-matching-deployment). |
 
-Read-only inspection on 2026-11-14 found the recorded control image ID, both local image IDs, all four served assets and 123 source fingerprints matching. RuntimeClass/runsc/Cilium configuration remained present. The lab retained 354 runs, 95 engagements, 14 setups, five available slots and no nonterminal runs. VAmPI expiry hints failed; the optional private route was unavailable. These observations do not constitute authenticated credential checks, new CRI/network qualification or readiness for a live demo. No lab mutations were made.
+Pre-cleanup read-only inspection on 2026-11-14 found the recorded control image ID, both local image IDs, all four served assets and 123 source fingerprints matching. RuntimeClass/runsc/Cilium configuration remained present. The lab retained 354 runs, 95 engagements, 14 setups, five available slots and no nonterminal runs. VAmPI expiry hints failed; the optional private route was unavailable. These observations do not constitute authenticated credential checks, new CRI/network qualification or readiness for a live demo. No lab mutations were made.
 
 Core rehearsal consumes three engagements. Full browser qualification creates six and requires seven free slots. The five-slot recorded lab cannot repeat the full campaign without explicit capacity maintenance. Never delete history, raise limits or clear gates to make qualification pass. Credentials/readiness are time-limited; source and historical records are not current account certification.
 
